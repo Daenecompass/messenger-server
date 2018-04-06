@@ -1,5 +1,5 @@
-FBMessenger = require './fb'
-DialogFlow = require './df'
+FBMessenger = require './FBMessenger'
+DialogFlow = require './DialogFlow'
 
 fb = new FBMessenger()  # connects to Messenger; receives messages from user; formats & sends messages to user
 df = new DialogFlow()   # connects to DialogFlow agent; persists DF state across sessions
