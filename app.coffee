@@ -21,3 +21,13 @@ df.emit 'response', 'Sorry about that [FU: Want to know about mold?: What do I d
                                                                           # DF sends back respons, including follow-up question with button
 fb.emit 'follow up postback', 'FOLLOW_UP: What do I do about mold?'       # user clicks button
 df.emit 'response', 'Here\'s what I know about mold'                      # DF sends back response
+
+# OUTPUT:
+# * Check whether new or returning user, and ask DialogFlow for the relevant intent; send DialogFlow context if returning user
+# * Sending regular user message (how do I end a tenancy?) to DialogFlow
+# * Dealing with DialogFlow's response (Here's how you end a tenancy… [more] Extra info) – splitting it up and queuing it to send, formatting buttons etc
+# * Formatting tell me more portion of postback (TELL_ME_MORE: Extra info) and sending it back to Messenger…
+# * Sending regular user message (My house is damp) to DialogFlow
+# * Dealing with DialogFlow's response (Sorry about that [FU: Want to know about mold?: What do I do about mold?]) – splitting it up and queuing it to send, formatting buttons etc
+# * Stripping out the fu tag from FOLLOW_UP: What do I do about mold?, sending the rest to DialogFlow
+# * Dealing with DialogFlow's response (Here's what I know about mold) – splitting it up and queuing it to send, formatting buttons etc
