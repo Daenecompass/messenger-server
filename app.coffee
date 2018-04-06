@@ -1,9 +1,6 @@
 require('dotenv').load()
-FBMessenger = require './FBMessenger'
-DialogFlow = require './DialogFlow'
-
-fb = new FBMessenger()  # connects to Messenger; receives messages from user; formats & sends messages to user
-df = new DialogFlow()   # connects to DialogFlow agent; persists DF state across sessions
+fb = require './FBMessenger'  # connects to Messenger; receives messages from user; formats & sends messages to user
+df = require './DialogFlow'   # connects to DialogFlow agent; persists DF state across sessions
 
 fb.on 'regular user message', df.handle
 fb.on 'tell me more postback', fb.tell_me_more

@@ -1,8 +1,6 @@
 EventEmitter = require('events').EventEmitter
-inherits = require('util').inherits
 
-DF = () ->
-DF.prototype =
+DF =
   handle: (fb_message) ->
     console.log "* Sending regular user message (#{fb_message}) to DialogFlow"
   follow_up: (fb_message) ->
@@ -10,6 +8,6 @@ DF.prototype =
   get_started: () ->
     console.log "* Check whether new or returning user, and ask DialogFlow for the relevant intent; send DialogFlow context if returning user"
 
-inherits DF, EventEmitter
+Object.assign DF, EventEmitter.prototype
 
 module.exports = DF
