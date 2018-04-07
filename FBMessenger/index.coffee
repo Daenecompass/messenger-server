@@ -1,19 +1,29 @@
 EventEmitter = require('events').EventEmitter
 
-fb_messenger_controller = require './controller'
+df = require '../DialogFlow'
+fb_messenger_botkit = require('./botkit')
 postbacks = require './postbacks'
 helpers = require '../helpers'
 
-FB =
-  handle: (df_response) ->
-    console.log "* Dealing with DialogFlow's response (#{df_response}) – splitting it up and queuing it to send, formatting buttons etc"
+fb =
+  handle: (fb_message, df_response, bot) ->
+    bot.reply fb_message, 'got something from DF'
+    # console.log "* Dealing with DialogFlow's response (#{df_response}) – splitting it up and queuing it to send, formatting buttons etc"
   tell_me_more: (fb_message) ->
-    console.log "* Formatting tell me more portion of postback (#{fb_message}) and sending it back to Messenger…"
-Object.assign FB, EventEmitter.prototype
+    df.handle helpers.remove_tell_me_more_in_fb_message fb_message
+    # console.log "* Formatting tell me more portion of postback (#{fb_message}) and sending it back to Messenger…"
+Object.assign fb, EventEmitter.prototype
 
-fb_messenger_controller.hears ['(.*)'], 'message_received', (bot, fb_message) ->
-  route_postbacks fb_message, FB
+fb.on 'regular user message', df.handle
+fb.on 'tell me more postback', fb.tell_me_more
+fb.on 'follow up postback', df.follow_up
+fb.on 'get started postback', df.get_started
+
+
+fb_messenger_botkit.controller.hears ['(.*)'], 'message_received', (bot, fb_message) ->
+  df.handle fb_message, bot
+  # route_postbacks fb_message
   # route_locally_handled fb_message
   # route_messages_for_diagloflow fb_message
 
-module.exports = FB
+module.exports = fb

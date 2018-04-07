@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "api-ai-botkit": "^1.1.1",
     "botkit": "^0.6.12",
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
