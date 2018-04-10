@@ -1,29 +1,28 @@
-EventEmitter = require('events').EventEmitter
-
-df = require '../DialogFlow'
-fb_messenger_botkit = require('./botkit')
-postbacks = require './postbacks'
+bus = require '../event_bus'
+fb_messenger_botkit = require './botkit'
 helpers = require '../helpers'
 
-fb =
-  handle: (fb_message, df_response, bot) ->
-    bot.reply fb_message, 'got something from DF'
-    # console.log "* Dealing with DialogFlow's response (#{df_response}) – splitting it up and queuing it to send, formatting buttons etc"
-  tell_me_more: (fb_message) ->
-    df.handle helpers.remove_tell_me_more_in_fb_message fb_message
-    # console.log "* Formatting tell me more portion of postback (#{fb_message}) and sending it back to Messenger…"
-Object.assign fb, EventEmitter.prototype
-
-fb.on 'regular user message', df.handle
-fb.on 'tell me more postback', fb.tell_me_more
-fb.on 'follow up postback', df.follow_up
-fb.on 'get started postback', df.get_started
-
+is_get_started_postback = (fb_message) ->
+  fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
 
 fb_messenger_botkit.controller.hears ['(.*)'], 'message_received', (bot, fb_message) ->
-  df.handle fb_message, bot
-  # route_postbacks fb_message
-  # route_locally_handled fb_message
-  # route_messages_for_diagloflow fb_message
+  if is_get_started_postback fb_message
+    bus.emit 'postback: get started', fb_message, bot
+  else
+    bus.emit 'message from user', fb_message, bot
 
-module.exports = fb
+module.exports =
+  handle_very_plain_message: (fb_message, df_response, bot) ->
+    if df_response.result.fulfillment.messages?[0].speech?
+      bot.reply fb_message, df_response.result.fulfillment.messages[0].speech
+    else
+      # need to queue up and deal with complex messages (buttons etc)
+      console.log "Looks like a more complex df response than I can currently work with:"
+      console.log df_response.result.fulfillment.messages
+
+  check_user_type: (fb_message, bot) ->
+    fb_messenger_botkit.controller.storage.users.get fb_message.user, (err, user_data) ->
+      if user_data.user_type?
+        bus.emit 'user returns with type set', fb_message, bot, user_data.user_type
+      else
+        bus.emit 'brand new user starts', fb_message, bot

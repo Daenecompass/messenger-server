@@ -1,19 +1,27 @@
-EventEmitter = require('events').EventEmitter
+bus = require '../event_bus'
 dialogflow_botkit = require('api-ai-botkit') process.env.dialogflow_client_token
-fb = require '../FBMessenger'
+helpers = require '../helpers'
 
-dialogflow_botkit.all fb.handle
-  # lib.delegate_df_messages bot, fb_message, df_response.result.fulfillment.messages
+no_speech_in_response = (df_response) ->
+  df_response.result.fulfillment.messages.every (message) -> message.speech is ''
 
-df =
-  handle: (fb_message, bot) ->
-    # console.log "* Sending regular user message (#{fb_message}) to DialogFlow"
+dialogflow_botkit.all (fb_message, df_response, bot) ->
+  if no_speech_in_response df_response
+    bus.emit 'message from dialogflow without speech in it'
+  else
+    bus.emit 'message from dialogflow', fb_message, df_response, bot
+
+module.exports =
+  process: dialogflow_botkit.process
+
+  interview_user: (fb_message, bot) ->
+    fb_message.text = 'INTERVIEW_USER_INTENT'
     dialogflow_botkit.process fb_message, bot
-  follow_up: (fb_message) ->
-    console.log "* Stripping out the fu tag from #{fb_message}, sending the rest to DialogFlow"
-  get_started: () ->
-    console.log "* Check whether new or returning user, and ask DialogFlow for the relevant intent; send DialogFlow context if returning user"
 
-Object.assign df, EventEmitter.prototype
+  welcome_returning_user: (fb_message, bot) ->
+    fb_message.text = 'RETURNING_USER_GREETING_INTENT'
+    dialogflow_botkit.process fb_message, bot
 
-module.exports = df
+  set_user_type: (fb_message, bot, user_type) ->
+    fb_message.text = helpers.user_type_to_intent[user_type]
+    dialogflow_botkit.process fb_message, bot

@@ -6,3 +6,9 @@ module.exports =
     console.log fb_message
     fb_message.text = fb_message.text.replace @tell_me_more_regex, ''
     fb_message
+
+  user_type_to_intent:
+    'landlord': 'SET_LANDLORD_CONTEXT_INTENT'
+    'private': 'SET_PRIVATE_CONTEXT_INTENT'
+    'social-housing': 'SET_SOCIAL-HOUSING_CONTEXT_INTENT'
+    'boardinghouse': 'SET_BOARDINGHOUSE_CONTEXT_INTENT'
