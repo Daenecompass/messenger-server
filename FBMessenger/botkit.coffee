@@ -28,5 +28,4 @@ controller.setupWebserver port, (err, webserver) ->
   controller.createWebhookEndpoints webserver, bot, () ->
     require '../ngrok' if process.env.ngrok_subdomain and process.env.ngrok_authtoken
 
-module.exports =
-  controller: controller
+module.exports = controller
