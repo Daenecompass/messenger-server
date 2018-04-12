@@ -16,6 +16,23 @@ quick_replies_reply = (df_message) ->
       title: qr
       payload: qr
 
+postback_button = (title, payload) ->
+  type: 'postback'
+  title: title
+  payload: payload
+
+button_template_attachment = (title, buttons) ->
+  attachment:
+    type: 'template'
+    payload:
+      template_type: 'button'
+      text: title
+      buttons: buttons
+
+follow_up_button = (label, payload) ->
+  button_template_attachment label, [postback_button('Okay', 'FOLLOW_UP:' + payload)]
+
+
 filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
 
@@ -49,19 +66,6 @@ split_on_newlines_before_more = (text) ->
 has_more = (text) -> text.match(/\[more\]/i)?
 text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
 text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
-
-single_button = (label, payload) ->
-  attachment:
-    type: 'template'
-    payload:
-      template_type: 'button'
-      text: label
-      buttons:
-        [
-          type: 'postback'
-          title: 'Okay'
-          payload: payload
-        ]
 
 buttons_prep = (button_text) ->
   button_text
@@ -97,6 +101,7 @@ split_text_by_more_and_length = (text) ->
   reply_text: reply_text
   overflow: overflow
 
+
 text_reply = (df_speech) ->
   split_text = split_text_by_more_and_length df_speech
   button_tag = split_text.reply_text.match helpers.phone_web_tag_regex
@@ -106,16 +111,8 @@ text_reply = (df_speech) ->
     buttons = []
     if button_tag then buttons = buttons_prep button_tag[1]
     if split_text.overflow
-      buttons.push
-        type: 'postback'
-        title: 'Tell me more'
-        payload: 'TELL_ME_MORE:' + split_text.overflow
-    attachment:
-      type: 'template'
-      payload:
-        template_type: 'button'
-        text: split_text.reply_text.replace helpers.phone_web_tag_regex, ''
-        buttons: buttons
+      buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
+    button_template_attachment split_text.reply_text.replace(helpers.phone_web_tag_regex, ''), buttons
 
 
 
@@ -128,7 +125,7 @@ text_processor = (df_message) ->
     if follow_up_tag
       cleaned_line = line.replace(helpers.follow_up_tag_regex, '').trim()
       output.push text_reply cleaned_line
-      output.push single_button follow_up_tag[1], 'FOLLOW_UP:' + follow_up_tag[2]
+      output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
     else
       output.push text_reply line
   output
@@ -153,7 +150,6 @@ df_message_type_to_func =
 
 formatter = (df_messages) ->
   unique_df_messages = filter_dialogflow_duplicates df_messages
-  # I feel like I wouldn't need flatmap if I were a better functional programmer
   flatmap unique_df_messages, (df_message) ->
     df_message_type_to_func[df_message.type] df_message
 
