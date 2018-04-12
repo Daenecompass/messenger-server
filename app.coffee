@@ -7,7 +7,7 @@ fb = require './FBMessenger'  # connects to Messenger; receives messages from us
 
 bus.on 'message from user', df.process
 bus.on 'message from dialogflow', fb.check_session
-bus.on 'message from dialogflow', fb.handle_very_plain_message
+bus.on 'message from dialogflow', fb.process_response_and_queue_messages
 bus.on 'postback: get started', fb.check_user_type
 bus.on 'brand new user starts', df.interview_user
 bus.on 'user session changed', df.set_user_type

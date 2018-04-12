@@ -1,6 +1,8 @@
 module.exports =
   tell_me_more_regex: /^tell_me_more: ?/i
   follow_up_regex: /^follow_up: ?/i
+  phone_web_tag_regex: /\[(.*?(0800|http).*?)\]/i
+  follow_up_tag_regex: /\[fu: ?(.*?): ?(.*?)\]/i
 
   remove_tell_me_more_in_fb_message: (fb_message) ->
     console.log fb_message
