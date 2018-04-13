@@ -9,6 +9,7 @@ bus.on 'message from user', df.process
 bus.on 'message from dialogflow', fb.check_session
 bus.on 'message from dialogflow', fb.process_response_and_queue_messages
 bus.on 'postback: get started', fb.check_user_type
+bus.on 'postback: tell me more', fb.tell_me_more
 bus.on 'brand new user starts', df.interview_user
 bus.on 'user session changed', df.set_user_type
 bus.on 'user returns with type set', df.set_user_type

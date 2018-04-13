@@ -114,10 +114,11 @@ text_reply = (df_speech) ->
       buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
     button_template_attachment split_text.reply_text.replace(helpers.phone_web_tag_regex, ''), buttons
 
-
+remove_sources = (text) ->
+  text.replace /(\[Sources?.*\])/, ''
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_newlines_around_more remove_newlines_before_buttons df_message.speech
+  cleaned_speech = remove_sources remove_newlines_around_more remove_newlines_before_buttons df_message.speech
   lines = split_on_newlines_before_more cleaned_speech
   output = []
   lines.map (line) ->

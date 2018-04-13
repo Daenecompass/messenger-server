@@ -6,9 +6,14 @@ helpers = require '../helpers'
 is_get_started_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
 
+is_tell_me_more_postback = (fb_message) ->
+  fb_message.type is 'facebook_postback' and fb_message.text.match helpers.tell_me_more_regex
+
 fb_messenger_botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
   if is_get_started_postback fb_message
     bus.emit 'postback: get started', fb_message, bot
+  else if is_tell_me_more_postback fb_message
+    bus.emit 'postback: tell me more', fb_message, bot
   else
     bus.emit 'message from user', fb_message, bot
 
@@ -28,6 +33,11 @@ module.exports =
     fb_messages = df_to_messenger.formatter df_messages
     send_queue fb_messages, fb_message, bot
 
+  tell_me_more: (fb_message, bot) ->
+    tell_me_more_content = fb_message.text.match(/^tell_me_more: ?(.*)/i)?[1]
+    fb_messages = df_to_messenger.formatter helpers.df_message_format tell_me_more_content
+    send_queue fb_messages, fb_message, bot
+
   check_user_type: (fb_message, bot) ->
     fb_messenger_botkit.storage.users.get fb_message.user, (err, user_data) ->
       if user_data.user_type?
@@ -41,4 +51,4 @@ module.exports =
         user_data.last_session_id = df_session
         fb_messenger_botkit.storage.users.save user_data
         if user_data.user_type?
-          bus.emit 'user session changed', fb_message, bot, user_data.user_type
+          bus.emit 'user session changed', fb_message, bot, user_data.user_type, df_session
