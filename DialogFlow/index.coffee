@@ -1,6 +1,7 @@
 bus = require '../event_bus'
 dialogflow_botkit = require('api-ai-botkit') process.env.dialogflow_client_token
 helpers = require '../helpers'
+df_api = require './df_api'
 
 no_speech_in_response = (df_response) ->
   df_response.result.fulfillment.messages.every (message) -> message.speech is ''
@@ -23,6 +24,13 @@ module.exports =
     fb_message.text = 'RETURNING_USER_GREETING_INTENT'
     dialogflow_botkit.process fb_message, bot
 
-  set_user_type: (fb_message, bot, user_type) ->
-    fb_message.text = helpers.user_type_to_intent[user_type]
-    dialogflow_botkit.process fb_message, bot
+  set_user_type: (fb_message, bot, user_type, df_session) ->
+    # this needs to handle those multi-contexts, like boadinghouse-and-social
+    # may need to clear other contexts
+
+    context =
+      lifespan: 5
+      name: user_type
+
+    df_api.send_context df_session, context
+    # dialogflow_botkit.process fb_message, bot
