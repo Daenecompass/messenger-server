@@ -4,7 +4,7 @@ mongoStorage = require('botkit-storage-mongo')
   mongoUri: "mongodb://#{process.env.mongoatlas_user}:#{process.env.mongoatlas_password}@rentbot-shard-00-00-dw7r3.mongodb.net:27017,rentbot-shard-00-01-dw7r3.mongodb.net:27017,rentbot-shard-00-02-dw7r3.mongodb.net:27017/test?ssl=true&replicaSet=rentbot-shard-0&authSource=admin"
 
 controller = Botkit.facebookbot
-  debug: true
+  # debug: true
   # log: true
   access_token: process.env.fb_page_token
   verify_token: process.env.fb_verify_token
