@@ -2,12 +2,12 @@
 
 request = require 'request'
 
-send_context = (session, context, callback) ->
+send_context = ({session, contexts, on_success, on_failure}) ->
   url = "https://api.dialogflow.com/v1/contexts?sessionId=#{session}"
   headers =
     Authorization: "Bearer #{process.env.dialogflow_client_token}"
     'Content-Type': 'application/json'
-  body = context
+  body = contexts
 
   request.post
     url: url
@@ -15,7 +15,10 @@ send_context = (session, context, callback) ->
     headers: headers
   , (err, r, body) ->
     console.log body
-    callback
+    if err
+      on_failure
+    else
+      on_success
 
 module.exports =
   send_context: send_context

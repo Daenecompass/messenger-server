@@ -13,26 +13,26 @@ dialogflow_botkit.all (fb_message, df_response, bot) ->
   else
     bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
 
-module.exports =
-  process: ({fb_message, bot}) -> dialogflow_botkit.process fb_message, bot
+process_fb_message = ({fb_message, bot}) -> dialogflow_botkit.process fb_message, bot
 
-  interview_user: ({fb_message, bot}) ->
-    fb_message.text = 'INTERVIEW_USER_INTENT'
-    dialogflow_botkit.process fb_message, bot
+interview_user = ({fb_message, bot}) ->
+  fb_message.text = 'INTERVIEW_USER_INTENT'
+  dialogflow_botkit.process fb_message, bot
 
-  welcome_returning_user: ({fb_message, bot}) ->
-    fb_message.text = 'RETURNING_USER_GREETING_INTENT'
-    dialogflow_botkit.process fb_message, bot
+welcome_returning_user = ({fb_message, bot}) ->
+  fb_message.text = 'RETURNING_USER_GREETING_INTENT'
+  dialogflow_botkit.process fb_message, bot
 
-  follow_up: ({fb_message, bot}) ->
-    fb_message.text = fb_message.text.replace helpers.follow_up_regex, ''
-    dialogflow_botkit.process fb_message, bot
+follow_up = ({fb_message, bot}) ->
+  fb_message.text = fb_message.text.replace helpers.follow_up_regex, ''
+  dialogflow_botkit.process fb_message, bot
 
-  set_user_type: ({fb_message, bot, user_type, df_session}) ->
-    # this needs to handle those multi-contexts, like boadinghouse-and-social
-    # may need to clear other contexts
-
-    context =
+set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
+  # this needs to handle those multi-contexts, like boadinghouse-and-social. mapping
+  # may need to clear other contexts
+  df_api.send_context {
+    session: df_session
+    contexts:
       [
         lifespan: 5
         name: user_type
@@ -40,7 +40,15 @@ module.exports =
         lifespan: 5
         name: 'generic'
         parameters:
-          fb_first_name: 'Carmelite Nun the First'
+          fb_first_name: fb_first_name
       ]
+    on_success: bus.emit 'context sent to dialogflow', {fb_message, bot, user_type, df_response}
+  }
 
-    df_api.send_context df_session, context, bus.emit 'context sent to dialogflow'
+module.exports = {
+  process_fb_message
+  interview_user
+  welcome_returning_user
+  follow_up
+  set_user_type
+}
