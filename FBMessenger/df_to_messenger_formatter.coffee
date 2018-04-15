@@ -1,3 +1,5 @@
+# knows everything rentbot needs to know about the FB Messenger api format
+
 _ = require 'lodash'
 flatmap = require 'flatmap'
 helpers = require '../helpers'
@@ -144,6 +146,33 @@ msec_delay = (message) ->
   if delay < 2000 then delay = 2000
   delay
 
+apply_fn_to_fb_message = (message, fn) ->
+  if typeof message is 'string'
+    message = fn message
+  else if message.attachment?.payload?.text?
+    message.attachment.payload.text = fn message.attachment.payload.text
+  else if message.title? # quick replies
+    message.title = fn message.title
+  message
+
+apply_fn_to_fb_messages = (messages, fn) ->
+  messages.map (message) ->
+    apply_fn_to_fb_message message, fn
+
+search_fb_message_text = (message, term) ->
+  if typeof message is 'string'
+    message.match term
+  else if message.attachment?.payload?.text?
+    message.attachment.payload.text.match term
+  else if message.title? # quick replies
+    message.title.match term
+
+fb_messages_text_contains = (messages, term) ->
+  matches = (messages.filter (message) ->
+    search_fb_message_text(message, term)?)
+  if matches.length is 0 then false else true
+
+
 df_message_type_to_func =
   0: text_processor
   2: quick_replies_reply
@@ -154,6 +183,9 @@ formatter = (df_messages) ->
   flatmap unique_df_messages, (df_message) ->
     df_message_type_to_func[df_message.type] df_message
 
-module.exports =
-  formatter: formatter
-  msec_delay: msec_delay
+module.exports = {
+  formatter
+  msec_delay
+  apply_fn_to_fb_messages
+  fb_messages_text_contains
+}
