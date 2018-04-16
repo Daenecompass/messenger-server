@@ -3,7 +3,6 @@ botkit = require './botkit'
 df_to_messenger = require './df_to_messenger_formatter'
 helpers = require '../helpers'
 {replace} = require 'lodash/fp'
-{some} = require 'lodash'
 
 is_get_started_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
@@ -27,13 +26,22 @@ swap_in_user_name = ({fb_message, fb_messages}) ->
       resolve fb_messages
 
 send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
-  cumulative_wait = 0
-  fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
-  fb_messages.forEach (message) ->
+  bot.reply original_fb_message, sender_action: 'typing_on'
+  cumulative_wait = 1000
+  processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
+  processed_fb_messages.forEach (message, index) ->
     do (bot, original_fb_message, message, cumulative_wait) ->
       setTimeout () ->
         bot.reply original_fb_message, message
+        bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
       , cumulative_wait
+
+      if index < processed_fb_messages.length - 2
+        setTimeout () ->
+          bot.reply original_fb_message, sender_action: 'typing_on'
+          bus.emit "Sending typing indicator to Messenger, delayed by #{cumulative_wait + 1000}"
+        , cumulative_wait + 1000
+
     cumulative_wait += df_to_messenger.msec_delay message
 
 process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
@@ -55,9 +63,7 @@ check_user_type = ({fb_message, bot}) ->
 
 check_session = ({fb_message, df_response, bot, df_session}) ->
   botkit.storage.users.get fb_message.user, (err, user_data) ->
-    if user_data.last_session_id is df_session
-      process_df_response_into_fb_messages {fb_message, df_response, bot}
-    else
+    if user_data.last_session_id isnt df_session
       user_data.last_session_id = df_session
       botkit.storage.users.save user_data
       bus.emit 'user session changed', {
