@@ -61,6 +61,13 @@ check_user_type = ({fb_message, bot}) ->
     else
       bus.emit 'brand new user starts', {fb_message, bot}
 
+store_user_type = ({df_response, fb_message}) ->
+  bus.emit 'Saving user type to db'
+  user_type = df_response.result.action.match(/Interviewuser\.(.*)/)[1]
+  botkit.storage.users.get fb_message.user, (err, user_data) ->
+    user_data.user_type = user_type
+    botkit.storage.users.save user_data
+
 check_session = ({fb_message, df_response, bot, df_session}) ->
   botkit.storage.users.get fb_message.user, (err, user_data) ->
     if user_data.last_session_id isnt df_session
@@ -74,6 +81,7 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
         df_session
         df_response
       }
+
 
 
 botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
@@ -90,4 +98,5 @@ module.exports = {
   tell_me_more
   check_user_type
   check_session
+  store_user_type
 }
