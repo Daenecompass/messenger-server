@@ -2,7 +2,23 @@
 
 request = require 'request'
 
-send_context = ({session, contexts, on_success, on_failure}) ->
+user_type_to_contexts =
+  'landlord': ['landlord']
+  'private': ['private']
+  'boardinghouse': ['boardinghouse', 'boardinghouse-or-social-housing']
+  'social-housing': ['socialhousing', 'boardinghouse-or-social-housing']
+
+send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
+  # may need to clear other contexts
+  contexts = user_type_to_contexts[user_type].map (context) ->
+    name: context
+    lifespan: 5
+  contexts.push
+    name: 'generic'
+    parameters:
+      fb_first_name: fb_first_name
+    lifespan: 5
+
   url = "https://api.dialogflow.com/v1/contexts?sessionId=#{session}"
   headers =
     Authorization: "Bearer #{process.env.dialogflow_client_token}"
@@ -14,7 +30,7 @@ send_context = ({session, contexts, on_success, on_failure}) ->
     body: JSON.stringify body, null, 4
     headers: headers
   , (err, r, body) ->
-    console.log body
+    # console.log body
     if err
       on_failure
     else

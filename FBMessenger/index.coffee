@@ -45,6 +45,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
     cumulative_wait += df_to_messenger.msec_delay message
 
 process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
+  # console.log df_response.result.contexts
   df_messages = df_response.result.fulfillment.messages
   fb_messages = df_to_messenger.formatter df_messages
   send_queue {fb_messages, fb_message, bot}
@@ -59,7 +60,7 @@ check_user_type = ({fb_message, bot}) ->
     if user_data.user_type?
       bus.emit 'user returns with type set', {fb_message, bot, user_type:user_data.user_type}
     else
-      bus.emit 'brand new user starts', {fb_message, bot}
+      bus.emit 'user with unknown type starts', {fb_message, bot}
 
 store_user_type = ({df_response, fb_message}) ->
   bus.emit 'Saving user type to db'

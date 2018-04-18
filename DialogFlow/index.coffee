@@ -21,20 +21,10 @@ follow_up = ({fb_message, bot}) ->
   dialogflow_botkit.process fb_message, bot
 
 set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
-  # this needs to handle those multi-contexts, like boadinghouse-and-social. mapping
-  # may need to clear other contexts
   df_api.send_context {
     session: df_session
-    contexts:
-      [
-        lifespan: 5
-        name: user_type
-      ,
-        lifespan: 5
-        name: 'generic'
-        parameters:
-          fb_first_name: fb_first_name
-      ]
+    user_type: user_type
+    fb_first_name: fb_first_name
     on_success: bus.emit 'context sent to dialogflow', {fb_message, bot, user_type, df_response}
   }
 
