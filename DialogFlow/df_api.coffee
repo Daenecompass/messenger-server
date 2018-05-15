@@ -12,12 +12,12 @@ send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
   # may need to clear other contexts
   contexts = user_type_to_contexts[user_type].map (context) ->
     name: context
-    lifespan: 5
+    lifespan: 999
   contexts.push
     name: 'generic'
     parameters:
       fb_first_name: fb_first_name
-    lifespan: 5
+    lifespan: 999
 
   url = "https://api.dialogflow.com/v1/contexts?sessionId=#{session}"
   headers =

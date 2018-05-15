@@ -36,7 +36,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
         bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
       , cumulative_wait
 
-      if index < processed_fb_messages.length - 2
+      if index < processed_fb_messages.length - 1
         setTimeout () ->
           bot.reply original_fb_message, sender_action: 'typing_on'
           bus.emit "Sending typing indicator to Messenger, delayed by #{cumulative_wait + 1000}"
