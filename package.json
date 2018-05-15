@@ -17,7 +17,8 @@
     "botkit-storage-mongo": "^1.0.7",
     "dotenv": "^5.0.1",
     "eventemitter2": "^5.0.1",
-    "flatmap": "0.0.3"
+    "flatmap": "0.0.3",
+    "hoek": "^5.0.3"
   },
   "devDependencies": {
     "ngrok": "^3.0.1"
