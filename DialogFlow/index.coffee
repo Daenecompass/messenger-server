@@ -2,9 +2,14 @@ bus = require '../event_bus'
 dialogflow_botkit = require('api-ai-botkit') process.env.dialogflow_client_token
 helpers = require '../helpers'
 df_api = require './df_api'
+is_balanced = require 'is-balanced'
+
 
 no_speech_in_response = (df_response) ->
   df_response.result.fulfillment.messages.every (message) -> message.speech is ''
+
+response_malformed = (df_response) ->
+  not df_response.result.fulfillment.messages.every (message) -> is_balanced message.speech, '{[(', ')]}'
 
 process_fb_message = ({fb_message, bot}) -> dialogflow_botkit.process fb_message, bot
 
@@ -33,10 +38,12 @@ user_type_interview_event = (fb_message, df_response, bot) ->
 
 dialogflow_botkit
   .all (fb_message, df_response, bot) ->
-    df_session = dialogflow_botkit.sessionIds[fb_message.user]
     if no_speech_in_response df_response
-      bus.emit 'message from dialogflow without speech in it'
+      bus.emit 'error: message from dialogflow without speech in it'
+    else if response_malformed df_response
+      bus.emit 'error: message from dialogflow is malformed'
     else
+      df_session = dialogflow_botkit.sessionIds[fb_message.user]
       bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
   .action 'Interviewuser.landlord', user_type_interview_event
   .action 'Interviewuser.boardinghouse', user_type_interview_event
