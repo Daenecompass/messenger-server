@@ -12,9 +12,11 @@ user_type_to_contexts =
 
 send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
   # may need to clear other contexts
-  contexts = user_type_to_contexts[user_type].map (context) ->
-    name: context
-    lifespan: 999
+  contexts = []
+  if user_type
+    contexts = user_type_to_contexts[user_type].map (context) ->
+      name: context
+      lifespan: 999
   contexts.push
     name: 'generic'
     parameters:
