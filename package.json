@@ -16,6 +16,7 @@
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
+    "coffeescript": "^2.3.0",
     "dotenv": "^5.0.1",
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
