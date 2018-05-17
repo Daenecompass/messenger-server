@@ -7,6 +7,8 @@ user_type_to_contexts =
   'private': ['private']
   'boardinghouse': ['boardinghouse', 'boardinghouse-or-social-housing']
   'social-housing': ['socialhousing', 'boardinghouse-or-social-housing']
+  null: []
+  '': []
 
 send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
   # may need to clear other contexts
