@@ -73,20 +73,25 @@ buttons_prep = (button_text) ->
   button_text
     .split /; ?/
     .map (b) ->
+      pdf_url = b.match /(.+) (https?:\/\/.+\.pdf)/i
       messenger_url = b.match /(.+) (https?:\/\/m\.me\/.+)/i
       page_url = b.match /(.+) (https?:\/\/.+)/i
       phone_number = b.match /(.+) (0800.+)/
-      if messenger_url
+      if pdf_url
+        type: 'web_url'
+        url: pdf_url[2]
+        title: "📄 #{pdf_url[1]}"
+      else if messenger_url
         type: 'web_url'
         url: messenger_url[2]
-        title: '💬 ' + messenger_url[1]
+        title: "💬 #{messenger_url[1]}"
       else if page_url
         type: 'web_url'
         url: page_url[2]
-        title: '🔗 ' + page_url[1]
+        title: "🔗 #{page_url[1]}"
       else if phone_number
         type: 'phone_number'
-        title: '📞 ' + phone_number[1]
+        title: "📞 #{phone_number[1]}"
         payload: phone_number[2]
       else console.error 'Error: Badly formatted button instruction in Dialogflow'
 
@@ -192,4 +197,5 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
+  buttons_prep # for testing
 }
