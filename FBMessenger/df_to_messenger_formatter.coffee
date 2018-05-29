@@ -80,8 +80,8 @@ buttons_prep = (button_text) ->
       if pdf_url
         type: 'web_url'
         url: pdf_url[2]
-        title: "📄 #{messenger_url[1]}"
-      if messenger_url
+        title: "📄 #{pdf_url[1]}"
+      else if messenger_url
         type: 'web_url'
         url: messenger_url[2]
         title: "💬 #{messenger_url[1]}"
@@ -197,4 +197,5 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
+  buttons_prep # for testing
 }

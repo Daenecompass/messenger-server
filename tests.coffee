@@ -20,18 +20,6 @@ df_messages = [
   speech: 'One line\nOne.5 line [num 0800 800 800]\nSecond line which is really much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much too long much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much much too long much much much much much much much much much much much much much much much much much much much much much much much muchd [more] much much much much much much much much much much much much much much much much much much much much much much much much much much too long [num 0800 800 800]\nThird\n[link http://google.com]\nFourth line\n[FU: Test3?: Test3]'
 ]
 
-context_map =
-  'landlord': ['landlord']
-  'private': ['private']
-  'boardinghouse': ['boardinghouse', 'boardinghouse-or-social']
-  'social-housing': ['socialhousing', 'boardinghouse-or-social-housing']
+{buttons_prep} = require './FBMessenger/df_to_messenger_formatter'
 
-
-do_it = (user_type) ->
-  contexts = context_map[user_type]
-  console.log contexts.map (context) ->
-    lifespan: 5
-    name: context
-
-do_it 'social-housing'
-do_it 'landlord'
+console.log buttons_prep 'Notice template https://www.tenancy.govt.nz/assets/Uploads/Tenancy/T141-14-day-Notice-to-remedy-landlord-breach-handwritten-letter-template.pdf'
