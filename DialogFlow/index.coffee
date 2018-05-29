@@ -4,12 +4,12 @@ helpers = require '../helpers'
 df_api = require './df_api'
 is_balanced = require 'is-balanced'
 
-
 no_speech_in_response = (df_response) ->
   df_response.result.fulfillment.messages.every (message) -> message.speech is ''
 
 response_malformed = (df_response) ->
-  not df_response.result.fulfillment.messages.every (message) -> is_balanced message.speech, '{[(', ')]}'
+  not df_response.result.fulfillment.messages.every (message) ->
+    is_balanced(message.speech, '{[(', ')]}') and not message.speech.match /\[.*more:.*\]/i
 
 process_fb_message = ({fb_message, bot}) -> dialogflow_botkit.process fb_message, bot
 
