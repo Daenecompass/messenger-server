@@ -3,6 +3,7 @@
 _ = require 'lodash'
 flatmap = require 'flatmap'
 helpers = require '../helpers'
+bus = require '../event_bus'
 
 image_reply = (df_message) ->
   attachment:
@@ -93,7 +94,8 @@ buttons_prep = (button_text) ->
         type: 'phone_number'
         title: "📞 #{phone_number[1]}"
         payload: phone_number[2]
-      else console.error 'Error: Badly formatted button instruction in Dialogflow'
+      else
+        bus.emit 'Error: Badly formatted button instruction in Dialogflow'
 
 split_text_by_more_and_length = (text) ->
   more_position = text.search /\[more\]/i
