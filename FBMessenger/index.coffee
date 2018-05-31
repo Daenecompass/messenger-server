@@ -11,6 +11,7 @@ is_tell_me_more_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match tell_me_more_regex
 
 is_follow_up_postback = (fb_message) ->
+  console.log fb_message
   fb_message.type is 'facebook_postback' and
     (fb_message.text.match(follow_up_regex) or fb_message.quick_reply.payload.match(follow_up_regex))
 
