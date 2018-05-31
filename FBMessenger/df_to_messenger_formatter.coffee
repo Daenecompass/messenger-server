@@ -2,7 +2,7 @@
 
 _ = require 'lodash'
 flatmap = require 'flatmap'
-helpers = require '../helpers'
+{phone_web_tag_regex, follow_up_tag_regex} = require '../helpers'
 bus = require '../event_bus'
 
 image_reply = (df_message) ->
@@ -14,10 +14,10 @@ image_reply = (df_message) ->
 quick_replies_reply = (df_message) ->
   text: df_message.title
   quick_replies:
-    _.map df_message.replies, (qr) ->
+    _.map df_message.replies, (reply) ->
       content_type: 'text'
-      title: qr
-      payload: qr
+      title: reply
+      payload: reply
 
 postback_button = (title, payload) ->
   type: 'postback'
@@ -33,8 +33,12 @@ button_template_attachment = (title, buttons) ->
       buttons: buttons
 
 follow_up_button = (label, payload) ->
-  button_template_attachment label, [postback_button('Okay', 'FOLLOW_UP:' + payload)]
-
+  text: label
+  quick_replies: [
+    content_type: 'text'
+    title: 'Okay'
+    payload: 'FOLLOW_UP:' + payload
+  ]
 
 filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
@@ -113,7 +117,7 @@ split_text_by_more_and_length = (text) ->
 
 text_reply = (df_speech) ->
   split_text = split_text_by_more_and_length df_speech
-  button_tag = split_text.reply_text.match helpers.phone_web_tag_regex
+  button_tag = split_text.reply_text.match phone_web_tag_regex
   if not button_tag and not split_text.overflow
     df_speech
   else
@@ -121,7 +125,7 @@ text_reply = (df_speech) ->
     if button_tag then buttons = buttons_prep button_tag[1]
     if split_text.overflow
       buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
-    button_template_attachment split_text.reply_text.replace(helpers.phone_web_tag_regex, ''), buttons
+    button_template_attachment split_text.reply_text.replace(phone_web_tag_regex, ''), buttons
 
 remove_sources = (text) ->
   text.replace /(\[Sources?.*\])/, ''
@@ -131,9 +135,9 @@ text_processor = (df_message) ->
   lines = split_on_newlines_before_more cleaned_speech
   output = []
   lines.map (line) ->
-    follow_up_tag = line.match helpers.follow_up_tag_regex
+    follow_up_tag = line.match follow_up_tag_regex
     if follow_up_tag
-      cleaned_line = line.replace(helpers.follow_up_tag_regex, '').trim()
+      cleaned_line = line.replace(follow_up_tag_regex, '').trim()
       output.push text_reply cleaned_line
       output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
     else
@@ -199,5 +203,4 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
-  buttons_prep # for testing
 }
