@@ -14,10 +14,10 @@ image_reply = (df_message) ->
 quick_replies_reply = (df_message) ->
   text: df_message.title
   quick_replies:
-    _.map df_message.replies, (qr) ->
+    _.map df_message.replies, (reply) ->
       content_type: 'text'
-      title: qr
-      payload: qr
+      title: reply
+      payload: reply
 
 postback_button = (title, payload) ->
   type: 'postback'
@@ -33,8 +33,12 @@ button_template_attachment = (title, buttons) ->
       buttons: buttons
 
 follow_up_button = (label, payload) ->
-  button_template_attachment label, [postback_button('Okay', 'FOLLOW_UP:' + payload)]
-
+  text: label
+  quick_replies: [
+    content_type: 'text'
+    title: 'Okay'
+    payload: 'FOLLOW_UP:' + payload
+  ]
 
 filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
@@ -199,5 +203,4 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
-  buttons_prep # for testing
 }

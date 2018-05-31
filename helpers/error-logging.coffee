@@ -1,4 +1,5 @@
-raven = require 'raven'
-raven.config(process.env.sentry_dsn).install()
+if process.env.sentry_dsn
+  raven = require 'raven'
+  raven.config(process.env.sentry_dsn).install()
 
-module.exports = raven
+  module.exports = raven
