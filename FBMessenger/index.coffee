@@ -1,8 +1,9 @@
 bus = require '../event_bus'
 botkit = require './botkit'
-df_to_messenger = require './df_to_messenger_formatter'
+{fb_messages_text_contains, apply_fn_to_fb_messages, msec_delay, format} = require './df_to_messenger_formatter'
 {tell_me_more_regex, follow_up_regex, df_message_format} = require '../helpers'
 {replace} = require 'lodash/fp'
+
 
 is_get_started_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
@@ -16,13 +17,14 @@ is_follow_up_postback = (fb_message) ->
 is_follow_up_message = (fb_message) ->
   fb_message.type is 'message_received' and fb_message.quick_reply?.payload.match follow_up_regex
 
+
 swap_in_user_name = ({fb_message, fb_messages}) ->
   new Promise (resolve, reject) ->
-    if df_to_messenger.fb_messages_text_contains fb_messages, '#generic.fb_first_name'
+    if fb_messages_text_contains fb_messages, '#generic.fb_first_name'
       bus.emit 'Looking up username in storage'
       botkit.storage.users.get fb_message.user, (err, user_data) ->
         if user_data.first_name?
-          resolve df_to_messenger.apply_fn_to_fb_messages fb_messages, replace '#generic.fb_first_name', user_data.first_name
+          resolve apply_fn_to_fb_messages fb_messages, replace '#generic.fb_first_name', user_data.first_name
         else
           resolve fb_messages
     else
@@ -42,20 +44,20 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
       if index < processed_fb_messages.length - 1
         setTimeout () ->
           bot.reply original_fb_message, sender_action: 'typing_on'
-          bus.emit "Sending typing indicator to Messenger, delayed by #{cumulative_wait + 1000}"
-        , cumulative_wait + 1000
+          bus.emit "Sending typing indicator to Messenger, delayed by #{cumulative_wait + 1750}"
+        , cumulative_wait + 1750
 
-    cumulative_wait += df_to_messenger.msec_delay message
+    cumulative_wait += msec_delay message
 
 process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
   # console.log df_response.result.contexts
   df_messages = df_response.result.fulfillment.messages
-  fb_messages = df_to_messenger.formatter df_messages
+  fb_messages = format df_messages
   send_queue {fb_messages, fb_message, bot}
 
 tell_me_more = ({fb_message, bot}) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?(.*)/i)?[1]
-  fb_messages = df_to_messenger.formatter df_message_format tell_me_more_content
+  fb_messages = format df_message_format tell_me_more_content
   send_queue {fb_messages, fb_message, bot}
 
 check_user_type = ({fb_message, bot}) ->
@@ -85,7 +87,6 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
         df_session
         df_response
       }
-
 
 
 botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
