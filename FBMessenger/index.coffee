@@ -11,6 +11,7 @@ is_tell_me_more_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match helpers.tell_me_more_regex
 
 is_follow_up_postback = (fb_message) ->
+  console.log fb_message
   fb_message.type is 'facebook_postback' and fb_message.text.match helpers.follow_up_regex
 
 swap_in_user_name = ({fb_message, fb_messages}) ->
