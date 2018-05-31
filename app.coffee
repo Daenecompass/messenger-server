@@ -13,6 +13,7 @@ raven.context () ->
   bus.on 'postback: get started', fb.check_user_type
   bus.on 'postback: tell me more', fb.tell_me_more
   bus.on 'postback: follow up', df.follow_up
+  bus.on 'quick reply: follow up', df.qr_follow_up
   bus.on 'user session changed', df.set_user_type
   bus.on 'user returns with type set', df.set_user_type
   bus.on 'user returns with type set', df.welcome_returning_user

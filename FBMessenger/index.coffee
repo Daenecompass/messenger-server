@@ -11,9 +11,10 @@ is_tell_me_more_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match tell_me_more_regex
 
 is_follow_up_postback = (fb_message) ->
-  console.log fb_message
-  fb_message.type is 'facebook_postback' and
-    (fb_message.text.match(follow_up_regex) or fb_message.quick_reply.payload.match(follow_up_regex))
+  fb_message.type is 'facebook_postback' and fb_message.text?.match follow_up_regex
+
+is_follow_up_message = (fb_message) ->
+  fb_message.type is 'message_received' and fb_message.quick_reply?.payload.match follow_up_regex
 
 swap_in_user_name = ({fb_message, fb_messages}) ->
   new Promise (resolve, reject) ->
@@ -92,6 +93,7 @@ botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
     if is_get_started_postback fb_message then 'postback: get started'
     else if is_tell_me_more_postback fb_message then 'postback: tell me more'
     else if is_follow_up_postback fb_message then 'postback: follow up'
+    else if is_follow_up_message fb_message then 'quick reply: follow up'
     else 'message from user'
   bus.emit event, {fb_message, bot}
 

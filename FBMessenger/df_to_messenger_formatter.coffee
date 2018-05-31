@@ -2,7 +2,7 @@
 
 _ = require 'lodash'
 flatmap = require 'flatmap'
-helpers = require '../helpers'
+{phone_web_tag_regex, follow_up_tag_regex} = require '../helpers'
 bus = require '../event_bus'
 
 image_reply = (df_message) ->
@@ -117,7 +117,7 @@ split_text_by_more_and_length = (text) ->
 
 text_reply = (df_speech) ->
   split_text = split_text_by_more_and_length df_speech
-  button_tag = split_text.reply_text.match helpers.phone_web_tag_regex
+  button_tag = split_text.reply_text.match phone_web_tag_regex
   if not button_tag and not split_text.overflow
     df_speech
   else
@@ -125,7 +125,7 @@ text_reply = (df_speech) ->
     if button_tag then buttons = buttons_prep button_tag[1]
     if split_text.overflow
       buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
-    button_template_attachment split_text.reply_text.replace(helpers.phone_web_tag_regex, ''), buttons
+    button_template_attachment split_text.reply_text.replace(phone_web_tag_regex, ''), buttons
 
 remove_sources = (text) ->
   text.replace /(\[Sources?.*\])/, ''
@@ -135,9 +135,9 @@ text_processor = (df_message) ->
   lines = split_on_newlines_before_more cleaned_speech
   output = []
   lines.map (line) ->
-    follow_up_tag = line.match helpers.follow_up_tag_regex
+    follow_up_tag = line.match follow_up_tag_regex
     if follow_up_tag
-      cleaned_line = line.replace(helpers.follow_up_tag_regex, '').trim()
+      cleaned_line = line.replace(follow_up_tag_regex, '').trim()
       output.push text_reply cleaned_line
       output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
     else

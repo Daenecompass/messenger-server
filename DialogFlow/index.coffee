@@ -1,6 +1,6 @@
 bus = require '../event_bus'
 dialogflow_botkit = require('api-ai-botkit') process.env.dialogflow_client_token
-helpers = require '../helpers'
+{follow_up_regex} = require '../helpers'
 df_api = require './df_api'
 is_balanced = require 'is-balanced'
 
@@ -22,7 +22,11 @@ welcome_returning_user = ({fb_message, bot}) ->
   dialogflow_botkit.process fb_message, bot
 
 follow_up = ({fb_message, bot}) ->
-  fb_message.text = fb_message.text.replace helpers.follow_up_regex, ''
+  fb_message.text = fb_message.text.replace follow_up_regex, ''
+  dialogflow_botkit.process fb_message, bot
+
+qr_follow_up = ({fb_message, bot}) ->
+  fb_message.text = fb_message.quick_reply?.payload.replace follow_up_regex, ''
   dialogflow_botkit.process fb_message, bot
 
 set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
@@ -56,5 +60,6 @@ module.exports = {
   interview_user
   welcome_returning_user
   follow_up
+  qr_follow_up
   set_user_type
 }
