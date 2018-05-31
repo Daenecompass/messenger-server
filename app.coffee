@@ -1,5 +1,5 @@
 require('dotenv').load()
-raven = require './error-logging'
+raven = require './helpers/error-logging'
 
 raven.context () ->
   bus = require './event_bus'

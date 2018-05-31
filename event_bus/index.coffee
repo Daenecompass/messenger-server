@@ -1,6 +1,6 @@
 EventEmitter = require('eventemitter2').EventEmitter2
 chalk = require 'chalk'
-raven = require '../error-logging'
+raven = require '../helpers/error-logging'
 
 bus = new EventEmitter
   wildcard: true
