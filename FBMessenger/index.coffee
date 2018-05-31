@@ -1,18 +1,18 @@
 bus = require '../event_bus'
 botkit = require './botkit'
 df_to_messenger = require './df_to_messenger_formatter'
-helpers = require '../helpers'
+{tell_me_more_regex, follow_up_regex, df_message_format} = require '../helpers'
 {replace} = require 'lodash/fp'
 
 is_get_started_postback = (fb_message) ->
   fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
 
 is_tell_me_more_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text.match helpers.tell_me_more_regex
+  fb_message.type is 'facebook_postback' and fb_message.text.match tell_me_more_regex
 
 is_follow_up_postback = (fb_message) ->
-  console.log fb_message
-  fb_message.type is 'facebook_postback' and fb_message.text.match helpers.follow_up_regex
+  fb_message.type is 'facebook_postback' and
+    (fb_message.text.match(follow_up_regex) or fb_message.quick_reply.payload.match(follow_up_regex))
 
 swap_in_user_name = ({fb_message, fb_messages}) ->
   new Promise (resolve, reject) ->
@@ -53,7 +53,7 @@ process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
 
 tell_me_more = ({fb_message, bot}) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?(.*)/i)?[1]
-  fb_messages = df_to_messenger.formatter helpers.df_message_format tell_me_more_content
+  fb_messages = df_to_messenger.formatter df_message_format tell_me_more_content
   send_queue {fb_messages, fb_message, bot}
 
 check_user_type = ({fb_message, bot}) ->
