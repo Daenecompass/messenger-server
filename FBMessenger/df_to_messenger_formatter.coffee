@@ -193,13 +193,13 @@ df_message_type_to_func =
   2: quick_replies_reply
   3: image_reply
 
-formatter = (df_messages) ->
+formatt = (df_messages) ->
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
     df_message_type_to_func[df_message.type] df_message
 
 module.exports = {
-  formatter
+  formatt
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
