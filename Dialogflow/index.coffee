@@ -44,9 +44,9 @@ dialogflow_botkit
   .all (fb_message, df_response, bot) ->
     if no_speech_in_response df_response
       bus.emit 'error: message from dialogflow without speech in it'
-    else if response_malformed df_response
-      bus.emit 'error: message from dialogflow is malformed'
     else
+      if response_malformed df_response
+        bus.emit 'error: message from dialogflow is malformed'
       df_session = dialogflow_botkit.sessionIds[fb_message.user]
       bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
   .action 'Interviewuser.landlord', user_type_interview_event
