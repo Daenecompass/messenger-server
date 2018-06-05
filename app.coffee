@@ -4,7 +4,7 @@ raven = require './helpers/error-logging'
 raven.context () ->
   bus = require './event_bus'
 
-  df = require './DialogFlow'   # connects to DialogFlow agent (via botkit & DF api)
+  df = require './Dialogflow'   # connects to Dialogflow agent (via botkit & DF api)
   fb = require './FBMessenger'  # connects to Messenger; receives messages from user
                                 # formats & sends messages to user; persists state across sessions
 
@@ -19,7 +19,7 @@ raven.context () ->
   bus.on 'user returns with type set', df.welcome_returning_user
   bus.on 'user with unknown type starts', df.interview_user
 
-  # events from DialogFlow
+  # events from Dialogflow
   bus.on 'message from dialogflow', fb.check_session
   bus.on 'message from dialogflow', fb.process_df_response_into_fb_messages
   bus.on 'message from user: user_type interview', fb.store_user_type
