@@ -74,32 +74,37 @@ has_more = (text) -> text.match(/\[more\]/i)?
 text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
 text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
 
-buttons_prep = (button_text) ->
-  button_text
+button_types = [
+  regex: /(.+) (https?:\/\/.+\.pdf)/i
+  link_type: 'web_url'
+  icon: '📄'
+,
+  regex: /(.+) (https?:\/\/m\.me\/.+)/i
+  link_type: 'web_url'
+  icon: '💬'
+,
+  regex: /(.+) (https?:\/\/.+)/i
+  link_type: 'web_url'
+  icon: '🔗'
+,
+  regex: /(.+) (0800.+)/
+  link_type: 'phone_number'
+  icon: '📞'
+]
+
+buttons_prep = (buttons_text) ->
+  buttons_text
     .split /; ?/
-    .map (b) ->
-      pdf_url = b.match /(.+) (https?:\/\/.+\.pdf)/i
-      messenger_url = b.match /(.+) (https?:\/\/m\.me\/.+)/i
-      page_url = b.match /(.+) (https?:\/\/.+)/i
-      phone_number = b.match /(.+) (0800.+)/
-      if pdf_url
-        type: 'web_url'
-        url: pdf_url[2]
-        title: "📄 #{pdf_url[1]}"
-      else if messenger_url
-        type: 'web_url'
-        url: messenger_url[2]
-        title: "💬 #{messenger_url[1]}"
-      else if page_url
-        type: 'web_url'
-        url: page_url[2]
-        title: "🔗 #{page_url[1]}"
-      else if phone_number
-        type: 'phone_number'
-        title: "📞 #{phone_number[1]}"
-        payload: phone_number[2]
-      else
-        bus.emit 'Error: Badly formatted button instruction in Dialogflow'
+    .map (button) ->
+      for button_type in button_types
+        match = button.match button_type.regex
+        if match
+          result =
+            type: button_type.link_type
+            url: match[2]
+            title: "#{button_type.icon} #{match[1]}"
+          break
+      result
 
 split_text_by_more_and_length = (text) ->
   more_position = text.search /\[more\]/i
