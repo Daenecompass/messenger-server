@@ -74,19 +74,24 @@ has_more = (text) -> text.match(/\[more\]/i)?
 text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
 text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
 
+# Earlier defined button types have preference
 button_types = [
-  regex: /(.+) (https?:\/\/.+\.pdf)/i
+  # PDF documents or links to the CLM
+  regex: /(.+) (https?:\/\/.+(community-law-manual.+|.pdf))/i
   link_type: 'web_url'
   icon: '📄'
 ,
+  # Messenger links
   regex: /(.+) (https?:\/\/m\.me\/.+)/i
   link_type: 'web_url'
   icon: '💬'
 ,
+  # Web links
   regex: /(.+) (https?:\/\/.+)/i
   link_type: 'web_url'
   icon: '🔗'
 ,
+  # Freephone numbers
   regex: /(.+) (0800.+)/
   link_type: 'phone_number'
   icon: '📞'
