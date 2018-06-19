@@ -1,4 +1,4 @@
-require('dotenv').load()
+require './env'
 raven = require './helpers/error-logging'
 
 raven.context () ->

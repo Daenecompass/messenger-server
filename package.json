@@ -17,10 +17,10 @@
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
     "coffeescript": "^2.3.1",
-    "dotenv": "^5.0.1",
+    "dotenv": "^6.0.0",
+    "envalid": "^4.1.4",
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
-    "hoek": "^5.0.3",
     "is-balanced": "^1.0.2",
     "raven": "^2.6.2"
   },
