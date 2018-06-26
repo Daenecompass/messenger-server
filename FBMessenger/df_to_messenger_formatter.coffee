@@ -74,36 +74,39 @@ has_more = (text) -> text.match(/\[more\]/i)?
 text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
 text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
 
-buttons_prep = (button_text) ->
-  flatmap (button_text.split /; ?/), (b) ->
-    pdf_url = b.match /(.+) (https?:\/\/.+\.pdf)/i
-    messenger_url = b.match /(.+) (https?:\/\/m\.me\/.+)/i
-    page_url = b.match /(.+) (https?:\/\/.+)/i
-    phone_number = b.match /(.+) (0800.+)/
-    # source_urls = b.match /Sources?: ? (https?:\/\/.+)/i
-    # if source_urls
-    #   source_urls[1].split /; ?/, (s) ->
-    #     type: 'web_url'
-    #     url: s
-    #     title: "📄 Source"
-    if pdf_url
-      type: 'web_url'
-      url: pdf_url[2]
-      title: "📄 #{pdf_url[1]}"
-    else if messenger_url
-      type: 'web_url'
-      url: messenger_url[2]
-      title: "💬 #{messenger_url[1]}"
-    else if page_url
-      type: 'web_url'
-      url: page_url[2]
-      title: "🔗 #{page_url[1]}"
-    else if phone_number
-      type: 'phone_number'
-      title: "📞 #{phone_number[1]}"
-      payload: phone_number[2]
-    else
-      bus.emit "Error: Badly formatted button instruction in Dialogflow: #{button_text}"
+buttons_prep = (button_tags) ->
+  flatmap button_tags, (button_tag) ->
+    button_tag = button_tag.replace /\[|\]/g, ''
+    flatmap (button_tag.split /; ?/), (button_text) ->
+      pdf_url = button_text.match /(.+) (https?:\/\/.+\.pdf)/i
+      messenger_url = button_text.match /(.+) (https?:\/\/m\.me\/.+)/i
+      page_url = button_text.match /(.+) (https?:\/\/.+)/i
+      phone_number = button_text.match /(.+) (0800.+)/
+      # console.log page_url
+      # source_urls = b.match /Sources?: ? (https?:\/\/.+)/i
+      # if source_urls
+      #   source_urls[1].split /; ?/, (s) ->
+      #     type: 'web_url'
+      #     url: s
+      #     title: "📄 Source"
+      if pdf_url
+        type: 'web_url'
+        url: pdf_url[2]
+        title: "📄 #{pdf_url[1]}"
+      else if messenger_url
+        type: 'web_url'
+        url: messenger_url[2]
+        title: "💬 #{messenger_url[1]}"
+      else if page_url
+        type: 'web_url'
+        url: page_url[2]
+        title: "🔗 #{page_url[1]}"
+      else if phone_number
+        type: 'phone_number'
+        title: "📞 #{phone_number[1]}"
+        payload: phone_number[2]
+      else
+        bus.emit "Error: Badly formatted button instruction in Dialogflow: #{button_text}"
 
 split_text_by_more_and_length = (text) ->
   more_position = text.search /\[more\]/i
@@ -121,12 +124,12 @@ split_text_by_more_and_length = (text) ->
 
 text_reply = (df_speech) ->
   split_text = split_text_by_more_and_length df_speech
-  button_tag = split_text.reply_text.match button_tag_regex
-  if not button_tag and not split_text.overflow
+  button_tags = split_text.reply_text.match button_tag_regex
+  if not button_tags and not split_text.overflow
     df_speech
   else
     buttons = []
-    if button_tag then buttons = buttons_prep button_tag[1]
+    if button_tags then buttons = buttons_prep button_tags
     if split_text.overflow
       buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
     button_template_attachment split_text.reply_text.replace(button_tag_regex, ''), buttons

@@ -35,8 +35,35 @@ describe 'text_processor', ->
           content_type: 'text'
           title: 'Okay'
           payload: 'FOLLOW_UP:What are my rights as a boarding house tenant?'
-          ]
         ]
+      ]
+
+  it 'should handle df_messages with multiple button tags, both formats', ->
+    fake_df_message =
+      speech: 'Citizen AI is developing Rentbot. We’re a charitable company owned by Community Law Wellington & Hutt Valley. Our mission is to research, develop and promote artificial intelligence systems for public benefit.
+[Citizen AI http://citizenai.nz; Google http://google.com]
+[Community Law http://communitylaw.org.nz/]'
+    expect text_processor fake_df_message
+      .to.containSubset [
+        attachment:
+          type: 'template'
+          payload:
+            template_type: 'button'
+            text: 'Citizen AI is developing Rentbot. We’re a charitable company owned by Community Law Wellington & Hutt Valley. Our mission is to research, develop and promote artificial intelligence systems for public benefit.  '
+            buttons: [
+              type: 'web_url'
+              url: 'http://citizenai.nz'
+              title: '🔗 Citizen AI'
+            ,
+              type: 'web_url'
+              url: 'http://google.com'
+              title: '🔗 Google'
+            ,
+              type: 'web_url'
+              url: 'http://communitylaw.org.nz/'
+              title: '🔗 Community Law'
+            ]
+      ]
 
 
 describe 'msec_delay', ->
