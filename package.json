@@ -22,9 +22,11 @@
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
     "is-balanced": "^1.0.2",
-    "raven": "^2.6.2"
+    "raven": "^2.6.3"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-subset": "^1.6.0",
     "ngrok": "^3.0.1"
   }
 }
