@@ -7,9 +7,10 @@ bus = new EventEmitter
 
 bus.on '*', (payload) ->
   if @event.match /^error/i
-    console.log chalk.red "Bus: #{@event}"
-    if payload? then console.log chalk.red payload
-    raven.captureException new Error @event
+    error_message = "Bus: #{@event}"
+    if payload? then error_message += ". #{payload}"
+    console.log chalk.red error_message
+    raven.captureException new Error error_message
   else
     console.log "Bus: #{@event}"
 
