@@ -49,6 +49,9 @@ remove_newlines_around_more = (text) ->
 remove_newlines_before_buttons = (text) ->
   text.replace /(\n)(\[(.+(http|0800).+)\])/ig, '$2'
 
+remove_sources_tags = (df_speech) ->
+  df_speech.replace /(\[Sources?: .+?\])/ig, ''
+
 # thanks http://stackoverflow.com/a/5454303
 truncate_to_word = (string, maxLength) ->
   if string.length > maxLength
@@ -135,10 +138,11 @@ text_reply = (df_speech) ->
     button_template_attachment split_text.reply_text.replace(button_tag_regex, ''), buttons
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_newlines_around_more remove_newlines_before_buttons df_message.speech
+  cleaned_speech = remove_newlines_around_more remove_newlines_before_buttons remove_sources_tags df_message.speech
   lines = split_on_newlines_before_more cleaned_speech
   output = []
   lines.map (line) ->
+    line = line.trim()
     follow_up_tag = line.match follow_up_tag_regex
     if follow_up_tag
       cleaned_line = line.replace(follow_up_tag_regex, '').trim()

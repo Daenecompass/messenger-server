@@ -25,6 +25,14 @@ describe 'text_reply', ->
             ]
 
 describe 'text_processor', ->
+  it 'should, given a df_message with a source, omit that part', ->
+    fake_df_message =
+      speech: 'If the boarding house has room for 6 or more tenants.
+[Sources: https://www.tenancy.govt.nz/starting-a-tenancy/types-of-tenancies/boarding-houses/; http://communitylaw.org.nz/community-law-manual/chapter-14-tenancy-and-housing/boardinghouses-renting-a-room-chapter-14/]'
+    # console.log text_processor fake_df_message
+    expect (text_processor fake_df_message)[0]
+      .to.equal 'If the boarding house has room for 6 or more tenants.'
+
   it 'should, given a df_message with a follow-up tag, return an appropriately formatted message', ->
     fake_df_message =
       speech: '[FU: Want to know about your rights as a boarding house tenant?: What are my rights as a boarding house tenant?]'
