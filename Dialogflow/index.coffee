@@ -7,9 +7,16 @@ is_balanced = require 'is-balanced'
 no_speech_in_response = (df_response) ->
   df_response.result.fulfillment.messages.every (message) -> message.speech is ''
 
-response_malformed = (df_response) ->
-  not df_response.result.fulfillment.messages.every (message) ->
-    is_balanced(message.speech, '{[(', ')]}') and not message.speech?.match /\[.*more:.*\]/i
+response_wellformed = (df_response) ->
+  df_response.result.fulfillment.messages.every (message) ->
+    balanced = is_balanced(message.speech, '{[(', '}])')
+    more_wrong = message.speech?.match /\[more:.*\]/i
+    follow_up_right =
+      if message.speech?.match(/\[FU/i)
+        message.speech.match /\[FU:.+:.+\]/i
+      else
+        true
+    balanced and not more_wrong and follow_up_right
 
 process_fb_message = ({fb_message, bot}) -> dialogflow_botkit.process fb_message, bot
 
@@ -45,7 +52,7 @@ dialogflow_botkit
     if no_speech_in_response df_response
       bus.emit 'error: message from dialogflow without speech in it'
     else
-      if response_malformed df_response
+      if not response_wellformed df_response
         bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
       df_session = dialogflow_botkit.sessionIds[fb_message.user]
       bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
@@ -62,4 +69,6 @@ module.exports = {
   follow_up
   qr_follow_up
   set_user_type
+  # for testing
+  response_wellformed
 }

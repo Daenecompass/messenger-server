@@ -85,13 +85,6 @@ buttons_prep = (button_tags) ->
       messenger_url = button_text.match /(.+) (https?:\/\/m\.me\/.+)/i
       page_url = button_text.match /(.+) (https?:\/\/.+)/i
       phone_number = button_text.match /(.+) (0800.+)/
-      # console.log page_url
-      # source_urls = b.match /Sources?: ? (https?:\/\/.+)/i
-      # if source_urls
-      #   source_urls[1].split /; ?/, (s) ->
-      #     type: 'web_url'
-      #     url: s
-      #     title: "📄 Source"
       if pdf_url
         type: 'web_url'
         url: pdf_url[2]

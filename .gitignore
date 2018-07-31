@@ -34,3 +34,4 @@ node_modules
 
 .env
 coffeelint.json
+gcp-api-key.json
