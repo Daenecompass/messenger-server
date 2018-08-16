@@ -84,7 +84,7 @@ buttons_prep = (button_tags) ->
       pdf_url = button_text.match /(.+) (https?:\/\/.+\.pdf)/i
       messenger_url = button_text.match /(.+) (https?:\/\/m\.me\/.+)/i
       page_url = button_text.match /(.+) (https?:\/\/.+)/i
-      phone_number = button_text.match /(.+) (0800.+)/
+      phone_number = button_text.match /(.+) (111|0800.+)/
       if pdf_url
         type: 'web_url'
         url: pdf_url[2]

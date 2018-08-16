@@ -29,7 +29,6 @@ describe 'text_processor', ->
     fake_df_message =
       speech: 'If the boarding house has room for 6 or more tenants.
 [Sources: https://www.tenancy.govt.nz/starting-a-tenancy/types-of-tenancies/boarding-houses/; http://communitylaw.org.nz/community-law-manual/chapter-14-tenancy-and-housing/boardinghouses-renting-a-room-chapter-14/]'
-    # console.log text_processor fake_df_message
     expect (text_processor fake_df_message)[0]
       .to.equal 'If the boarding house has room for 6 or more tenants.'
 
@@ -73,6 +72,29 @@ describe 'text_processor', ->
             ]
       ]
 
+  it 'should handle phone numbers', ->
+    fake_df_message =
+      speech: 'Call the police
+[Hell Pizza 0800-666-111]
+[Police 111]'
+    expect text_processor fake_df_message
+      .to.containSubset [
+        attachment:
+          type: 'template'
+          payload:
+            template_type: 'button'
+            text: 'Call the police  '
+            buttons: [
+              type: 'phone_number'
+              title: '📞 Hell Pizza'
+              payload: '0800-666-111'
+            ,
+              type: 'phone_number'
+              title: '📞 Police'
+              payload: '111'
+            ]
+      ]
+
 
 describe 'msec_delay', ->
   it 'should return 2000 for short messages', ->
@@ -80,18 +102,18 @@ describe 'msec_delay', ->
     expect msec_delay message
       .equal 2000
 
-  it 'should return 40 x the number of characters in the message for simple messages', ->
+  it 'should return 100x the number of characters in the message for simple messages', ->
     message = 'A longer simple message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.length * 40
+      .equal message.length * 100
 
-  it 'should return 40 x the number of characters in the message for structured messages', ->
+  it 'should return 100x the number of characters in the message for structured messages', ->
     message =
       attachment:
         payload:
           text: 'A longer structured message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.attachment.payload.text.length * 40
+      .equal message.attachment.payload.text.length * 100
 
   it 'should return 3000 for messages with quick replies', ->
     message =
