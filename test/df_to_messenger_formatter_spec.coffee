@@ -20,7 +20,7 @@ describe 'text_reply', ->
             text: (text) -> text.length < 600
             buttons: [
               type: 'postback'
-              title: 'Tell me more'
+              title: 'Tell me more…'
               payload: (payload) -> payload.match /^TELL_ME_MORE:/
             ]
 
@@ -94,6 +94,26 @@ describe 'text_processor', ->
               payload: '111'
             ]
       ]
+
+  it 'should return the same result whether or not there are newlines before tags', ->
+    fake_df_message1 = speech: 'Call the police [Police 111]'
+    fake_df_message2 = speech: "Call the police\n[Police 111]"
+    subset = [
+      attachment:
+        type: 'template'
+        payload:
+          template_type: 'button'
+          text: 'Call the police '
+          buttons: [
+            type: 'phone_number'
+            title: '📞 Police'
+            payload: '111'
+          ]
+    ]
+    expect text_processor fake_df_message1
+      .to.containSubset subset
+    expect text_processor fake_df_message2
+      .to.containSubset subset
 
 
 describe 'msec_delay', ->

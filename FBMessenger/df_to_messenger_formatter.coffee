@@ -43,17 +43,11 @@ follow_up_button = (label, payload) ->
 filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
 
-remove_newlines_around_more = (text) ->
-  text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
+remove_newlines_around_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
+remove_newlines_before_buttons = (text) -> text.replace /(\n)(\[(.+(111|http|0800).+)\])/ig, '$2'
+remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
 
-remove_newlines_before_buttons = (text) ->
-  text.replace /(\n)(\[(.+(http|0800).+)\])/ig, '$2'
-
-remove_sources_tags = (df_speech) ->
-  df_speech.replace /(\[Sources?: .+?\])/ig, ''
-
-# thanks http://stackoverflow.com/a/5454303
-truncate_to_word = (string, maxLength) ->
+truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/5454303
   if string.length > maxLength
     truncatedString = string.substring 0, maxLength
     truncatedString
@@ -127,11 +121,14 @@ text_reply = (df_speech) ->
     buttons = []
     if button_tags then buttons = buttons_prep button_tags
     if split_text.overflow
-      buttons.push postback_button 'Tell me more', 'TELL_ME_MORE:' + split_text.overflow
+      buttons.push postback_button 'Tell me more…', 'TELL_ME_MORE:' + split_text.overflow
     button_template_attachment split_text.reply_text.replace(button_tag_regex, ''), buttons
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_newlines_around_more remove_newlines_before_buttons remove_sources_tags df_message.speech
+  cleaned_speech = remove_newlines_around_more \
+    remove_newlines_before_buttons \
+    remove_sources_tags \
+    df_message.speech
   lines = split_on_newlines_before_more cleaned_speech
   output = []
   lines.map (line) ->
@@ -207,4 +204,5 @@ module.exports = {
   # for testing
   text_reply
   text_processor
+  remove_newlines_before_buttons
 }
