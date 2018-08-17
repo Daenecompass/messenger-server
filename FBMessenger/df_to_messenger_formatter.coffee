@@ -145,9 +145,9 @@ text_processor = (df_message) ->
 msec_delay = (message) ->
   delay =
     if typeof message is 'string'
-      message.length * 100                        # ms per char ~ wpm
+      message.length * 70                        # ms per char ~ wpm
     else if message.attachment?.payload?.text?
-      message.attachment.payload.text.length * 100
+      message.attachment.payload.text.length * 70
     else if message.attachment?.payload?.url?
       3000
     else if message.quick_replies?

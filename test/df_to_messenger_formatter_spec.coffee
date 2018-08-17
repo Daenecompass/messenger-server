@@ -122,18 +122,18 @@ describe 'msec_delay', ->
     expect msec_delay message
       .equal 2000
 
-  it 'should return 100x the number of characters in the message for simple messages', ->
+  it 'should return 70x the number of characters in the message for simple messages', ->
     message = 'A longer simple message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.length * 100
+      .equal message.length * 70
 
-  it 'should return 100x the number of characters in the message for structured messages', ->
+  it 'should return 70x the number of characters in the message for structured messages', ->
     message =
       attachment:
         payload:
           text: 'A longer structured message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.attachment.payload.text.length * 100
+      .equal message.attachment.payload.text.length * 70
 
   it 'should return 3000 for messages with quick replies', ->
     message =
