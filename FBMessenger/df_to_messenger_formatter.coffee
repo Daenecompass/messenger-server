@@ -5,11 +5,13 @@ flatmap = require 'flatmap'
 {button_tag_regex, follow_up_tag_regex} = require '../helpers'
 bus = require '../event_bus'
 
+
 image_reply = (df_message) ->
   attachment:
     type: 'image'
     payload:
       url: df_message.imageUrl
+
 
 quick_replies_reply = (df_message) ->
   text: df_message.title
@@ -19,10 +21,36 @@ quick_replies_reply = (df_message) ->
       title: reply
       payload: reply
 
+# TODO: Default action (first button)
+# TODO: collect up all cards into a carousel
+card_reply = (df_message) ->
+  attachment:
+    type: 'template'
+    payload:
+      if df_message.buttons.length isnt 0
+        template_type: 'generic'
+        elements: [
+          title: df_message.title
+          image_url: df_message.imageUrl
+          subtitle: df_message.subtitle
+          buttons: _.map df_message.buttons, (button) ->
+            type: 'web_url'
+            url: button.postback
+            title: button.text
+        ]
+      else
+        template_type: 'generic'
+        elements: [
+          title: df_message.title
+          image_url: df_message.imageUrl
+          subtitle: df_message.subtitle
+        ]
+
 postback_button = (title, payload) ->
   type: 'postback'
   title: title
   payload: payload
+
 
 button_template_attachment = (title, buttons) ->
   attachment:
@@ -32,6 +60,7 @@ button_template_attachment = (title, buttons) ->
       text: title
       buttons: buttons
 
+
 follow_up_button = (label, payload) ->
   text: label
   quick_replies: [
@@ -40,12 +69,15 @@ follow_up_button = (label, payload) ->
     payload: 'FOLLOW_UP:' + payload
   ]
 
+
 filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
+
 
 remove_newlines_around_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
 remove_newlines_before_buttons = (text) -> text.replace /(\n)(\[(.+(111|http|0800).+)\])/ig, '$2'
 remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
+
 
 truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/5454303
   if string.length > maxLength
@@ -55,6 +87,7 @@ truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/
       .concat ' …'
   else
     string
+
 
 split_on_newlines_before_more = (text) ->
   more_position = text.search /\[more\]/i
@@ -67,9 +100,11 @@ split_on_newlines_before_more = (text) ->
   else
     text.split /\n/
 
+
 has_more = (text) -> text.match(/\[more\]/i)?
 text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
 text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
+
 
 buttons_prep = (button_tags) ->
   flatmap button_tags, (button_tag) ->
@@ -98,6 +133,7 @@ buttons_prep = (button_tags) ->
       else
         bus.emit "Error: Badly formatted button instruction in Dialogflow: #{button_text}"
 
+
 split_text_by_more_and_length = (text) ->
   more_position = text.search /\[more\]/i
   if more_position is -1 and text.length < 600    # short message with no '[more]'
@@ -124,6 +160,7 @@ text_reply = (df_speech) ->
       buttons.push postback_button 'Tell me more…', 'TELL_ME_MORE:' + split_text.overflow
     button_template_attachment split_text.reply_text.replace(button_tag_regex, ''), buttons
 
+
 text_processor = (df_message) ->
   cleaned_speech = remove_newlines_around_more \
     remove_newlines_before_buttons \
@@ -142,18 +179,18 @@ text_processor = (df_message) ->
       output.push text_reply line
   output
 
+
 msec_delay = (message) ->
   delay =
     if typeof message is 'string'
       message.length * 70                        # ms per char ~ wpm
     else if message.attachment?.payload?.text?
       message.attachment.payload.text.length * 70
-    else if message.attachment?.payload?.url?
-      3000
-    else if message.quick_replies?
+    else
       3000
   if delay < 2000 then delay = 2000
   delay
+
 
 apply_fn_to_fb_message = (message, fn) ->
   if typeof message is 'string'
@@ -166,9 +203,11 @@ apply_fn_to_fb_message = (message, fn) ->
     message.title = fn message.title
   message
 
+
 apply_fn_to_fb_messages = (messages, fn) ->
   messages.map (message) ->
     apply_fn_to_fb_message message, fn
+
 
 search_fb_message_text = (message, term) ->
   if typeof message is 'string'
@@ -180,21 +219,24 @@ search_fb_message_text = (message, term) ->
   else if message.title? # quick replies
     message.title.match term
 
+
 fb_messages_text_contains = (messages, term) ->
   matches = (messages.filter (message) ->
     search_fb_message_text(message, term)?)
   if matches.length is 0 then false else true
 
 
-df_message_type_to_func =
-  0: text_processor
-  2: quick_replies_reply
-  3: image_reply
-
 format = (df_messages) ->
+  df_message_type_to_func =
+    0: text_processor
+    1: card_reply
+    2: quick_replies_reply
+    3: image_reply
+
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
     df_message_type_to_func[df_message.type] df_message
+
 
 module.exports = {
   format

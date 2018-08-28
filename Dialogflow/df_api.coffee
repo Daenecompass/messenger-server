@@ -34,7 +34,6 @@ send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
     body: JSON.stringify body, null, 4
     headers: headers
   , (err, r, body) ->
-    # console.log body
     if err
       on_failure
     else
