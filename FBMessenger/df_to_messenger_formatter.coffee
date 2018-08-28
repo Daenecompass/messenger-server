@@ -27,9 +27,9 @@ card_reply = (df_message) ->
   attachment:
     type: 'template'
     payload:
-      if df_message.buttons.length isnt 0
-        template_type: 'generic'
-        elements: [
+      template_type: 'generic'
+      elements: [
+        if df_message.buttons.length isnt 0
           title: df_message.title
           image_url: df_message.imageUrl
           subtitle: df_message.subtitle
@@ -37,14 +37,11 @@ card_reply = (df_message) ->
             type: 'web_url'
             url: button.postback
             title: button.text
-        ]
-      else
-        template_type: 'generic'
-        elements: [
+        else
           title: df_message.title
           image_url: df_message.imageUrl
           subtitle: df_message.subtitle
-        ]
+      ]
 
 postback_button = (title, payload) ->
   type: 'postback'
