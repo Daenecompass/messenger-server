@@ -21,6 +21,7 @@ quick_replies_reply = (df_message) ->
       title: reply
       payload: reply
 
+
 # TODO: Default action (first button)
 # TODO: collect up all cards into a carousel
 card_reply = (df_message) ->
@@ -42,6 +43,7 @@ card_reply = (df_message) ->
           image_url: df_message.imageUrl
           subtitle: df_message.subtitle
       ]
+
 
 postback_button = (title, payload) ->
   type: 'postback'
