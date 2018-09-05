@@ -2,7 +2,16 @@
 
 _ = require 'lodash'
 flatmap = require 'flatmap'
-{button_tag_regex, follow_up_tag_regex} = require '../helpers'
+
+{
+  button_tag_regex
+  newline_button_tag_regex
+  follow_up_tag_regex
+  phone_regex
+  url_regex
+  messenger_url_regex
+  pdf_url_regex
+} = require '../helpers'
 bus = require '../event_bus'
 
 
@@ -74,7 +83,7 @@ filter_dialogflow_duplicates = (df_messages) ->
 
 
 remove_newlines_around_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
-remove_newlines_before_buttons = (text) -> text.replace /(\n)(\[(.+(111|http|0800).+)\])/ig, '$2'
+remove_newlines_before_buttons = (text) -> text.replace newline_button_tag_regex, '$2'
 remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
 
 
@@ -109,10 +118,10 @@ buttons_prep = (button_tags) ->
   flatmap button_tags, (button_tag) ->
     button_tag = button_tag.replace /\[|\]/g, ''
     flatmap (button_tag.split /; ?/), (button_text) ->
-      pdf_url = button_text.match /(.+) (https?:\/\/.+\.pdf)/i
-      messenger_url = button_text.match /(.+) (https?:\/\/m\.me\/.+)/i
-      page_url = button_text.match /(.+) (https?:\/\/.+)/i
-      phone_number = button_text.match /(.+) (111|0800.+)/
+      pdf_url = button_text.match pdf_url_regex
+      messenger_url = button_text.match messenger_url_regex
+      page_url = button_text.match url_regex
+      phone_number = button_text.match phone_regex
       if pdf_url
         type: 'web_url'
         url: pdf_url[2]

@@ -75,6 +75,7 @@ describe 'text_processor', ->
   it 'should handle phone numbers', ->
     fake_df_message =
       speech: 'Call the police
+[OHRP 09 375 8623]
 [Hell Pizza 0800-666-111]
 [Police 111]'
     expect text_processor fake_df_message
@@ -83,8 +84,12 @@ describe 'text_processor', ->
           type: 'template'
           payload:
             template_type: 'button'
-            text: 'Call the police  '
+            text: 'Call the police   '
             buttons: [
+              type: 'phone_number'
+              title: '📞 OHRP'
+              payload: '09 375 8623'
+            ,
               type: 'phone_number'
               title: '📞 Hell Pizza'
               payload: '0800-666-111'

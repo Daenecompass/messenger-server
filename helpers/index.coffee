@@ -1,7 +1,12 @@
 module.exports =
   tell_me_more_regex: /^tell_me_more: ?/i
   follow_up_regex: /^follow_up: ?/i
-  button_tag_regex: /\[.*?(0800|111|http).*?\]/ig
+  button_tag_regex: /\[.*?(0800|111|0[0-9]|http).*?\]/ig
+  newline_button_tag_regex: /(\n)(\[(.+(0800|111|0[0-9]|http).+)\])/ig
+  phone_regex: /(.+) (111|0800.+|0[0-9].+)/
+  url_regex: /(.+) (https?:\/\/.+)/i
+  messenger_url_regex: /(.+) (https?:\/\/m\.me\/.+)/i
+  pdf_url_regex: /(.+) (https?:\/\/.+\.pdf)/i
   follow_up_tag_regex: /\[fu: ?(.*?): ?(.*?)\]/i
 
   remove_tell_me_more_in_fb_message: (fb_message) ->
