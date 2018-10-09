@@ -3,6 +3,9 @@
 _ = require 'lodash'
 flatmap = require 'flatmap'
 
+bus = require '../event_bus'
+
+
 {
   button_tag_regex
   newline_button_tag_regex
@@ -243,7 +246,10 @@ format = (df_messages) ->
 
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
-    df_message_type_to_func[df_message.type] df_message
+    if df_message.type in [0..3]
+      df_message_type_to_func[df_message.type] df_message
+    else
+      bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
 
 
 module.exports = {
