@@ -17,5 +17,13 @@ describe 'response_wellformed', ->
       .to.be.true
 
   it 'should be true if FU syntax absent', ->
-    expect response_wellformed result: fulfillment: messages: [speech:'Can you hear me?']
+    expect response_wellformed result: fulfillment: messages: [speech: 'Can you hear me?']
       .to.be.true
+
+  it 'should be true if smiley used', ->
+    expect response_wellformed result: fulfillment: messages: [speech: 'Hi :)']
+      .to.be.true
+
+  it 'should be false if unbalanced parentheses', ->
+    expect response_wellformed result: fulfillment: messages: [speech: 'Hi )']
+      .to.be.false
