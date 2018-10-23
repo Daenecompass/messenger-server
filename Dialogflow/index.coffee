@@ -12,12 +12,13 @@ no_speech_in_response = (df_response) ->
 response_wellformed = (df_response) ->
   remove_smiley = (text) -> text.replace /:\)/, ''
   df_response.result.fulfillment.messages.every (message) ->
-    if message.speech? then message.speech = remove_smiley message.speech
-    balanced = is_balanced(message.speech, '{[(', '}])')
-    more_wrong = message.speech?.match /\[more:.*\]/i
+    speech = ''
+    if message.speech? then speech = remove_smiley message.speech
+    balanced = is_balanced(speech, '{[(', '}])')
+    more_wrong = speech?.match /\[more:.*\]/i
     follow_up_right =
-      if message.speech?.match(/\[FU/i)
-        message.speech.match /\[FU:.+:.+\]/i
+      if speech?.match(/\[FU/i)
+        speech.match /\[FU:.+:.+\]/i
       else
         true
     balanced and not more_wrong and follow_up_right
