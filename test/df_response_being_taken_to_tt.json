@@ -1,0 +1,35 @@
+{
+  "id": "de96951d-1574-421c-bb26-00efb62320ab",
+  "timestamp": "2018-10-26T02:16:08.921Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "how should i prepare for the tenancy tribunal?",
+    "action": "",
+    "actionIncomplete": false,
+    "parameters": {},
+    "contexts": [],
+    "metadata": {
+      "intentId": "6dbabd5b-8b86-469d-ba0c-6cc29aa8820c",
+      "webhookUsed": "false",
+      "webhookForSlotFillingUsed": "false",
+      "isFallbackIntent": "false",
+      "intentName": "Being taken to the Tenancy Tribunal"
+    },
+    "fulfillment": {
+      "speech": "If the landlord is taking you to the Tenancy Tribunal, it’s really important that you attend the hearing and present your side of the story. You can call witnesses to give evidence on your behalf. You can also have a support person sit with you, e.g. a friend or family member. If you don’t attend the hearing the Tribunal will only hear the landlord’s story and will make its decision (called an order) based solely on the landlord’s version of events. [more] The Tribunal’s orders are normally made public on its website including the names of the tenant and landlord and the tenancy address. If you’re worried about these details being public, e.g. an ex-partner is stalking you, you need to let the Tribunal know so it can decide what personal information to publish on its website.",
+      "messages": [
+        {
+          "type": 0,
+          "speech": "If the landlord is taking you to the Tenancy Tribunal, it’s really important that you attend the hearing and present your side of the story. You can call witnesses to give evidence on your behalf. You can also have a support person sit with you, e.g. a friend or family member.\nIf you don’t attend the hearing the Tribunal will only hear the landlord’s story and will make its decision (called an order) based solely on the landlord’s version of events.\n[more]\nThe Tribunal’s orders are normally made public on its website including the names of the tenant and landlord and the tenancy address. If you’re worried about these details being public, e.g. an ex-partner is stalking you, you need to let the Tribunal know so it can decide what personal information to publish on its website."
+        }
+      ]
+    },
+    "score": 1
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "eaa94e29-888e-38f5-6aba-b9e81a810aa5"
+}

@@ -1,7 +1,22 @@
-{msec_delay, text_reply, text_processor} = require '../FBMessenger/df_to_messenger_formatter'
+{msec_delay, text_reply, text_processor, format} = require '../FBMessenger/df_to_messenger_formatter'
+
+
 chai = require 'chai'
 chai.use require 'chai-subset'
 {expect} = chai
+
+
+describe 'format', ->
+  it 'should give just one message if a dialogflow response has the [FU] after [more]', ->
+    fake_df_response = require './df_response_flatmate_rights.json'
+    expect format fake_df_response.result.fulfillment.messages
+      .to.have.length(1)
+
+  it 'should split a two-line df response into two messages', ->
+    fake_df_response = require './df_response_being_taken_to_tt.json'
+    expect format fake_df_response.result.fulfillment.messages
+      .to.have.length(2)
+
 
 describe 'text_reply', ->
   it 'should, given a simple line of text without special tags, return that text', ->
@@ -23,6 +38,7 @@ describe 'text_reply', ->
               title: 'Tell me more…'
               payload: (payload) -> payload.match /^TELL_ME_MORE:/
             ]
+
 
 describe 'text_processor', ->
   it 'should, given a df_message with a source, omit that part', ->

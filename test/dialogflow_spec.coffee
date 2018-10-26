@@ -1,7 +1,9 @@
 {response_wellformed} = require '../Dialogflow/index'
+
 chai = require 'chai'
 chai.use require 'chai-subset'
 {expect} = chai
+
 
 describe 'response_wellformed', ->
   it 'should be false if [more] wrongly used', ->
