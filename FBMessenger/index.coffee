@@ -47,10 +47,12 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
       , cumulative_wait
 
       if index < processed_fb_messages.length - 1
+        next_message_delay = msec_delay message
+        typing_delay = cumulative_wait + (next_message_delay * 0.75)
         setTimeout () ->
           bot.reply original_fb_message, sender_action: 'typing_on'
-          bus.emit "Sending typing indicator to Messenger, delayed by #{cumulative_wait + 1750}"
-        , cumulative_wait + 1750
+          bus.emit "Sending typing indicator to Messenger, delayed by #{typing_delay}"
+        , typing_delay
 
     cumulative_wait += msec_delay message
 
@@ -114,6 +116,4 @@ module.exports = {
   check_user_type
   check_session
   store_user_type
-  # for testing
-  send_queue
 }
