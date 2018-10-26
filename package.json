@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "api-ai-botkit": "^1.1.1",
-    "botkit": "^0.6.17",
+    "botkit": "^0.6.18",
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
