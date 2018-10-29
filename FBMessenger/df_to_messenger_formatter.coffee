@@ -4,16 +4,7 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-{
-  button_tag_regex
-  newline_button_tag_regex
-  follow_up_tag_regex
-  phone_regex
-  url_regex
-  messenger_url_regex
-  pdf_url_regex
-  map_url_regex
-} = require '../helpers'
+{regex} = require '../helpers'
 
 
 image_reply = (df_message) ->
@@ -84,7 +75,7 @@ filter_dialogflow_duplicates = (df_messages) ->
 
 
 remove_newlines_around_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
-remove_newlines_before_buttons = (text) -> text.replace newline_button_tag_regex, '$2'
+remove_newlines_before_buttons = (text) -> text.replace regex.newline_button_tag, '$2'
 remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
 
 
@@ -119,11 +110,11 @@ buttons_prep = (button_tags) ->
   flatmap button_tags, (button_tag) ->
     button_tag = button_tag.replace /\[|\]/g, ''
     flatmap (button_tag.split /; ?/), (button_text) ->
-      map_url = button_text.match map_url_regex
-      pdf_url = button_text.match pdf_url_regex
-      messenger_url = button_text.match messenger_url_regex
-      page_url = button_text.match url_regex
-      phone_number = button_text.match phone_regex
+      map_url = button_text.match regex.map_url
+      pdf_url = button_text.match regex.pdf_url
+      messenger_url = button_text.match regex.messenger_url
+      page_url = button_text.match regex.url
+      phone_number = button_text.match regex.phone
       if map_url
         type: 'web_url'
         url: map_url[2]
@@ -164,7 +155,7 @@ split_text_by_more_and_length = (text) ->
 
 text_reply = (df_speech) ->
   split_text = split_text_by_more_and_length df_speech
-  button_tags = split_text.reply_text.match button_tag_regex
+  button_tags = split_text.reply_text.match regex.button_tag
   if not button_tags and not split_text.overflow
     df_speech
   else
@@ -172,7 +163,7 @@ text_reply = (df_speech) ->
     if button_tags then buttons = buttons_prep button_tags
     if split_text.overflow
       buttons.push postback_button 'Tell me more…', 'TELL_ME_MORE:' + split_text.overflow
-    button_template_attachment split_text.reply_text.replace(button_tag_regex, ''), buttons
+    button_template_attachment split_text.reply_text.replace(regex.button_tag, ''), buttons
 
 
 text_processor = (df_message) ->
@@ -184,9 +175,9 @@ text_processor = (df_message) ->
   output = []
   lines.map (line) ->
     line = line.trim()
-    follow_up_tag = line.match follow_up_tag_regex
+    follow_up_tag = line.match regex.follow_up_tag
     if follow_up_tag
-      cleaned_line = line.replace(follow_up_tag_regex, '').trim()
+      cleaned_line = line.replace(regex.follow_up_tag, '').trim()
       output.push text_reply cleaned_line
       output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
     else

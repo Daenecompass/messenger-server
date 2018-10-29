@@ -1,9 +1,9 @@
 bus = require '../event_bus'
 botkit = require './botkit'
-{fb_messages_text_contains, apply_fn_to_fb_messages, msec_delay, format} = require './df_to_messenger_formatter'
-{tell_me_more_regex, follow_up_regex, df_message_format} = require '../helpers'
-
 {replace} = require 'lodash/fp'
+
+{fb_messages_text_contains, apply_fn_to_fb_messages, msec_delay, format} = require './df_to_messenger_formatter'
+{regex, df_message_format} = require '../helpers'
 
 
 is_get_started_postback = (fb_message) ->
@@ -11,15 +11,15 @@ is_get_started_postback = (fb_message) ->
 
 
 is_tell_me_more_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text.match tell_me_more_regex
+  fb_message.type is 'facebook_postback' and fb_message.text.match regex.tell_me_more
 
 
 is_follow_up_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text?.match follow_up_regex
+  fb_message.type is 'facebook_postback' and fb_message.text?.match regex.follow_up
 
 
 is_follow_up_message = (fb_message) ->
-  fb_message.type is 'message_received' and fb_message.quick_reply?.payload.match follow_up_regex
+  fb_message.type is 'message_received' and fb_message.quick_reply?.payload.match regex.follow_up
 
 
 swap_in_user_name = ({fb_message, fb_messages}) ->
