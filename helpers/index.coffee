@@ -7,6 +7,7 @@ module.exports =
   url_regex: /(.+) (https?:\/\/.+)/i
   messenger_url_regex: /(.+) (https?:\/\/m\.me\/.+)/i
   pdf_url_regex: /(.+) (https?:\/\/.+\.pdf)/i
+  map_url_regex: /(.+) (https?:\/\/.+\/maps\/.+)/i
   follow_up_tag_regex: /\[fu: ?(.*?): ?(.*?)\]/i
 
   remove_tell_me_more_in_fb_message: (fb_message) ->

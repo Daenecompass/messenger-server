@@ -4,8 +4,6 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-
-
 {
   button_tag_regex
   newline_button_tag_regex
@@ -14,8 +12,8 @@ bus = require '../event_bus'
   url_regex
   messenger_url_regex
   pdf_url_regex
+  map_url_regex
 } = require '../helpers'
-bus = require '../event_bus'
 
 
 image_reply = (df_message) ->
@@ -121,11 +119,16 @@ buttons_prep = (button_tags) ->
   flatmap button_tags, (button_tag) ->
     button_tag = button_tag.replace /\[|\]/g, ''
     flatmap (button_tag.split /; ?/), (button_text) ->
+      map_url = button_text.match map_url_regex
       pdf_url = button_text.match pdf_url_regex
       messenger_url = button_text.match messenger_url_regex
       page_url = button_text.match url_regex
       phone_number = button_text.match phone_regex
-      if pdf_url
+      if map_url
+        type: 'web_url'
+        url: map_url[2]
+        title: "📍 #{map_url[1]}"
+      else if pdf_url
         type: 'web_url'
         url: pdf_url[2]
         title: "📄 #{pdf_url[1]}"

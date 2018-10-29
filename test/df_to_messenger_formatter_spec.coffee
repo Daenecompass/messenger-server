@@ -116,6 +116,17 @@ describe 'text_processor', ->
             ]
       ]
 
+  it 'should use a pin emoji for google maps links', ->
+    fake_df_message = speech: "Hi [CABs near you https://www.google.com/maps/search/citizen's+advice+near+me/]"
+    result = text_processor fake_df_message
+    expect result[0].attachment.payload.buttons[0]
+      .to.eql
+        type: 'web_url'
+        title: '📍 CABs near you'
+        url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
+
+
+
   it 'should return the same result whether or not there are newlines before tags', ->
     fake_df_message1 = speech: 'Call the police [Police 111]'
     fake_df_message2 = speech: "Call the police\n[Police 111]"
@@ -143,18 +154,15 @@ describe 'msec_delay', ->
     expect msec_delay message
       .equal 2000
 
-  it 'should return 70x the number of characters in the message for simple messages', ->
+  it 'should return 40x the number of characters in the message for simple messages', ->
     message = 'A longer simple message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.length * 70
+      .equal message.length * 40
 
-  it 'should return 70x the number of characters in the message for structured messages', ->
-    message =
-      attachment:
-        payload:
-          text: 'A longer structured message. Some more text to pad it out a bit'
+  it 'should return 40x the number of characters in the message for structured messages', ->
+    message = attachment: payload: text: 'A longer structured message. Some more text to pad it out a bit'
     expect msec_delay message
-      .equal message.attachment.payload.text.length * 70
+      .equal message.attachment.payload.text.length * 40
 
   it 'should return 3000 for messages with quick replies', ->
     message =
