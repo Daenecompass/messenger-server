@@ -65,8 +65,12 @@ follow_up_button = (label, payload) ->
   text: label
   quick_replies: [
     content_type: 'text'
-    title: 'Okay'
+    title: 'Yes'
     payload: 'FOLLOW_UP:' + payload
+  ,
+    content_type: 'text'
+    title: 'No'
+    payload: 'FOLLOW_UP: FU No'
   ]
 
 
