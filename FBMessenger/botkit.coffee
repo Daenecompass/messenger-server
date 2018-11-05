@@ -4,7 +4,7 @@ mongoStorage = require('botkit-storage-mongo')
   mongoUri: "mongodb://#{process.env.mongoatlas_user}:#{process.env.mongoatlas_password}@#{process.env.mongoatlas_db_string}"
 
 controller = Botkit.facebookbot
-  # debug: true
+  debug: process.env.NODE_ENV is 'development' ? true : false
   # log: true
   access_token: process.env.fb_page_token
   verify_token: process.env.fb_verify_token
@@ -12,14 +12,6 @@ controller = Botkit.facebookbot
   validate_requests: true
   receive_via_postback: true
   storage: mongoStorage
-
-fbuser = require('botkit-middleware-fbuser')
-  accessToken: process.env.fb_page_token
-  fields: ['first_name', 'last_name', 'locale', 'profile_pic','timezone','gender','is_payment_enabled']
-  logLevel: 'error'
-  expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
-  storage: controller.storage
-controller.middleware.receive.use fbuser.receive
 
 bot = controller.spawn()
 
