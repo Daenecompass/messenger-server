@@ -4,7 +4,7 @@ module.exports =
     follow_up: /^follow_up: ?/i
     button_tag: /\[.*?(0800|111|0[0-9]|http).*?\]/ig
     newline_button_tag: /(\n)(\[(.+(0800|111|0[0-9]|http).+)\])/ig
-    phone: /(.+) (111|0800.+|0[0-9].+)/
+    phone: /(.+?) (111|0800.+|0[0-9].+)/
     url: /(.+) (https?:\/\/.+)/i
     messenger_url: /(.+) (https?:\/\/m\.me\/.+)/i
     pdf_url: /(.+) (https?:\/\/.+\.pdf)/i

@@ -92,7 +92,7 @@ describe 'text_processor', ->
     fake_df_message =
       speech: 'Call the police
 [OHRP 09 375 8623]
-[Hell Pizza 0800-666-111]
+[Hell Pizza 0800 666 111]
 [Police 111]'
     expect text_processor fake_df_message
       .to.containSubset [
@@ -108,7 +108,7 @@ describe 'text_processor', ->
             ,
               type: 'phone_number'
               title: '📞 Hell Pizza'
-              payload: '0800-666-111'
+              payload: '0800 666 111'
             ,
               type: 'phone_number'
               title: '📞 Police'
