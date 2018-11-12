@@ -4,7 +4,7 @@ mongoStorage = require('botkit-storage-mongo')
   mongoUri: "mongodb://#{process.env.mongoatlas_user}:#{process.env.mongoatlas_password}@#{process.env.mongoatlas_db_string}"
 
 controller = Botkit.facebookbot
-  # debug: true
+  debug: process.env.NODE_ENV is 'development' ? true : false
   # log: true
   access_token: process.env.fb_page_token
   verify_token: process.env.fb_verify_token
