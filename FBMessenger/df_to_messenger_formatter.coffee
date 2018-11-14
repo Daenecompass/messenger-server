@@ -78,7 +78,7 @@ filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
 
 
-remove_newlines_around_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/ig, '$2'
+remove_newlines_around_first_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/i, '$2'
 remove_newlines_before_buttons = (text) -> text.replace regex.newline_button_tag, '$2'
 remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
 
@@ -106,8 +106,8 @@ split_on_newlines_before_more = (text) ->
 
 
 has_more = (text) -> text.match(/\[more\]/i)?
-text_before_more = (text) -> text.match(/(.*)\[more\]/i)?[1]
-text_after_more = (text) -> text.match(/\[more\](.*)/i)?[1]
+text_before_more = (text) -> text.match(/([\s\S]*)\[more\]/i)?[1]
+text_after_more = (text) -> text.match(/\[more\]([\s\S]*)/i)?[1]
 
 
 buttons_prep = (button_tags) ->
@@ -171,7 +171,7 @@ text_reply = (df_speech) ->
 
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_newlines_around_more \
+  cleaned_speech = remove_newlines_around_first_more \
     remove_newlines_before_buttons \
     remove_sources_tags \
     df_message.speech

@@ -41,6 +41,12 @@ describe 'text_reply', ->
 
 
 describe 'text_processor', ->
+  it 'should preseve newlines in Tell me more payload', ->
+    formatted = text_processor speech: 'Line 1\n[more]\nLine 2\nLine 3\n[more]\nLine 4'
+    expect formatted[0].attachment.payload.buttons[0].payload
+      .to.equal 'TELL_ME_MORE:Line 2\nLine 3\n[more]\nLine 4'
+
+
   it 'should, given a df_message with a source, omit that part', ->
     fake_df_message =
       speech: 'If the boarding house has room for 6 or more tenants.
@@ -56,7 +62,6 @@ describe 'text_processor', ->
         text: 'Want to know about your rights as a boarding house tenant?'
         quick_replies: [
           content_type: 'text'
-          title: 'Okay'
           payload: 'FOLLOW_UP:What are my rights as a boarding house tenant?'
         ]
       ]
