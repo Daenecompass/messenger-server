@@ -1,5 +1,8 @@
 Botkit = require 'botkit'
 
+persistent_menu = require './persistent_menu.json'
+
+
 mongoStorage = require('botkit-storage-mongo')
   mongoUri: "mongodb://#{process.env.mongoatlas_user}:#{process.env.mongoatlas_password}@#{process.env.mongoatlas_db_string}"
 
@@ -29,5 +32,6 @@ controller.setupWebserver port, (err, webserver) ->
     require '../ngrok' if process.env.ngrok_subdomain and process.env.ngrok_authtoken
 
 controller.api.messenger_profile.get_started 'GET_STARTED'
+controller.api.thread_settings.menu [persistent_menu]
 
 module.exports = controller
