@@ -5,13 +5,10 @@ flatmap = require 'flatmap'
 
 bus = require '../event_bus'
 {regex} = require '../helpers'
+image_reply_template = require './image_reply'
 
 
-image_reply = (df_message) ->
-  attachment:
-    type: 'image'
-    payload:
-      url: df_message.imageUrl
+image_reply = (df_message) -> image_reply_template df_message.imageUrl
 
 
 quick_replies_reply = (df_message) ->
