@@ -5,19 +5,31 @@ flatmap = require 'flatmap'
 
 bus = require '../event_bus'
 {regex} = require '../helpers'
-image_reply_template = require './image_reply'
+image_reply_template = require './templates/image_reply'
+quick_replies_template = require './templates/quick_replies'
 
 
 image_reply = (df_message) -> image_reply_template df_message.imageUrl
 
 
-quick_replies_reply = (df_message) ->
-  text: df_message.title
-  quick_replies:
-    _.map df_message.replies, (reply) ->
-      content_type: 'text'
+quick_replies_reply_df_native = (df_message) ->
+  quick_replies_template
+    title: df_message.title
+    replies: df_message.replies.map (reply) ->
       title: reply
       payload: reply
+
+
+quick_replies_reply_handrolled = (qr_tag_contents) ->
+  [title, ...options] = qr_tag_contents.split /; ?/
+  quick_replies_template
+    title: title
+    replies: options.map (option) ->
+      [title, payload] = option.split /: ?/
+      title: title
+      payload: "FOLLOW_UP: #{payload}"
+
+  # need to extend quick_replies_template so that it can take payloads
 
 
 # TODO: Default action (first button)
@@ -177,12 +189,17 @@ text_processor = (df_message) ->
   lines.map (line) ->
     line = line.trim()
     follow_up_tag = line.match regex.follow_up_tag
+    quick_replies_tag = line.match regex.quick_replies_tag
     if follow_up_tag
       cleaned_line = line.replace(regex.follow_up_tag, '').trim()
       output.push text_reply cleaned_line
       output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
+    else if quick_replies_tag
+      cleaned_line = line.replace(regex.quick_replies_tag, '').trim()
+      output.push quick_replies_reply_handrolled quick_replies_tag[1]
     else
       output.push text_reply line
+  console.log "text_processor output: ", JSON.stringify output, null, 4
   output
 
 
@@ -236,7 +253,7 @@ format = (df_messages) ->
   df_message_type_to_func =
     0: text_processor
     1: card_reply
-    2: quick_replies_reply
+    2: quick_replies_reply_df_native
     3: image_reply
 
   unique_df_messages = filter_dialogflow_duplicates df_messages
@@ -256,4 +273,6 @@ module.exports = {
   text_reply
   text_processor
   remove_newlines_before_buttons
+  quick_replies_reply_handrolled
+  quick_replies_reply_df_native
 }

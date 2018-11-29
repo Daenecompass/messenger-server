@@ -10,6 +10,7 @@ module.exports =
     pdf_url: /(.+) (https?:\/\/.+\.pdf)/i
     map_url: /(.+) (https?:\/\/.+\/maps\/.+)/i
     follow_up_tag: /\[fu: ?(.*?): ?(.*?)\]/i
+    quick_replies_tag: /\[qr: (.+?)\]/i
 
   remove_tell_me_more_in_fb_message: (fb_message) ->
     console.log fb_message

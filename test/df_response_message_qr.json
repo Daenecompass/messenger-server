@@ -1,0 +1,10 @@
+{
+  "type": 2,
+  "platform": "facebook",
+  "title": "Some words",
+  "replies": [
+    "Yes",
+    "No",
+    "Maybe"
+  ]
+}

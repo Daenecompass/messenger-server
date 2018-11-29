@@ -1,11 +1,9 @@
 # https://developers.facebook.com/docs/messenger-platform/send-messages/quick-replies/
 
-
-
 module.exports = ({title, replies}) ->
-  text: df_message.title
+  text: title
   quick_replies:
-    _.map df_message.replies, (reply) ->
+    replies.map (reply) ->
       content_type: 'text'
-      title: reply
-      payload: reply
+      title: reply.title
+      payload: if reply.payload? then reply.payload else reply.title

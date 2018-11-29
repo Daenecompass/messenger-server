@@ -1,4 +1,11 @@
-{msec_delay, text_reply, text_processor, format} = require '../FBMessenger/df_to_messenger_formatter'
+{
+  msec_delay
+  text_reply
+  text_processor
+  format
+  quick_replies_reply_df_native
+  quick_replies_reply_handrolled
+} = require '../FBMessenger/df_to_messenger_formatter'
 
 
 chai = require 'chai'
@@ -193,3 +200,23 @@ describe 'msec_delay', ->
           title: "Google"
     expect msec_delay message
       .equal 3000
+
+
+describe 'quick_replies_reply_handrolled', ->
+  it 'should work, given a correctly formatted QR tag contents', ->
+    qr_tag_content = 'Some title; Yeah: Tenancy agreement definition; Nah: Subletting'
+    output = quick_replies_reply_handrolled qr_tag_content
+    expect output.quick_replies[1].title
+      .to.equal('Nah')
+    expect output.quick_replies[1].payload
+      .to.equal('FOLLOW_UP: Subletting')
+      
+
+describe 'quick_replies_reply_df_native', ->
+  it 'should work, given a properly formatted Dialogflow-style quick replies message', ->
+    fake_df_message = require './df_response_message_qr.json'
+    output = quick_replies_reply_df_native fake_df_message
+    expect output.quick_replies[2].title
+      .to.equal('Maybe')
+    expect output.quick_replies[2].payload
+      .to.equal('Maybe')

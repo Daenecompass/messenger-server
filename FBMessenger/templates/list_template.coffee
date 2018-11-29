@@ -1,4 +1,6 @@
 # https://developers.facebook.com/docs/messenger-platform/reference/template/list
+# presently unused
+
 
 list_template_element = ({title, subtitle, image_url, payload}) ->
   element =
