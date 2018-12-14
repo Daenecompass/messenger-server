@@ -199,7 +199,6 @@ text_processor = (df_message) ->
       output.push quick_replies_reply_handrolled quick_replies_tag[1]
     else
       output.push text_reply line
-  console.log "text_processor output: ", JSON.stringify output, null, 4
   output
 
 
