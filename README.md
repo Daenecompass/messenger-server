@@ -35,6 +35,7 @@ follow-up questions, too-long-for-Messenger text, etc.
     * Create a new cluster, using default, 'free tier' options.
     * Once the cluster is created, click `Connect`, create a new user (remember the username and password for later).
     * Choose `Connect Your Application`, then `Standard connection string`. Copy everything after the `@`, and save it for later.
+    * Under Security > IP Whitelist, make sure your computer's IP address is listed, or use 'Allow access from anywhere'
 
 * Clone this repository into a folder on your computer.
 
