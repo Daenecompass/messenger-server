@@ -7,8 +7,7 @@ For more details, get in touch with matthew@citizenai.nz / +64 27 211 3455
 ---
 
 This app connects [Dialogflow](https://dialogflow.com) and [Facebook Messenger](https://www.messenger.com).
-It processes some custom syntax in Dialogflow responses to handle images, buttons,
-follow-up questions, too-long-for-Messenger text, etc.
+It processes some custom syntax in Dialogflow responses to handle images, buttons, follow-up questions, too-long-for-Messenger text, etc (see below for details).
 
 ---
 
@@ -70,3 +69,21 @@ follow-up questions, too-long-for-Messenger text, etc.
 * Now if you visit https://m.me/ + *your Facebook page ID*, you should be able to chat with your bot.
 
 * Note that while your Facebook App is 'In Development', only you, and other Facebook users that you have added as testers (in Roles > Roles on your Facebook app page at [developers.facebook.com](https://developers.facebook.com/) will be able to interact with your bot.
+
+---
+
+# Rentbot syntax (to be completed)
+
+This app processes responses from Dialogflow like this:
+
+* Responses from Dialogflow are split on newlines, and each 'line' is sent to Facebook Messenger with a delay corresponding to the length of each message (to give people time to read).
+
+* Messages that are too long for Messenger are broken in half, with the first part sent to Messenger along with a 'Tell me more' button with a payload containing the second part.
+
+* The app handles this special syntax:
+
+  * **Follow-up messages**:
+    * Syntax: `[FU: Words to show the user: Words to send to Dialogflow]`
+
+  * **Quick replies**:
+    * Syntax: `[QU: Message text; Option 1 words to show user: Words to send to Dialogflow; Option 2 words to show user: Words to send to Dialogflow; etc]`
