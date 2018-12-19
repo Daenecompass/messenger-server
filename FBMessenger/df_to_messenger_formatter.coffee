@@ -203,14 +203,15 @@ text_processor = (df_message) ->
 
 
 msec_delay = (message) ->
+  if process.env.delay_ms? then msecs = process.env.delay_ms else msecs = 40
   delay =
     if typeof message is 'string'
-      message.length * 40                        # ms per char ~ wpm
+      message.length * msecs
     else if message.attachment?.payload?.text?
-      message.attachment.payload.text.length * 40
+      message.attachment.payload.text.length * msecs
     else
       3000
-  if delay < 2000 then delay = 2000
+  if delay < 1000 then delay = 1000
   delay
 
 

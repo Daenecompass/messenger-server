@@ -166,15 +166,23 @@ describe 'msec_delay', ->
     expect msec_delay message
       .equal 2000
 
-  it 'should return 40x the number of characters in the message for simple messages', ->
-    message = 'A longer simple message. Some more text to pad it out a bit'
-    expect msec_delay message
-      .equal message.length * 40
+  it 'should return the right delay for the number of characters in the message for simple messages', ->
+    message = 'A longer simple message. Some more text to pad it out a bit. And yet more text so that it is long enough.'
+    if process.env.delay_ms?
+      expect msec_delay message
+        .equal message.length * process.env.delay_ms
+    else
+      expect msec_delay message
+        .equal message.length * 40
 
-  it 'should return 40x the number of characters in the message for structured messages', ->
-    message = attachment: payload: text: 'A longer structured message. Some more text to pad it out a bit'
-    expect msec_delay message
-      .equal message.attachment.payload.text.length * 40
+  it 'should return the right delay the number of characters in the message for structured messages', ->
+    message = attachment: payload: text: 'A longer structured message. Some more text to pad it out a bit. And yet more text'
+    if process.env.delay_ms?
+      expect msec_delay message
+        .equal message.attachment.payload.text.length * process.env.delay_ms
+    else
+      expect msec_delay message
+        .equal message.attachment.payload.text.length * 40
 
   it 'should return 3000 for messages with quick replies', ->
     message =
@@ -210,7 +218,7 @@ describe 'quick_replies_reply_handrolled', ->
       .to.equal('Nah')
     expect output.quick_replies[1].payload
       .to.equal('FOLLOW_UP: Subletting')
-      
+
 
 describe 'quick_replies_reply_df_native', ->
   it 'should work, given a properly formatted Dialogflow-style quick replies message', ->

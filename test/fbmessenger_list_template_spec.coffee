@@ -1,4 +1,4 @@
-list_template = require '../FBMessenger/list_template'
+list_template = require '../FBMessenger/templates/list_template'
 
 chai = require 'chai'
 chai.use require 'chai-subset'
