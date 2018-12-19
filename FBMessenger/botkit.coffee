@@ -3,8 +3,9 @@ Botkit = require 'botkit'
 persistent_menu = require './persistent_menu.json'
 
 
+{mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
 mongoStorage = require('botkit-storage-mongo')
-  mongoUri: "mongodb://#{process.env.mongoatlas_user}:#{process.env.mongoatlas_password}@#{process.env.mongoatlas_db_string}"
+  mongoUri: "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}"
 
 controller = Botkit.facebookbot
   debug: process.env.NODE_ENV is 'development' ? true : false
