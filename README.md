@@ -43,15 +43,26 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 * Create a `.env` file and populate it with these environment variables:
 
   * dialogflow_client_token=*Get this from the `Client access token` field in Dialogflow agent's settings page*
+
   * fb_page_token=*Use the Page Access Token generated above.*
+
   * fb_verify_token=*Choose a random string of characters*
+
   * fb_app_secret=*Get this from your app page on [developers.facebook.com](https://developers.facebook.com/), under Settings > Basic > App Secret*
+
   * mongoatlas_user=*The username you chose earlier*
+
   * mongoatlas_password=*The password you chose or generated earlier*
+
   * mongoatlas_db_string=*The connection string saved earlier. Will look like `cluster0-shard-00-00-svyyv.mongodb.net:27017,cluster0-shard-00-01-svyyv.mongodb.net:27017,cluster0-shard-00-02-svyyv.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true`*
+
   * ngrok_subdomain=*Optional, only works if you have an ngrok subscription. Use whatever subdomain name you like, e.g. rentbot-local-test*
+
   * ngrok_authtoken=*Optional, only works if you have an ngrok subscription. Get the token from https://dashboard.ngrok.com/get-started*
+
   * NODE_ENV=development *(optional, but makes the bot server show more debugging information)*
+
+  * delay_ms=*Optional, reading speed in milliseconds per character. Rentbot delays the second and following of multiple messages so that there's time for users to read them. Defaults to 40*
 
 * Start your bot with `npm start`.
 

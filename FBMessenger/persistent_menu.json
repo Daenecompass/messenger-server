@@ -4,12 +4,17 @@
    "call_to_actions": [
       {
          "type": "postback",
-         "title": "Who made this?",
+         "title": "Who Made This?",
          "payload": "Who made this?"
       },
       {
+         "type": "postback",
+         "title": "Give Feedback",
+         "payload": "Give feedback"
+      },
+      {
          "type": "web_url",
-         "title": "Privacy Policy",
+         "title": "Privacy policy",
          "url": "http://citizenai.nz/privacy-and-confidentiality-policy.html"
       }
    ]
