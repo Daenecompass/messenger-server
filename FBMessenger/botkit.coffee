@@ -19,7 +19,7 @@ controller = Botkit.facebookbot
 
 fbuser = require('botkit-middleware-fbuser')
   accessToken: process.env.fb_page_token
-  fields: ['first_name', 'last_name', 'locale', 'profile_pic','timezone','gender']
+  fields: ['first_name', 'last_name', 'profile_pic']
   logLevel: 'error'
   expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
   storage: controller.storage
