@@ -12,6 +12,9 @@ module.exports =
     follow_up_tag: /\[fu: ?(.*?): ?(.*?)\]/i
     quick_replies_tag: /\[qr: (.+?)\]/i
 
+  remove_empties:
+    (arr) -> arr.filter (x) -> x isnt ''
+
   remove_tell_me_more_in_fb_message: (fb_message) ->
     console.log fb_message
     fb_message.text = fb_message.text.replace @tell_me_more_regex, ''

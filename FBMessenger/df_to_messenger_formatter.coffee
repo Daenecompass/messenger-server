@@ -4,7 +4,7 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-{regex} = require '../helpers'
+{regex, remove_empties} = require '../helpers'
 image_reply_template = require './templates/image_reply'
 quick_replies_template = require './templates/quick_replies'
 
@@ -89,7 +89,7 @@ filter_dialogflow_duplicates = (df_messages) ->
 
 remove_newlines_around_first_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/i, '$2'
 remove_newlines_before_buttons = (text) -> text.replace regex.newline_button_tag, '$2'
-remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+?\])/ig, ''
+remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+\])/ig, ''
 
 
 truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/5454303
@@ -199,6 +199,8 @@ text_processor = (df_message) ->
       output.push quick_replies_reply_handrolled quick_replies_tag[1]
     else
       output.push text_reply line
+
+  output = remove_empties output
   output
 
 
