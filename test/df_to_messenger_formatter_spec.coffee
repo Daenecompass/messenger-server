@@ -137,7 +137,14 @@ describe 'text_processor', ->
         title: '📍 CABs near you'
         url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
 
-
+  it 'should use a book emoji for Community Law Manual links', ->
+    fake_df_message = speech: "Hi [Trees http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/]"
+    result = text_processor fake_df_message
+    expect result[0].attachment.payload.buttons[0]
+      .to.eql
+        type: 'web_url'
+        title: '📖 Trees'
+        url: "http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/"
 
   it 'should return the same result whether or not there are newlines before tags', ->
     fake_df_message1 = speech: 'Call the police [Police 111]'
@@ -161,10 +168,10 @@ describe 'text_processor', ->
 
 
 describe 'msec_delay', ->
-  it 'should return 2000 for short messages', ->
+  it 'should return 1000 for short messages', ->
     message = 'A short message'
     expect msec_delay message
-      .equal 2000
+      .equal 1000
 
   it 'should return the right delay for the number of characters in the message for simple messages', ->
     message = 'A longer simple message. Some more text to pad it out a bit. And yet more text so that it is long enough.'
