@@ -188,7 +188,10 @@ text_processor = (df_message) ->
   output = []
   lines.map (line) ->
     line = line.trim()
-    follow_up_tag = line.match regex.follow_up_tag
+    line_before_any_more = (split_text_by_more_and_length line).reply_text
+
+    follow_up_tag = line_before_any_more.match regex.follow_up_tag
+    console.log follow_up_tag
     quick_replies_tag = line.match regex.quick_replies_tag
     if follow_up_tag
       cleaned_line = line.replace(regex.follow_up_tag, '').trim()
@@ -199,6 +202,7 @@ text_processor = (df_message) ->
       output.push quick_replies_reply_handrolled quick_replies_tag[1]
     else
       output.push text_reply line
+  console.log output
 
   output = remove_empties output
   output

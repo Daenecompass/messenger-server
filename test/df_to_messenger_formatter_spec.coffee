@@ -15,9 +15,14 @@ chai.use require 'chai-subset'
 
 describe 'format', ->
   it 'should give just one message if a dialogflow response has the [FU] after [more]', ->
-    fake_df_response = require './df_response_flatmate_rights.json'
-    expect format fake_df_response.result.fulfillment.messages
+    expect format [type: 0, speech: "Line 1\n[more]\nLine 2\n[FU: Follow-up: follow-up]"]
       .to.have.length(1)
+
+  it 'should give two messages if a dialogflow response has the [FU] before [more]', ->
+    formatted = format [type: 0, speech: "Line 1\n[FU: Follow-up: follow-up][more]\nLine 2"]
+    console.log formatted
+    expect formatted
+      .to.have.length(2)
 
   it 'should split a two-line df response into two messages', ->
     fake_df_response = require './df_response_being_taken_to_tt.json'
@@ -161,10 +166,10 @@ describe 'text_processor', ->
 
 
 describe 'msec_delay', ->
-  it 'should return 2000 for short messages', ->
+  it 'should return 1 second for short messages', ->
     message = 'A short message'
     expect msec_delay message
-      .equal 2000
+      .equal 1000
 
   it 'should return the right delay for the number of characters in the message for simple messages', ->
     message = 'A longer simple message. Some more text to pad it out a bit. And yet more text so that it is long enough.'
