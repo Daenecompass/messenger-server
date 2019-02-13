@@ -5,11 +5,30 @@ flatmap = require 'flatmap'
 
 bus = require '../event_bus'
 {regex, remove_empties} = require '../helpers'
+
+# pure FB templates (knowing nothing about DF's or Rentbot's APIs)
 image_reply_template = require './templates/image_reply'
 quick_replies_template = require './templates/quick_replies'
+generic_template = require './templates/generic_template'
+button_template_attachment = require './templates/button_template_attachment'
+postback_button = require './templates/postback_button'
+
+# less pure templates
+follow_up_button = require './templates/follow_up_button'
 
 
-image_reply = (df_message) -> image_reply_template df_message.imageUrl
+# these functions translate between dialoglow-style message types, and the FB Messenger API
+
+image_reply = (df_message) ->
+  image_reply_template df_message.imageUrl
+
+
+card_reply = (df_message) ->
+  generic_template
+    title: df_message.title
+    subtitle: df_message.subtitle
+    image_url: df_message.imageUrl
+    buttons: df_message.buttons
 
 
 quick_replies_reply_df_native = (df_message) ->
@@ -28,59 +47,9 @@ quick_replies_reply_handrolled = (qr_tag_contents) ->
       [title, payload] = option.split /: ?/
       title: title
       payload: "FOLLOW_UP: #{payload}"
-
   # need to extend quick_replies_template so that it can take payloads
 
-
-# TODO: Default action (first button)
-# TODO: collect up all cards into a carousel
-card_reply = (df_message) ->
-  attachment:
-    type: 'template'
-    payload:
-      template_type: 'generic'
-      elements: [
-        if df_message.buttons.length isnt 0
-          title: df_message.title
-          image_url: df_message.imageUrl
-          subtitle: df_message.subtitle
-          buttons: _.map df_message.buttons, (button) ->
-            type: 'web_url'
-            url: button.postback
-            title: button.text
-        else
-          title: df_message.title
-          image_url: df_message.imageUrl
-          subtitle: df_message.subtitle
-      ]
-
-
-postback_button = (title, payload) ->
-  type: 'postback'
-  title: title
-  payload: payload
-
-
-button_template_attachment = (title, buttons) ->
-  attachment:
-    type: 'template'
-    payload:
-      template_type: 'button'
-      text: title
-      buttons: buttons
-
-
-follow_up_button = (label, payload) ->
-  text: label
-  quick_replies: [
-    content_type: 'text'
-    title: 'Yes'
-    payload: 'FOLLOW_UP:' + payload
-  ,
-    content_type: 'text'
-    title: 'No'
-    payload: 'FOLLOW_UP: FU No'
-  ]
+# --- #
 
 
 filter_dialogflow_duplicates = (df_messages) ->
@@ -103,6 +72,9 @@ truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/
 
 
 split_on_newlines_before_more = (text) ->
+  text_before_more = (text) -> text.match(/([\s\S]*)\[more\]/i)?[1]
+  text_after_more = (text) -> text.match(/\[more\]([\s\S]*)/i)?[1]
+
   more_position = text.search /\[more\]/i
   if more_position isnt -1
     text_before_more = text.substring 0, more_position
@@ -113,10 +85,6 @@ split_on_newlines_before_more = (text) ->
   else
     text.split /\n/
 
-
-has_more = (text) -> text.match(/\[more\]/i)?
-text_before_more = (text) -> text.match(/([\s\S]*)\[more\]/i)?[1]
-text_after_more = (text) -> text.match(/\[more\]([\s\S]*)/i)?[1]
 
 
 buttons_prep = (button_tags) ->
@@ -175,8 +143,12 @@ text_reply = (df_speech) ->
     buttons = []
     if button_tags then buttons = buttons_prep button_tags
     if split_text.overflow
-      buttons.push postback_button 'Tell me more…', 'TELL_ME_MORE:' + split_text.overflow
-    button_template_attachment split_text.reply_text.replace(regex.button_tag, ''), buttons
+      buttons.push postback_button
+        title: 'Tell me more…'
+        payload: 'TELL_ME_MORE:' + split_text.overflow
+    button_template_attachment
+      title: split_text.reply_text.replace(regex.button_tag, '')
+      buttons: buttons
 
 
 text_processor = (df_message) ->
@@ -191,18 +163,18 @@ text_processor = (df_message) ->
     line_before_any_more = (split_text_by_more_and_length line).reply_text
 
     follow_up_tag = line_before_any_more.match regex.follow_up_tag
-    console.log follow_up_tag
     quick_replies_tag = line.match regex.quick_replies_tag
     if follow_up_tag
       cleaned_line = line.replace(regex.follow_up_tag, '').trim()
       output.push text_reply cleaned_line
-      output.push follow_up_button follow_up_tag[1], follow_up_tag[2]
+      output.push follow_up_button
+        label: follow_up_tag[1]
+        payload: follow_up_tag[2]
     else if quick_replies_tag
       cleaned_line = line.replace(regex.quick_replies_tag, '').trim()
       output.push quick_replies_reply_handrolled quick_replies_tag[1]
     else
       output.push text_reply line
-  console.log output
 
   output = remove_empties output
   output
