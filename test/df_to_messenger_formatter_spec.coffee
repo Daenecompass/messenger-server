@@ -179,6 +179,16 @@ Citizen AI is developing Rentbot.
         title: '📍 CABs near you'
         url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
 
+  it 'should use a book emoji for Community Law Manual links', ->
+    fake_df_message = speech: "Hi [Trees http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/]"
+    result = text_processor fake_df_message
+    expect result[0].attachment.payload.buttons[0]
+      .to.eql
+        type: 'web_url'
+        title: '📖 Trees'
+        url: "http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/"
+
+
   it 'should return the same result whether or not there are newlines before tags', ->
     fake_df_message1 = speech: 'Call the police [Police 111]'
     fake_df_message2 = speech: "Call the police\n[Police 111]"
@@ -201,7 +211,11 @@ Citizen AI is developing Rentbot.
 
 
 describe 'msec_delay', ->
+<<<<<<< HEAD
   it 'should return 1 second for short messages', ->
+=======
+  it 'should return 1000 for short messages', ->
+>>>>>>> master
     message = 'A short message'
     expect msec_delay message
       .equal 1000

@@ -85,6 +85,7 @@ buttons_prep = (button_tags) ->
     button_tag = button_tag.replace /\[|\]/g, ''
     flatmap (button_tag.split /; ?/), (button_text) ->
       map_url = button_text.match regex.map_url
+      clm_url = button_text.match regex.clm_url
       pdf_url = button_text.match regex.pdf_url
       messenger_url = button_text.match regex.messenger_url
       page_url = button_text.match regex.url
@@ -93,6 +94,10 @@ buttons_prep = (button_tags) ->
         type: 'web_url'
         url: map_url[2]
         title: "📍 #{map_url[1]}"
+      else if clm_url
+        type: 'web_url'
+        url: clm_url[2]
+        title: "📖 #{clm_url[1]}"
       else if pdf_url
         type: 'web_url'
         url: pdf_url[2]

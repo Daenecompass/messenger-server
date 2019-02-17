@@ -10,6 +10,7 @@ module.exports =
     phone: /(.+?) (111|0800.+|0[0-9].+)/
     url: /(.+) (https?:\/\/.+)/i
     messenger_url: /(.+) (https?:\/\/m\.me\/.+)/i
+    clm_url: /(.+) (http.*community-law-manual.*)/i
     pdf_url: /(.+) (https?:\/\/.+\.pdf)/i
     map_url: /(.+) (https?:\/\/.+\/maps\/.+)/i
     follow_up_tag: /\[fu: ?(.*?): ?(.*?)\]/i
