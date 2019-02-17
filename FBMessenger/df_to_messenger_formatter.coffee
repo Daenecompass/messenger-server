@@ -4,7 +4,7 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-{regex, remove_empties} = require '../helpers'
+{cl, regex, remove_empties} = require '../helpers'
 
 # pure FB templates (knowing nothing about DF's or Rentbot's APIs)
 image_reply_template = require './templates/image_reply'
@@ -47,7 +47,6 @@ quick_replies_reply_handrolled = (qr_tag_contents) ->
       [title, payload] = option.split /: ?/
       title: title
       payload: "FOLLOW_UP: #{payload}"
-  # need to extend quick_replies_template so that it can take payloads
 
 # --- #
 
@@ -56,9 +55,7 @@ filter_dialogflow_duplicates = (df_messages) ->
   _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
 
 
-remove_newlines_around_first_more = (text) -> text.replace /(\n ?)?(\[more\])( ?\n)?/i, '$2'
-remove_newlines_before_buttons = (text) -> text.replace regex.newline_button_tag, '$2'
-remove_sources_tags = (df_speech) -> df_speech.replace /(\[Sources?: .+\])/ig, ''
+remove_sources_tags = (text) -> text.replace /(\[Sources?.+\])/ig, ''
 
 
 truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/5454303
@@ -72,9 +69,6 @@ truncate_to_word = (string, maxLength) ->   # thanks http://stackoverflow.com/a/
 
 
 split_on_newlines_before_more = (text) ->
-  text_before_more = (text) -> text.match(/([\s\S]*)\[more\]/i)?[1]
-  text_after_more = (text) -> text.match(/\[more\]([\s\S]*)/i)?[1]
-
   more_position = text.search /\[more\]/i
   if more_position isnt -1
     text_before_more = text.substring 0, more_position
@@ -84,7 +78,6 @@ split_on_newlines_before_more = (text) ->
     lines_before_more
   else
     text.split /\n/
-
 
 
 buttons_prep = (button_tags) ->
@@ -151,33 +144,51 @@ text_reply = (df_speech) ->
       buttons: buttons
 
 
+remove_extra_whitespace = (text) ->
+  text
+    .replace /[\s]*\n[\s]*/g, '\n'
+    .replace regex.whitespace_around_first_more, '$1'
+    .replace /[\s]*(\[.*?\])/ig, '$1'
+
+
+has_followup_before_more = (text) ->
+  text
+    .replace /(\[more\][\s\S]*)/i, ''  # strip out from first more on
+    .match regex.follow_up_tag
+
+
+has_qr_before_more = (text) ->
+  text
+    .replace /(\[more\][\s\S]*)/i, ''  # strip out from first more on
+    .match regex.quick_replies_tag
+
+
+follow_up_reply = (text) ->
+  [, label, payload] = text.match regex.follow_up_tag
+  rest_of_line = text
+    .replace regex.follow_up_tag, ''
+    .trim()
+  [rest_of_line, follow_up_button {label, payload}]
+
+
+quick_replies_reply = (text) ->
+  [, qr_tag_contents] = text.match regex.quick_replies_tag
+  rest_of_line = text
+    .replace regex.quick_replies_tag, ''
+    .trim()
+  [rest_of_line, quick_replies_reply_handrolled qr_tag_contents]
+
+
 text_processor = (df_message) ->
-  cleaned_speech = remove_newlines_around_first_more \
-    remove_newlines_before_buttons \
-    remove_sources_tags \
-    df_message.speech
+  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.speech
   lines = split_on_newlines_before_more cleaned_speech
-  output = []
-  lines.map (line) ->
-    line = line.trim()
-    line_before_any_more = (split_text_by_more_and_length line).reply_text
-
-    follow_up_tag = line_before_any_more.match regex.follow_up_tag
-    quick_replies_tag = line.match regex.quick_replies_tag
-    if follow_up_tag
-      cleaned_line = line.replace(regex.follow_up_tag, '').trim()
-      output.push text_reply cleaned_line
-      output.push follow_up_button
-        label: follow_up_tag[1]
-        payload: follow_up_tag[2]
-    else if quick_replies_tag
-      cleaned_line = line.replace(regex.quick_replies_tag, '').trim()
-      output.push quick_replies_reply_handrolled quick_replies_tag[1]
+  flatmap lines, (line) ->
+    if has_followup_before_more line
+      follow_up_reply line
+    else if has_qr_before_more line
+      quick_replies_reply line
     else
-      output.push text_reply line
-
-  output = remove_empties output
-  output
+      text_reply line
 
 
 msec_delay = (message) ->
@@ -228,18 +239,15 @@ fb_messages_text_contains = (messages, term) ->
 
 
 format = (df_messages) ->
-  df_message_type_to_func =
-    0: text_processor
-    1: card_reply
-    2: quick_replies_reply_df_native
-    3: image_reply
-
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
-    if df_message.type in [0..3]
-      df_message_type_to_func[df_message.type] df_message
-    else
-      bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
+    switch df_message.type
+      when 0 then text_processor df_message
+      when 1 then card_reply df_message
+      when 2 then quick_replies_reply_handrolled df_message
+      when 3 then image_reply df_message
+      else
+        bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
 
 
 module.exports = {
@@ -250,7 +258,6 @@ module.exports = {
   # for testing
   text_reply
   text_processor
-  remove_newlines_before_buttons
   quick_replies_reply_handrolled
   quick_replies_reply_df_native
 }

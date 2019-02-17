@@ -1,9 +1,12 @@
 module.exports =
+  cl: console.log
+  
   regex:
     tell_me_more: /^tell_me_more: ?/i
     follow_up: /^follow_up: ?/i
     button_tag: /\[.*?(0800|111|0[0-9]|http).*?\]/ig
-    newline_button_tag: /(\n)(\[(.+(0800|111|0[0-9]|http).+)\])/ig
+    whitespace_around_button_tags: /[\s]*(\[(.+(0800|111|0[0-9]|http).*)\][\s]*)/ig
+    whitespace_around_first_more: /[\s]*(\[more\])[\s]*/i
     phone: /(.+?) (111|0800.+|0[0-9].+)/
     url: /(.+) (https?:\/\/.+)/i
     messenger_url: /(.+) (https?:\/\/m\.me\/.+)/i

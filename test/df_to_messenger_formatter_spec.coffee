@@ -14,14 +14,44 @@ chai.use require 'chai-subset'
 
 
 describe 'format', ->
+  it 'should handle this complicated message', ->
+    expect format [
+      type: 0
+      speech: "Line 1 [FU: Follow-up: follow-up] \nLine 2\n \n[more]\nLine 3 \n Line 4 \n[more] Line 5 \n Line 6"
+    ]
+      .to.containSubset [
+        'Line 1'
+      ,
+        text: 'Follow-up'
+        quick_replies: [
+          content_type: 'text'
+          title: 'Yes'
+          payload: 'FOLLOW_UP:follow-up'
+        ,
+          content_type: 'text'
+          title: 'No'
+          payload: 'FOLLOW_UP: FU No'
+        ]
+      ,
+        attachment:
+          type: 'template'
+          payload:
+            template_type: 'button'
+            text: 'Line 2'
+            buttons: [
+              type: 'postback'
+              title: 'Tell me more…'
+              payload: 'TELL_ME_MORE:Line 3\nLine 4[more] Line 5\nLine 6'
+            ]
+      ]
+
+
   it 'should give just one message if a dialogflow response has the [FU] after [more]', ->
     expect format [type: 0, speech: "Line 1\n[more]\nLine 2\n[FU: Follow-up: follow-up]"]
       .to.have.length(1)
 
   it 'should give two messages if a dialogflow response has the [FU] before [more]', ->
-    formatted = format [type: 0, speech: "Line 1\n[FU: Follow-up: follow-up][more]\nLine 2"]
-    console.log formatted
-    expect formatted
+    expect format [type: 0, speech: "Line 1 [FU: Follow-up: follow-up][more]\nLine 2"]
       .to.have.length(2)
 
   it 'should split a two-line df response into two messages', ->
@@ -34,7 +64,7 @@ describe 'text_reply', ->
   it 'should, given a simple line of text without special tags, return that text', ->
     line = 'Tenancy Services has good information on how to write an insulation statement'
     expect text_reply line
-      .equal line
+      .to.equal line
 
   it 'should, given a too-long line of text, return that text with the overflow as the payload of a postback button', ->
     line = 'Tenancy Services has good information on how to write an insulation statement. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on. Here\'s a bunch more text to flesh out the line until its longer than the 600 chars that we\'re cutting on.'
@@ -53,18 +83,30 @@ describe 'text_reply', ->
 
 
 describe 'text_processor', ->
-  it 'should preseve newlines in Tell me more payload', ->
-    formatted = text_processor speech: 'Line 1\n[more]\nLine 2\nLine 3\n[more]\nLine 4'
-    expect formatted[0].attachment.payload.buttons[0].payload
-      .to.equal 'TELL_ME_MORE:Line 2\nLine 3\n[more]\nLine 4'
+  it 'should, given a df_message with QR tags, handle it properly', ->
+    processed = text_processor speech: 'Something [QR: Title; Option 1: opt1]'
+    expect processed
+      .to.containSubset [
+        'Something'
+      ,
+        text: 'Title'
+        quick_replies: [
+          content_type: 'text'
+          title: 'Option 1'
+          payload: 'FOLLOW_UP: opt1'
+        ]
+      ]
 
-
+  # it 'should preseve newlines in Tell me more payload', ->
+  #   formatted = text_processor speech: 'Line 1\n[more]\nLine 2\nLine 3\n[more]\nLine 4'
+  #   expect formatted[0].attachment.payload.buttons[0].payload
+  #     .to.equal 'TELL_ME_MORE:Line 2\nLine 3\n[more]\nLine 4'
+  #
+  #
   it 'should, given a df_message with a source, omit that part', ->
-    fake_df_message =
-      speech: 'If the boarding house has room for 6 or more tenants.
-[Sources: https://www.tenancy.govt.nz/starting-a-tenancy/types-of-tenancies/boarding-houses/; http://communitylaw.org.nz/community-law-manual/chapter-14-tenancy-and-housing/boardinghouses-renting-a-room-chapter-14/]'
+    fake_df_message = speech: 'If the boarding house.\n[Sources: https://www.tenancy.govt.nz; http://communitylaw.org.nz]'
     expect (text_processor fake_df_message)[0]
-      .to.equal 'If the boarding house has room for 6 or more tenants.'
+      .to.equal 'If the boarding house.'
 
   it 'should, given a df_message with a follow-up tag, return an appropriately formatted message', ->
     fake_df_message =
@@ -79,45 +121,40 @@ describe 'text_processor', ->
       ]
 
   it 'should handle df_messages with multiple button tags, both formats', ->
-    fake_df_message =
-      speech: 'Citizen AI is developing Rentbot. We’re a charitable company owned by Community Law Wellington & Hutt Valley. Our mission is to research, develop and promote artificial intelligence systems for public benefit.
+    fake_df_message = speech: """
+Citizen AI is developing Rentbot.
 [Citizen AI http://citizenai.nz; Google http://google.com]
-[Community Law http://communitylaw.org.nz/]'
-    expect text_processor fake_df_message
-      .to.containSubset [
-        attachment:
-          type: 'template'
-          payload:
-            template_type: 'button'
-            text: 'Citizen AI is developing Rentbot. We’re a charitable company owned by Community Law Wellington & Hutt Valley. Our mission is to research, develop and promote artificial intelligence systems for public benefit.  '
-            buttons: [
-              type: 'web_url'
-              url: 'http://citizenai.nz'
-              title: '🔗 Citizen AI'
-            ,
-              type: 'web_url'
-              url: 'http://google.com'
-              title: '🔗 Google'
-            ,
-              type: 'web_url'
-              url: 'http://communitylaw.org.nz/'
-              title: '🔗 Community Law'
-            ]
-      ]
+[Community Law http://communitylaw.org.nz/]
+"""
+    processed = text_processor fake_df_message
+    expect processed[0].attachment.payload
+      .to.containSubset
+        template_type: 'button'
+        text: 'Citizen AI is developing Rentbot.'
+        buttons: [
+          type: 'web_url'
+          url: 'http://citizenai.nz'
+          title: '🔗 Citizen AI'
+        ,
+          type: 'web_url'
+          url: 'http://google.com'
+          title: '🔗 Google'
+        ,
+          type: 'web_url'
+          url: 'http://communitylaw.org.nz/'
+          title: '🔗 Community Law'
+        ]
 
   it 'should handle phone numbers', ->
     fake_df_message =
-      speech: 'Call the police
-[OHRP 09 375 8623]
-[Hell Pizza 0800 666 111]
-[Police 111]'
+      speech: 'Call the police \n [OHRP 09 375 8623] [Hell Pizza 0800 666 111]\n[Police 111]'
     expect text_processor fake_df_message
       .to.containSubset [
         attachment:
           type: 'template'
           payload:
             template_type: 'button'
-            text: 'Call the police   '
+            text: 'Call the police'
             buttons: [
               type: 'phone_number'
               title: '📞 OHRP'
@@ -142,8 +179,6 @@ describe 'text_processor', ->
         title: '📍 CABs near you'
         url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
 
-
-
   it 'should return the same result whether or not there are newlines before tags', ->
     fake_df_message1 = speech: 'Call the police [Police 111]'
     fake_df_message2 = speech: "Call the police\n[Police 111]"
@@ -152,7 +187,7 @@ describe 'text_processor', ->
         type: 'template'
         payload:
           template_type: 'button'
-          text: 'Call the police '
+          text: 'Call the police'
           buttons: [
             type: 'phone_number'
             title: '📞 Police'
