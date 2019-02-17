@@ -186,7 +186,8 @@ quick_replies_reply = (text) ->
 
 text_processor = (df_message) ->
   cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.speech
-  lines = split_on_newlines_before_more cleaned_speech
+  lines = remove_empties \    # to get rid of removed source lines
+          split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
     if has_followup_before_more line
       follow_up_reply line
@@ -249,7 +250,7 @@ format = (df_messages) ->
     switch df_message.type
       when 0 then text_processor df_message
       when 1 then card_reply df_message
-      when 2 then quick_replies_reply_handrolled df_message
+      when 2 then quick_replies_reply_df_native df_message
       when 3 then image_reply df_message
       else
         bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"

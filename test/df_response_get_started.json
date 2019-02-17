@@ -1,0 +1,55 @@
+{
+  "id": "546e55a1-f10b-4b8a-b1a5-4cff974f56e1",
+  "timestamp": "2019-02-17T23:38:47.956Z",
+  "lang": "en",
+  "result": {
+    "source": "agent",
+    "resolvedQuery": "get started",
+    "action": "",
+    "actionIncomplete": false,
+    "parameters": {},
+    "contexts": [
+      {
+        "name": "interviewuser-followup",
+        "parameters": {},
+        "lifespan": 2
+      }
+    ],
+    "metadata": {
+      "intentId": "24c99348-2ff0-4512-8a9b-c784a5c90136",
+      "webhookUsed": "false",
+      "webhookForSlotFillingUsed": "false",
+      "isFallbackIntent": "false",
+      "intentName": "[App] Interview user"
+    },
+    "fulfillment": {
+      "speech": "Hi #generic.fb_first_name. I'm a chatbot (not a lawyer!) that tries to help New Zealanders with renting problems. I'm still in training, and I might make mistakes. I get smarter all the time though, so please keep chatting to me!",
+      "messages": [
+        {
+          "type": 0,
+          "platform": "facebook",
+          "speech": "Hi #generic.fb_first_name. I'm a chatbot (not a lawyer!) that tries to help New Zealanders with renting problems. I'm still in training, and I might make mistakes. I get smarter all the time though, so please keep chatting to me!"
+        },
+        {
+          "type": 0,
+          "speech": "Hi #generic.fb_first_name. I'm a chatbot (not a lawyer!) that tries to help New Zealanders with renting problems. I'm still in training, and I might make mistakes. I get smarter all the time though, so please keep chatting to me!"
+        },
+        {
+          "type": 2,
+          "platform": "facebook",
+          "title": "Which do you have questions about…?",
+          "replies": [
+            "Renting",
+            "Being a landlord"
+          ]
+        }
+      ]
+    },
+    "score": 1
+  },
+  "status": {
+    "code": 200,
+    "errorType": "success"
+  },
+  "sessionId": "11984c5b-afeb-41ba-10c6-c1225df7726a"
+}

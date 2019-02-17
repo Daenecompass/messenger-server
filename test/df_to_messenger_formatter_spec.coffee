@@ -6,7 +6,7 @@
   quick_replies_reply_df_native
   quick_replies_reply_handrolled
 } = require '../FBMessenger/df_to_messenger_formatter'
-
+{cl} = require '../helpers'
 
 chai = require 'chai'
 chai.use require 'chai-subset'
@@ -14,7 +14,18 @@ chai.use require 'chai-subset'
 
 
 describe 'format', ->
-  it 'should handle this complicated message', ->
+  it 'should handle Dialogflow native quick-reply messages', ->
+    fake_df_response = require './df_response_get_started.json'
+    formatted = format fake_df_response.result.fulfillment.messages
+    expect formatted[1]
+      .to.containSubset
+        quick_replies: [
+          content_type: 'text'
+          title: 'Renting'
+          payload: 'Renting'
+        ]
+
+  it 'should properly format this complicated message', ->
     expect format [
       type: 0
       speech: "Line 1 [FU: Follow-up: follow-up] \nLine 2\n \n[more]\nLine 3 \n Line 4 \n[more] Line 5 \n Line 6"
@@ -44,7 +55,6 @@ describe 'format', ->
               payload: 'TELL_ME_MORE:Line 3\nLine 4[more] Line 5\nLine 6'
             ]
       ]
-
 
   it 'should give just one message if a dialogflow response has the [FU] after [more]', ->
     expect format [type: 0, speech: "Line 1\n[more]\nLine 2\n[FU: Follow-up: follow-up]"]
@@ -83,6 +93,15 @@ describe 'text_reply', ->
 
 
 describe 'text_processor', ->
+  it 'should include no empty messages', ->
+    processed = text_processor speech: """
+If you need to build a fence for your pet.
+[FU: Want to know more?: Fixture definition]
+[Source:  https://www.aucklandcouncil.govt.nz/; s42(1) RTA]
+    """
+    expect processed
+      .to.not.containSubset ['']
+
   it 'should, given a df_message with QR tags, handle it properly', ->
     processed = text_processor speech: 'Something [QR: Title; Option 1: opt1]'
     expect processed
@@ -211,11 +230,7 @@ Citizen AI is developing Rentbot.
 
 
 describe 'msec_delay', ->
-<<<<<<< HEAD
   it 'should return 1 second for short messages', ->
-=======
-  it 'should return 1000 for short messages', ->
->>>>>>> master
     message = 'A short message'
     expect msec_delay message
       .equal 1000
