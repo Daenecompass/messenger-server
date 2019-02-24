@@ -5,7 +5,8 @@ module.exports = function (w) {
     files: [
       '*/*.coffee',
       '*/*/*.coffee',
-      'test/*.json',
+      '*/*.json',
+      '*/*/*.json',
       { pattern: 'test/*.coffee', ignore: true }
     ],
 

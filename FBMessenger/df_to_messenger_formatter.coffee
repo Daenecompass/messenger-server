@@ -170,10 +170,11 @@ has_qr_before_more = (text) ->
 
 follow_up_reply = (text) ->
   [, label, payload] = text.match regex.follow_up_tag
-  rest_of_line = text
-    .replace regex.follow_up_tag, ''
-    .trim()
-  [rest_of_line, follow_up_button {label, payload}]
+  rest_of_line = text.replace(regex.follow_up_tag, '').trim()
+  [
+    text_reply rest_of_line
+    follow_up_button {label, payload}
+  ]
 
 
 quick_replies_reply = (text) ->
