@@ -44,6 +44,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
       setTimeout () ->
         bot.reply original_fb_message, message
         bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
+        bus.emit "message to user", {fb_message:original_fb_message, message}
       , cumulative_wait
 
       if index < processed_fb_messages.length - 1
@@ -100,11 +101,11 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
 
 
 botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
-  event =
-    if is_get_started_postback fb_message then 'postback: get started'
-    else if is_tell_me_more_postback fb_message then 'postback: tell me more'
-    else if is_follow_up_postback fb_message then 'postback: follow up'
-    else if is_follow_up_message fb_message then 'quick reply: follow up'
+  event = switch
+    when is_get_started_postback fb_message then 'postback: get started'
+    when is_tell_me_more_postback fb_message then 'postback: tell me more'
+    when is_follow_up_postback fb_message then 'postback: follow up'
+    when is_follow_up_message fb_message then 'quick reply: follow up'
     else 'message from user'
   bus.emit event, {fb_message, bot}
 
