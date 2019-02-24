@@ -14,8 +14,19 @@ chai.use require 'chai-subset'
 
 
 describe 'format', ->
+  it 'should handle a message with both a button and follow-up', ->
+    fake_df_response = require './df_responses/insulation_responsibility.json'
+    formatted = format fake_df_response.result.fulfillment.messages
+    formatted #
+    expect formatted[0]
+      .to.containSubset
+        attachment:
+          payload:
+            buttons: {}
+
+
   it 'should handle Dialogflow native quick-reply messages', ->
-    fake_df_response = require './df_response_get_started.json'
+    fake_df_response = require './df_responses/get_started.json'
     formatted = format fake_df_response.result.fulfillment.messages
     expect formatted[1]
       .to.containSubset
@@ -65,12 +76,16 @@ describe 'format', ->
       .to.have.length(2)
 
   it 'should split a two-line df response into two messages', ->
-    fake_df_response = require './df_response_being_taken_to_tt.json'
+    fake_df_response = require './df_responses/being_taken_to_tt.json'
     expect format fake_df_response.result.fulfillment.messages
       .to.have.length(2)
 
 
 describe 'text_reply', ->
+  it 'should produce a button even with run-on button tag', ->
+    expect text_reply 'Some words.[Read more https://alink.com]'
+      .to.containSubset attachment: payload: buttons: []
+
   it 'should, given a simple line of text without special tags, return that text', ->
     line = 'Tenancy Services has good information on how to write an insulation statement'
     expect text_reply line
@@ -97,7 +112,7 @@ describe 'text_processor', ->
     processed = text_processor speech: """
 If you need to build a fence for your pet.
 [FU: Want to know more?: Fixture definition]
-[Source:  https://www.aucklandcouncil.govt.nz/; s42(1) RTA]
+[Source: https://www.aucklandcouncil.govt.nz/; s42(1) RTA]
     """
     expect processed
       .to.not.containSubset ['']
@@ -291,7 +306,7 @@ describe 'quick_replies_reply_handrolled', ->
 
 describe 'quick_replies_reply_df_native', ->
   it 'should work, given a properly formatted Dialogflow-style quick replies message', ->
-    fake_df_message = require './df_response_message_qr.json'
+    fake_df_message = require './df_responses/message_qr.json'
     output = quick_replies_reply_df_native fake_df_message
     expect output.quick_replies[2].title
       .to.equal('Maybe')
