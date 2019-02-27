@@ -3,6 +3,7 @@ require('dotenv').load();
 module.exports = function (w) {
   return {
     files: [
+      '*.coffee',
       '*/*.coffee',
       '*/*/*.coffee',
       '*/*.json',
