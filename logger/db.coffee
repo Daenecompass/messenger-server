@@ -16,6 +16,11 @@ db = connect()
 
 module.exports =
   db: db
+
   users_collection: () ->
     conn = await db
     conn.collection 'users'
+
+  events_collection: () ->
+    conn = await db
+    conn.collection 'events'

@@ -1,21 +1,34 @@
-mongo = require './db'
+raven = require '../helpers/error-logging'
+
+raven.context () ->
+  {users_collection, events_collection} = require './db'
 
 
-module.exports =
-  from_fb: ({fb_message}) ->
-    console.log 'timestamp', Date.now()
-    console.log 'user id', fb_message.user
-    console.log 'said', fb_message.text
+  log_event = (obj) ->
+    events = await events_collection()
+    events
+      .insertOne {obj..., timestamp: Date.now()}
+      .catch (e) -> console.error e
 
 
-  from_df: ({fb_message, df_response, df_session}) ->
-    console.log 'timestamp', Date.now()
-    console.log 'user id', fb_message.user
-    console.log 'df session', df_session
-    console.log 'df messages', df_response.result?.fulfillment?.messages
+  module.exports =
+    from_fb: ({fb_message}) ->
+      log_event
+        type: 'from_fb'
+        user_id: fb_message.user
+        user_said: fb_message.text
 
 
-  to_fb: ({fb_message, message}) ->
-    console.log 'timestamp', Date.now()
-    console.log 'user id', fb_message.user
-    console.log 'message', message
+    from_df: ({fb_message, df_response, df_session}) ->
+      log_event
+        type: 'from_df'
+        user_id: fb_message.user
+        df_session: df_session
+        df_messages: df_response.result?.fulfillment?.messages
+
+
+    to_fb: ({fb_message, message}) ->
+      log_event
+        type: 'to_fb'
+        user_id: fb_message.user
+        bot_said: message

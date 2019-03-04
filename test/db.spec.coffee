@@ -3,7 +3,7 @@ chai.use require 'chai-subset'
 {expect} = chai
 
 
-{db, users_collection} = require('../logger/db')
+{users_collection, events_collection} = require('../logger/db')
 
 
 describe 'db', ->
@@ -14,20 +14,13 @@ describe 'db', ->
 
   it 'should find some records', ->
     users = await users_collection()
-    console.log await users.find({})
+    all_users = await users.find({}).toArray()
+    expect all_users.length
+      .to.be.at.least 1
 
-    # console.log await coll.find({}).toArray()
 
-    # collection = await db.collection 'users'
-    # users = await collection.find({}).toArray()
-    # console.log users
-    # expect users.length
-    #   .to.be.at.least(1)
-
-  # it 'should let me insert a record', ->
-  #   conn = await db_connection()
-  #   db = conn.db()
-  #   collection = await db.collection 'dbtest'
-  #   collection.insertOne
-  #     timestamp: Date.now()
-  #     note: 'Wallaby test run'
+  it 'should let me insert a record', ->
+    events = await events_collection()
+    events.insertOne
+      timestamp: Date.now()
+      note: 'Wallaby test run'
