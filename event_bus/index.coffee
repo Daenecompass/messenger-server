@@ -1,12 +1,9 @@
 EventEmitter = require('eventemitter2').EventEmitter2
 chalk = require 'chalk'
-
 raven = require '../helpers/error-logging'
-
 
 bus = new EventEmitter
   wildcard: true
-
 
 bus.on '*', (payload) ->
   if @event.match /^error/i
@@ -16,6 +13,5 @@ bus.on '*', (payload) ->
     raven.captureException new Error error_message
   else
     console.log "Bus: #{@event}"
-
 
 module.exports = bus
