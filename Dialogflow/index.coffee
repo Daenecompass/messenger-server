@@ -27,6 +27,7 @@ response_wellformed = (df_response) ->
 process_fb_message = ({fb_message, bot}) ->
   if fb_message.text.length > 255
     fb_message.text = 'USER_TEXT_TOO_LONG_INTENT'
+  console.log 'fb_message:', fb_message
   dialogflow_botkit.process fb_message, bot
 
 
@@ -56,6 +57,7 @@ set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_
     user_type: user_type
     fb_first_name: fb_first_name
     on_success: bus.emit 'context sent to dialogflow', {fb_message, bot, user_type, df_response}
+    on_failure: (err) -> bus.emit 'Error: problem communicating with Dialogflow: ', err
   }
 
 
