@@ -23,7 +23,13 @@ fbuser = require('botkit-middleware-fbuser')
   logLevel: 'error'
   expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
   storage: controller.storage
+
 controller.middleware.receive.use fbuser.receive
+
+dialogflowMiddleware = require('botkit-middleware-dialogflow')
+  keyFilename: './rentbot-apiv2-7f878ebb46d6.json'
+
+controller.middleware.receive.use dialogflowMiddleware.receive
 
 bot = controller.spawn()
 

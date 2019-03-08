@@ -11,8 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "api-ai-botkit": "github:Citizen-AI/dialogflow-botkit-client",
     "botkit": "^0.6.21",
+    "botkit-middleware-dialogflow": "^2.0.4",
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",

@@ -20,21 +20,22 @@ follow_up_button = require './templates/follow_up_button'
 # these functions translate between dialoglow-style message types, and the FB Messenger API
 
 image_reply = (df_message) ->
-  image_reply_template df_message.imageUrl
+  image_reply_template df_message.image.imageUri
 
 
 card_reply = (df_message) ->
+  # console.log 'card_reply (df_message):', df_message
   generic_template
-    title: df_message.title
-    subtitle: df_message.subtitle
-    image_url: df_message.imageUrl
-    buttons: df_message.buttons
+    title: df_message.card.title
+    subtitle: df_message.card.subtitle
+    image_url: df_message.card.imageUri
+    buttons: df_message.card.buttons
 
 
 quick_replies_reply_df_native = (df_message) ->
   quick_replies_template
-    title: df_message.title
-    replies: df_message.replies.map (reply) ->
+    title: df_message.quickReplies.title
+    replies: df_message.quickReplies.quickReplies.map (reply) ->
       title: reply
       payload: reply
 
@@ -52,7 +53,7 @@ quick_replies_reply_handrolled = (qr_tag_contents) ->
 
 
 filter_dialogflow_duplicates = (df_messages) ->
-  _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
+  _.uniqWith(df_messages, (a, b) -> a.text?.text[0]?) # I don't understand why this works
 
 
 remove_sources_tags = (text) -> text.replace /(\[Sources?.+\])/ig, ''
@@ -186,7 +187,7 @@ quick_replies_reply = (text) ->
 
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.speech
+  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
@@ -246,13 +247,14 @@ fb_messages_text_contains = (messages, term) ->
 
 
 format = (df_messages) ->
+  console.log 'format (df_messages):', df_messages
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
-    switch df_message.type
-      when 0 then text_processor df_message
-      when 1 then card_reply df_message
-      when 2 then quick_replies_reply_df_native df_message
-      when 3 then image_reply df_message
+    switch df_message.message
+      when 'text' then text_processor df_message
+      when 'card' then card_reply df_message
+      when 'quickReplies' then quick_replies_reply_df_native df_message
+      when 'image' then image_reply df_message
       else
         bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
 

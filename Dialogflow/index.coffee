@@ -1,5 +1,6 @@
 bus = require '../event_bus'
-dialogflow_botkit = require('api-ai-botkit') process.env.dialogflow_client_token
+dialogflowMiddleware = require('botkit-middleware-dialogflow')
+  keyFilename: './rentbot-apiv2-7f878ebb46d6.json'
 {regex} = require '../helpers'
 df_api = require './df_api'
 is_balanced = require 'is-balanced'
@@ -25,30 +26,36 @@ response_wellformed = (df_response) ->
 
 
 process_fb_message = ({fb_message, bot}) ->
-  if fb_message.text.length > 255
+  if fb_message.text.length > 255                   # TODO: redo
     fb_message.text = 'USER_TEXT_TOO_LONG_INTENT'
-  console.log 'fb_message:', fb_message
-  dialogflow_botkit.process fb_message, bot
+  if fb_message.nlpResponse?
+    # NOTE: we're not presently sending df_session
+    console.log 'process_fb_message (fb_message): ', JSON.stringify(fb_message, null, 4)
+    console.log 'process_fb_message (dialogflowMiddleware): ', JSON.stringify(dialogflowMiddleware, null, 4)
+
+    # df_session = dialogflow_botkit.sessionIds[fb_message.user]
+    bus.emit 'message from dialogflow', {fb_message, df_response:fb_message.nlpResponse, bot}
+  # dialogflow_botkit.process fb_message, bot
 
 
 interview_user = ({fb_message, bot}) ->
   fb_message.text = 'INTERVIEW_USER_INTENT'
-  dialogflow_botkit.process fb_message, bot
+  # dialogflow_botkit.process fb_message, bot
 
 
 welcome_returning_user = ({fb_message, bot}) ->
   fb_message.text = 'RETURNING_USER_GREETING_INTENT'
-  dialogflow_botkit.process fb_message, bot
+  # dialogflow_botkit.process fb_message, bot
 
 
 follow_up = ({fb_message, bot}) ->
   fb_message.text = fb_message.text.replace regex.follow_up, ''
-  dialogflow_botkit.process fb_message, bot
+  # dialogflow_botkit.process fb_message, bot
 
 
 qr_follow_up = ({fb_message, bot}) ->
   fb_message.text = fb_message.quick_reply?.payload.replace regex.follow_up, ''
-  dialogflow_botkit.process fb_message, bot
+  # dialogflow_botkit.process fb_message, bot
 
 
 set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
@@ -65,19 +72,19 @@ user_type_interview_event = (fb_message, df_response, bot) ->
   bus.emit 'message from user: user_type interview', {df_response, fb_message}
 
 
-dialogflow_botkit
-  .all (fb_message, df_response, bot) ->
-    if no_speech_in_response df_response
-      bus.emit 'error: message from dialogflow without speech in it'
-    else
-      if not response_wellformed df_response
-        bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
-      df_session = dialogflow_botkit.sessionIds[fb_message.user]
-      bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
-  .action 'Interviewuser.landlord', user_type_interview_event
-  .action 'Interviewuser.boardinghouse', user_type_interview_event
-  .action 'Interviewuser.private', user_type_interview_event
-  .action 'Interviewuser.social-housing', user_type_interview_event
+# dialogflow_botkit
+#   .all (fb_message, df_response, bot) ->
+#     if no_speech_in_response df_response
+#       bus.emit 'error: message from dialogflow without speech in it'
+#     else
+#       if not response_wellformed df_response
+#         bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
+#       df_session = dialogflow_botkit.sessionIds[fb_message.user]
+#       bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
+#   .action 'Interviewuser.landlord', user_type_interview_event
+#   .action 'Interviewuser.boardinghouse', user_type_interview_event
+#   .action 'Interviewuser.private', user_type_interview_event
+#   .action 'Interviewuser.social-housing', user_type_interview_event
 
 
 module.exports = {

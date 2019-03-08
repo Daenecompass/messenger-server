@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "rentbot-apiv2",
+  "private_key_id": "7f878ebb46d6fbcfe175a9ae197c8f9182c2c229",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDCSNjWeldUI7av\nOOq3pLFt1x43LxbOs/6ud93cxuaBlC5O4ZPysqgxgknVkeDcLdzho0IXQuXLb0S6\nkwgdM6uuSM5Lt1ag5XJQvkqeYIdrJvo+6zZ2xQckppc6b5IQYKkwAbbhTgGvKxCn\nAho0DeNHAbbyL3Ko4p7zJImttiHmSsGVBcdxlmHgHHnCvI99QTPHqHxPzJoOUqHn\nghmpDAQ/k81ZjmIPtqdDkadnd6C9o6lkdXRHYx4bvdR/R8cPjiUuSnnlZ4MRL2FZ\nRbv6HZn8GuDsF1C3kBmi5EJ2cRP+0+IMCIotilnFqqB9p3ErFIhBPblDpU2POQ5D\nOp5magN5AgMBAAECggEACY4Z9VPCAhYu5hI8tPh0GMyuJJT7ywGzjQgXJhm1fM+k\nBrwgZxzImdq9tTO9+oYvk/ylWPiGIwm0uHUCaVFBEyAV3p0Z38LjwDsuTKNptZLk\nAX6Bng4Vn69TxmDLWbkvSPhPSBMVO8oN68Yg3MjcEddwlHD8niK7IjEnVkmcBDPj\naD0CihcJIbktNpxIfgbR2NC97FTAbszBj8ReZtlNLIMG0N0KIFRL0waH8OE80jiA\nhK+AV71ELynrp0kaptY9st2vfIOme3GfLvU/tjBWBMV8ij/IvthzodI4Jm1xrVP2\nBuB542NIcZEvuqAhUn1uhnA0v63EtQt2ae0EYFMSaQKBgQDjVQnUrRisEDWI5LuR\n8MTbssJ0kH0JZUH0ibOKQE7eNtkm1G9W3XzNA/lRea4OAo2aVhvbrNT3sMRQ0dHS\nMQ1fqY6VVu6MU7KdbKxo2pksvjB580a+8Ja9xZ57FkKi+O3Oo7BXOXRMpnBrYX8t\nt9yFwYO/QqSK7K+uKW6nh7T8HQKBgQDayO7Ep0UaL0sj+xmkyw+icG3GbX06Cxmt\nLeSFYmHIE2+AawB+Dh7Iax5DGVZ7zohpbULkPKcszcwp+ibQgqt1rLUIxY5egF/z\nTuEmsJVQhWyYQ02IKBGV0qr7VZ+nTTmCk2SD7MCQSoDwOUcZBw+9dmOPgQ+pWlbM\nVuSuZNwuDQKBgQCREg1p+ORLuTRQnZbNNRaLFPJerG3+du21/cHjMdKin+HHk71R\nc5pWwnhx8/KM4jg3C0hP0WU+g0FkSeFZ/w+Hwo5I4ubsCeVr7JPBfe5NzTjmOccl\nxiaMB/Zwme4ATlaDjZXUs8dxuqz2+YrNRA2oFavbe83BEfWycKI6qrFmSQKBgHPk\n1HZflP9V5hvdO6xL1LBblgrynM9Oaf+Ou+rcPqfZg8sm40/i8vN/qrwog+N5eFFA\ni5qTdosJSQlDdaQmU+U144AOBmiQ4ELmmeYAzFenFetiW4OwlgAjZGdW6AebpMdC\nhJBNrYPBs6OM89iSIQhf2kV+PGmdbTU5IlIvI2NRAoGBALwQSRiZlYKPyTet6uLS\nkiZeomNqfA8TvAX5zoq0wdDPPj7woCACROS0ji6o5x7pf8u+y3UgE+LMnHlChkVD\n3M97pw8xSmAfHPFnlEIbGhXGMdZqe/yhCBCWZ1LhTulNtaMdCI1xXwR6NVSpZnFL\npm5iZPFWNtJapZd2w3qzGaNw\n-----END PRIVATE KEY-----\n",
+  "client_email": "client-access@rentbot-apiv2.iam.gserviceaccount.com",
+  "client_id": "102825010476288122895",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/client-access%40rentbot-apiv2.iam.gserviceaccount.com"
+}
