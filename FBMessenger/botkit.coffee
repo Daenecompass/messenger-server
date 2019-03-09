@@ -26,10 +26,10 @@ fbuser = require('botkit-middleware-fbuser')
 
 controller.middleware.receive.use fbuser.receive
 
-dialogflowMiddleware = require('botkit-middleware-dialogflow')
-  keyFilename: './rentbot-apiv2-7f878ebb46d6.json'
+# dialogflowMiddleware = require('botkit-middleware-dialogflow')
+#   keyFilename: './rentbot-apiv2-7f878ebb46d6.json'
 
-controller.middleware.receive.use dialogflowMiddleware.receive
+# controller.middleware.receive.use dialogflowMiddleware.receive
 
 bot = controller.spawn()
 

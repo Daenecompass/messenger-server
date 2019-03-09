@@ -57,8 +57,8 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
     cumulative_wait += msec_delay message
 
 
-process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
-  fb_messages = format df_response.queryResult.fulfillmentMessages
+process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
+  fb_messages = format df_result.fulfillmentMessages
   send_queue {fb_messages, fb_message, bot}
 
 

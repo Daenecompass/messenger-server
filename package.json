@@ -17,6 +17,7 @@
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
     "coffeescript": "^2.3.2",
+    "dialogflow": "^0.8.0",
     "dotenv": "^6.2.0",
     "envalid": "^4.2.1",
     "eventemitter2": "^5.0.1",
