@@ -2,8 +2,14 @@ bus = require '../event_bus'
 botkit = require './botkit'
 {replace} = require 'lodash/fp'
 
-{fb_messages_text_contains, apply_fn_to_fb_messages, msec_delay, format} = require './df_to_messenger_formatter'
-{regex, df_message_format} = require '../helpers'
+{
+  fb_messages_text_contains
+  apply_fn_to_fb_messages
+  msec_delay
+  format
+  df_text_message_format
+} = require './df_to_messenger_formatter'
+{regex} = require '../helpers'
 
 
 is_get_started_postback = (fb_message) ->
@@ -64,7 +70,7 @@ process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
 
 tell_me_more = ({fb_message, bot}) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?([\s\S]*)/i)?[1]
-  fb_messages = format df_message_format tell_me_more_content
+  fb_messages = format df_text_message_format tell_me_more_content
   send_queue {fb_messages, fb_message, bot}
 
 
@@ -100,7 +106,6 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
 
 
 botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
-  # console.log 'botkit.hears: ', fb_message
   event =
     if is_get_started_postback fb_message then 'postback: get started'
     else if is_tell_me_more_postback fb_message then 'postback: tell me more'
@@ -108,9 +113,6 @@ botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
     else if is_follow_up_message fb_message then 'quick reply: follow up'
     else 'message from user'
   bus.emit event, {fb_message, bot}
-#
-# botkit.hears ['(.*)'], 'message_received,facebook_postback', dialogflow.hears, (bot, fb_message) ->
-#   console.log 'botkit.hears (df.hears)'
 
 
 module.exports = {

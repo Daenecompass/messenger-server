@@ -12,6 +12,6 @@ bus.on '*', (payload) ->
     console.log chalk.red error_message
     raven.captureException new Error error_message
   else
-    console.log "Bus: #{@event}"
+    console.log chalk.green "Bus: #{@event}"
 
 module.exports = bus

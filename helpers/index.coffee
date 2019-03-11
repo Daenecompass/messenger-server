@@ -28,5 +28,4 @@ module.exports =
     'social-housing': 'SET_SOCIAL-HOUSING_CONTEXT_INTENT'
     'boardinghouse': 'SET_BOARDINGHOUSE_CONTEXT_INTENT'
 
-  df_message_format: (text) ->
-    [type: 0, speech: text]
+  Js: (object) -> JSON.stringify object, null, 2

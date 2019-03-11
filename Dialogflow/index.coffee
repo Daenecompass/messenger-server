@@ -1,7 +1,7 @@
 is_balanced = require 'is-balanced'
 
 bus = require '../event_bus'
-{regex} = require '../helpers'
+{regex, Js} = require '../helpers'
 df_api = require './df_api'
 df_api_v2 = require './df_api_v2'
 
@@ -26,21 +26,13 @@ response_wellformed = (df_result) ->
 
 
 process_fb_message = ({fb_message, bot}) ->
-  # if fb_message.text.length > 255                   # TODO: redo
-  #   fb_message.text = 'USER_TEXT_TOO_LONG_INTENT'
-  # if fb_message.nlpResponse?
-  #   # NOTE: we're not presently sending df_session
-  #   console.log 'process_fb_message (fb_message): ', JSON.stringify(fb_message, null, 4)
-  #   console.log 'process_fb_message (dialogflowMiddleware): ', JSON.stringify(dialogflowMiddleware, null, 4)
-
-    # df_session = dialogflow_botkit.sessionIds[fb_message.user]
-    # bus.emit 'message from dialogflow', {fb_message, df_response:fb_message.nlpResponse, bot}
-  # dialogflow_botkit.process fb_message, bot
+  # TODO: check for long messages
+  console.log 'process_fb_message (fb_message): ', Js fb_message
   df_result = await df_api_v2
-    query: fb_message.message.text
+    query: fb_message.text
     bot: bot
     sessionId: fb_message.sender.id
-  console.log 'process_fb_message (df_result): ', df_result
+  # console.log 'process_fb_message (df_result): ', df_result
 
   switch
     when not response_wellformed df_result
@@ -71,22 +63,24 @@ process_fb_message = ({fb_message, bot}) ->
 
 interview_user = ({fb_message, bot}) ->
   fb_message.text = 'INTERVIEW_USER_INTENT'
-  # dialogflow_botkit.process fb_message, bot
+  process_fb_message {fb_message, bot}
 
 
 welcome_returning_user = ({fb_message, bot}) ->
+  console.log 'welcome_returning_user (fb_message): ', Js fb_message
   fb_message.text = 'RETURNING_USER_GREETING_INTENT'
-  # dialogflow_botkit.process fb_message, bot
+  process_fb_message {fb_message, bot}
 
 
 follow_up = ({fb_message, bot}) ->
   fb_message.text = fb_message.text.replace regex.follow_up, ''
-  # dialogflow_botkit.process fb_message, bot
+  process_fb_message {fb_message, bot}
 
 
 qr_follow_up = ({fb_message, bot}) ->
   fb_message.text = fb_message.quick_reply?.payload.replace regex.follow_up, ''
-  # dialogflow_botkit.process fb_message, bot
+  console.log 'qr_follow_up (fb_message)', Js fb_message
+  process_fb_message {fb_message, bot}
 
 
 set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
@@ -101,7 +95,6 @@ set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_
 
 user_type_interview_event = (fb_message, df_response, bot) ->
   bus.emit 'message from user: user_type interview', {df_response, fb_message}
-
 
 
 module.exports = {

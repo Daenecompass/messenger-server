@@ -4,7 +4,7 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-{cl, regex, remove_empties} = require '../helpers'
+{regex, remove_empties, Js} = require '../helpers'
 
 # pure FB templates (knowing nothing about DF's or Rentbot's APIs)
 image_reply_template = require './templates/image_reply'
@@ -170,12 +170,16 @@ has_qr_before_more = (text) ->
 
 
 follow_up_reply = (text) ->
+  console.log 'follow_up_reply (text): ', Js text
   [, label, payload] = text.match regex.follow_up_tag
   rest_of_line = text.replace(regex.follow_up_tag, '').trim()
-  [
-    text_reply rest_of_line
-    follow_up_button {label, payload}
-  ]
+  output =
+    [
+      text_reply rest_of_line
+      follow_up_button {label, payload}
+    ]
+  console.log 'follow_up_reply (output): ', Js output
+  output
 
 
 quick_replies_reply = (text) ->
@@ -187,6 +191,7 @@ quick_replies_reply = (text) ->
 
 
 text_processor = (df_message) ->
+  console.log 'text_processor (df_message): ', Js df_message
   cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
@@ -247,16 +252,24 @@ fb_messages_text_contains = (messages, term) ->
 
 
 format = (df_messages) ->
-  console.log 'format (df_messages):', df_messages
+  console.log 'format (df_messages):', Js df_messages
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
     switch df_message.message
-      when 'text' then text_processor df_message
-      when 'card' then card_reply df_message
+      when 'text' then         text_processor df_message
+      when 'card' then         card_reply df_message
       when 'quickReplies' then quick_replies_reply_df_native df_message
-      when 'image' then image_reply df_message
+      when 'image' then        image_reply df_message
       else
-        bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
+        bus.emit 'error: message from dialogflow with unknown type', "Message: #{df_message}"
+
+
+df_text_message_format = (text) ->
+  [
+    message: 'text'
+    text:
+      text: [text]
+  ]
 
 
 module.exports = {
@@ -264,6 +277,7 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
+  df_text_message_format
   # for testing
   text_reply
   text_processor
