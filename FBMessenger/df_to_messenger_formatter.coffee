@@ -4,7 +4,7 @@ _ = require 'lodash'
 flatmap = require 'flatmap'
 
 bus = require '../event_bus'
-{cl, regex, remove_empties} = require '../helpers'
+{regex, remove_empties, Js} = require '../helpers'
 
 # pure FB templates (knowing nothing about DF's or Rentbot's APIs)
 image_reply_template = require './templates/image_reply'
@@ -20,21 +20,21 @@ follow_up_button = require './templates/follow_up_button'
 # these functions translate between dialoglow-style message types, and the FB Messenger API
 
 image_reply = (df_message) ->
-  image_reply_template df_message.imageUrl
+  image_reply_template df_message.image.imageUri
 
 
 card_reply = (df_message) ->
   generic_template
-    title: df_message.title
-    subtitle: df_message.subtitle
-    image_url: df_message.imageUrl
-    buttons: df_message.buttons
+    title: df_message.card.title
+    subtitle: df_message.card.subtitle
+    image_url: df_message.card.imageUri
+    buttons: df_message.card.buttons
 
 
 quick_replies_reply_df_native = (df_message) ->
   quick_replies_template
-    title: df_message.title
-    replies: df_message.replies.map (reply) ->
+    title: df_message.quickReplies.title
+    replies: df_message.quickReplies.quickReplies.map (reply) ->
       title: reply
       payload: reply
 
@@ -52,7 +52,7 @@ quick_replies_reply_handrolled = (qr_tag_contents) ->
 
 
 filter_dialogflow_duplicates = (df_messages) ->
-  _.uniqWith(df_messages, (a, b) -> a.speech?) # I don't understand why this works
+  _.uniqWith(df_messages, (a, b) -> a.text?.text[0]?) # I don't understand why this works
 
 
 remove_sources_tags = (text) -> text.replace /(\[Sources?.+\])/ig, ''
@@ -186,16 +186,15 @@ quick_replies_reply = (text) ->
 
 
 text_processor = (df_message) ->
-  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.speech
+  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
-    if has_followup_before_more line
-      follow_up_reply line
-    else if has_qr_before_more line
-      quick_replies_reply line
-    else
-      text_reply line
+    switch
+      when has_followup_before_more line  then follow_up_reply line
+      when has_qr_before_more line        then quick_replies_reply line
+      else
+        text_reply line
 
 
 msec_delay = (message) ->
@@ -248,13 +247,21 @@ fb_messages_text_contains = (messages, term) ->
 format = (df_messages) ->
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
-    switch df_message.type
-      when 0 then text_processor df_message
-      when 1 then card_reply df_message
-      when 2 then quick_replies_reply_df_native df_message
-      when 3 then image_reply df_message
+    switch
+      when df_message.text? then            text_processor df_message
+      when df_message.card? then            card_reply df_message
+      when df_message.quickReplies? then    quick_replies_reply_df_native df_message
+      when df_message.image? then           image_reply df_message
       else
-        bus.emit 'error: message from dialogflow with unknown type', "Message type: #{df_message.type}"
+        bus.emit 'error: message from dialogflow with unknown type', "Message: #{df_message}"
+
+
+df_text_message_format = (text) ->
+  [
+    message: 'text'
+    text:
+      text: [text]
+  ]
 
 
 module.exports = {
@@ -262,9 +269,8 @@ module.exports = {
   msec_delay
   apply_fn_to_fb_messages
   fb_messages_text_contains
+  df_text_message_format
   # for testing
   text_reply
   text_processor
-  quick_replies_reply_handrolled
-  quick_replies_reply_df_native
 }

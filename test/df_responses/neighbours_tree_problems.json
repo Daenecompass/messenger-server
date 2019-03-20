@@ -1,0 +1,24 @@
+{
+  "responseId": "bfbd3fab-7b4e-4c20-b9c4-4eff79d21674",
+  "queryResult": {
+    "queryText": "trees",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "Landlords are responsible for looking after the garden, including the trees, shrubs and hedges, unless your tenancy agreement says that you are. Problems with neighbour’s trees and boundary hedges can be tricky – the Community Law Manual has information about these issues: [Community Law Manual http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/] You could ask your landlord to talk to your neighbour about resolving problems with trees and hedges. If the landlord refuses, you could send them a 14-day notice. It’s best not to do the work yourself without the landlord’s permission. [FU: Want to know about 14-day notices?: Notice to remedy]",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Landlords are responsible for looking after the garden, including the trees, shrubs and hedges, unless your tenancy agreement says that you are. Problems with neighbour’s trees and boundary hedges can be tricky – the Community Law Manual has information about these issues:\n[Community Law Manual http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/]\nYou could ask your landlord to talk to your neighbour about resolving problems with trees and hedges. If the landlord refuses, you could send them a 14-day notice. It’s best not to do the work yourself without the landlord’s permission.\n[FU: Want to know about 14-day notices?: Notice to remedy]"
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/2d22c3b7-7c18-4fe1-be75-7d6c5024b3f5",
+      "displayName": "Neighbours - tree problems"
+    },
+    "intentDetectionConfidence": 0.58,
+    "languageCode": "en"
+  }
+}

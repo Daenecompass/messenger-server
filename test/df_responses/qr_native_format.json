@@ -1,0 +1,33 @@
+{
+  "responseId": "c69994ef-ee17-49e8-89c2-384d7a1b2810",
+  "queryResult": {
+    "queryText": "testtest",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "quickReplies": {
+          "title": "Do you want to?",
+          "quickReplies": [
+            "Yes",
+            "No"
+          ]
+        },
+        "platform": "FACEBOOK"
+      },
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/f8f61c25-7b2a-4d97-8f9d-d03977b7dc1a",
+      "displayName": "[Meta] Test"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "responseId": "5e5d6fae-3e12-494b-bcf8-503eaae984bd",
+  "queryResult": {
+    "queryText": "testtest",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "Line 1 [FU: Follow-up: follow-up] Line 2 [more] Line 3 Line 4 [more] Line 5 Line 6",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Line 1 [FU: Follow-up: follow-up] \nLine 2\n \n[more]\nLine 3 \n Line 4 \n[more] Line 5 \n Line 6"
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/f8f61c25-7b2a-4d97-8f9d-d03977b7dc1a",
+      "displayName": "[Meta] Test"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

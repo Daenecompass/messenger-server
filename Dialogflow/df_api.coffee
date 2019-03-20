@@ -35,7 +35,7 @@ send_context = ({session, user_type, fb_first_name, on_success, on_failure}) ->
     headers: headers
   , (err, r, body) ->
     if err
-      on_failure
+      on_failure err
     else
       on_success
 

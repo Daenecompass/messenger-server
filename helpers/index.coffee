@@ -1,4 +1,6 @@
 module.exports =
+  cl: console.log
+
   regex:
     tell_me_more: /^tell_me_more: ?/i
     follow_up: /^follow_up: ?/i
@@ -14,14 +16,11 @@ module.exports =
     follow_up_tag: /\[fu: ?(.*?): ?(.*?)\]/i
     quick_replies_tag: /\[qr: (.+?)\]/i
 
-
   remove_empties: (arr) -> arr.filter (x) -> x isnt ''
-
 
   remove_tell_me_more_in_fb_message: (fb_message) ->
     fb_message.text = fb_message.text.replace @tell_me_more_regex, ''
     fb_message
-
 
   user_type_to_intent:
     'landlord': 'SET_LANDLORD_CONTEXT_INTENT'
@@ -29,6 +28,4 @@ module.exports =
     'social-housing': 'SET_SOCIAL-HOUSING_CONTEXT_INTENT'
     'boardinghouse': 'SET_BOARDINGHOUSE_CONTEXT_INTENT'
 
-
-  df_message_format: (text) ->
-    [type: 0, speech: text]
+  Js: (object) -> JSON.stringify object, null, 2

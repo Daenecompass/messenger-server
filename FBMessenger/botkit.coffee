@@ -23,6 +23,7 @@ fbuser = require('botkit-middleware-fbuser')
   logLevel: 'error'
   expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
   storage: controller.storage
+
 controller.middleware.receive.use fbuser.receive
 
 bot = controller.spawn()

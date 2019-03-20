@@ -2,8 +2,14 @@ bus = require '../event_bus'
 botkit = require './botkit'
 {replace} = require 'lodash/fp'
 
-{fb_messages_text_contains, apply_fn_to_fb_messages, msec_delay, format} = require './df_to_messenger_formatter'
-{regex, df_message_format} = require '../helpers'
+{
+  fb_messages_text_contains
+  apply_fn_to_fb_messages
+  msec_delay
+  format
+  df_text_message_format
+} = require './df_to_messenger_formatter'
+{regex} = require '../helpers'
 
 
 is_get_started_postback = (fb_message) ->
@@ -44,7 +50,6 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
       setTimeout () ->
         bot.reply original_fb_message, message
         bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
-        bus.emit "message to user", {fb_message:original_fb_message, message}
       , cumulative_wait
 
       if index < processed_fb_messages.length - 1
@@ -58,14 +63,14 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
     cumulative_wait += msec_delay message
 
 
-process_df_response_into_fb_messages = ({fb_message, df_response, bot}) ->
-  fb_messages = format df_response.result.fulfillment.messages
+process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
+  fb_messages = format df_result.fulfillmentMessages
   send_queue {fb_messages, fb_message, bot}
 
 
 tell_me_more = ({fb_message, bot}) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?([\s\S]*)/i)?[1]
-  fb_messages = format df_message_format tell_me_more_content
+  fb_messages = format df_text_message_format tell_me_more_content
   send_queue {fb_messages, fb_message, bot}
 
 
@@ -101,14 +106,13 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
 
 
 botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
-  event = switch
-    when is_get_started_postback fb_message then 'postback: get started'
-    when is_tell_me_more_postback fb_message then 'postback: tell me more'
-    when is_follow_up_postback fb_message then 'postback: follow up'
-    when is_follow_up_message fb_message then 'quick reply: follow up'
+  event =
+    if is_get_started_postback fb_message then 'postback: get started'
+    else if is_tell_me_more_postback fb_message then 'postback: tell me more'
+    else if is_follow_up_postback fb_message then 'postback: follow up'
+    else if is_follow_up_message fb_message then 'quick reply: follow up'
     else 'message from user'
   bus.emit event, {fb_message, bot}
-
 
 
 module.exports = {

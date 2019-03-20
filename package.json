@@ -12,18 +12,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "api-ai-botkit": "github:Citizen-AI/dialogflow-botkit-client",
-    "botkit": "^0.7.4",
+    "botkit": "^0.6.21",
+    "botkit-middleware-dialogflow": "^2.0.4",
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
     "coffeescript": "^2.3.2",
+    "dialogflow": "^0.8.2",
     "dotenv": "^6.2.0",
-    "envalid": "^4.2.2",
+    "envalid": "^4.2.1",
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
     "is-balanced": "^1.0.2",
-    "mongodb": "^3.1.13",
     "raven": "^2.6.4"
   },
   "devDependencies": {

@@ -1,35 +1,24 @@
 {
-  "id": "9aa25927-c824-4cfa-afd7-0ac68bf1bb9b",
-  "timestamp": "2019-02-24T21:27:40.3Z",
-  "lang": "en",
-  "result": {
-    "source": "agent",
-    "resolvedQuery": "insulation",
-    "action": "",
-    "actionIncomplete": false,
+  "responseId": "ff5dbc69-cb09-4369-af5b-5da4d8db22da",
+  "queryResult": {
+    "queryText": "insulation responsibility",
     "parameters": {},
-    "contexts": [],
-    "metadata": {
-      "intentId": "00480da7-59aa-489d-a4dd-18e9db7827d5",
-      "webhookUsed": "false",
-      "webhookForSlotFillingUsed": "false",
-      "isFallbackIntent": "false",
-      "intentName": "Insulation responsibility"
-    },
-    "fulfillment": {
-      "speech": "From 1 July 2019 all landlords are responsible for installing ceiling and floor insulation in residential rental housing where it’s ‘reasonably practicable’ to install. It’s not compulsory to install wall insulation. (From 1 July 2016 all social housing providers have been responsible for installing ceiling and underfloor insulation.) Both new and existing ceiling and underfloor insulation must comply with regulations about thickness etc. and be safely installed. [Read more https://www.tenancy.govt.nz/maintenance-and-inspections/insulation/compulsory-insulation] [FU: Want to know what to do if the landlord says they can’t insulate?: Landlord says they can't insulate]",
-      "messages": [
-        {
-          "type": 0,
-          "speech": "Both new and existing ceiling and underfloor insulation must comply with regulations about thickness etc. and be safely installed.\n[Read more https://www.tenancy.govt.nz/maintenance-and-inspections/insulation/compulsory-insulation]\n[FU: Want to know what to do if the landlord says they can’t insulate?: Landlord says they can't insulate]"
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "From 1 July 2019 all landlords are responsible for installing ceiling and floor insulation in residential rental housing where it’s ‘reasonably practicable’ to install. It’s not compulsory to install wall insulation. (From 1 July 2016 all social housing providers have been responsible for installing ceiling and underfloor insulation.) Both new and existing ceiling and underfloor insulation must comply with regulations about thickness etc. and be safely installed. [Read more https://www.tenancy.govt.nz/maintenance-and-inspections/insulation/compulsory-insulation] [FU: Want to know what to do if the landlord says they can’t insulate?: Landlord says they can't insulate]",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "From 1 July 2019 all landlords are responsible for installing ceiling and floor insulation in residential rental housing where it’s ‘reasonably practicable’ to install. It’s not compulsory to install wall insulation. (From 1 July 2016 all social housing providers have been responsible for installing ceiling and underfloor insulation.)\nBoth new and existing ceiling and underfloor insulation must comply with regulations about thickness etc. and be safely installed.\n[Read more https://www.tenancy.govt.nz/maintenance-and-inspections/insulation/compulsory-insulation]\n[FU: Want to know what to do if the landlord says they can’t insulate?: Landlord says they can't insulate]"
+          ]
         }
-      ]
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/00480da7-59aa-489d-a4dd-18e9db7827d5",
+      "displayName": "Insulation responsibility"
     },
-    "score": 1
-  },
-  "status": {
-    "code": 200,
-    "errorType": "success"
-  },
-  "sessionId": "e7de72a6-2d3d-1108-42bb-fc311b940394"
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
 }

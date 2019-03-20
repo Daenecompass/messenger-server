@@ -7,11 +7,9 @@ raven.context () ->
   df = require './Dialogflow'   # connects to Dialogflow agent (via botkit & DF api)
   fb = require './FBMessenger'  # connects to Messenger; receives messages from user
                                 # formats & sends messages to user; persists state across sessions
-  logger = require './logger'
 
   # events from FBMessenger
   bus.on 'message from user', df.process_fb_message
-  bus.on 'message from user', logger.from_fb
   bus.on 'postback: get started', fb.check_user_type
   bus.on 'postback: tell me more', fb.tell_me_more
   bus.on 'postback: follow up', df.follow_up
@@ -23,9 +21,5 @@ raven.context () ->
 
   # events from Dialogflow
   bus.on 'message from dialogflow', fb.check_session
-  bus.on 'message from dialogflow', logger.from_df
   bus.on 'message from dialogflow', fb.process_df_response_into_fb_messages
   bus.on 'message from user: user_type interview', fb.store_user_type
-
-  # events to FBMessenger
-  bus.on 'message to user', logger.to_fb
