@@ -1,0 +1,22 @@
+{
+  "responseId": "07c9dd74-136a-4c7e-847b-7eac3f9455c7",
+  "queryResult": {
+    "queryText": "testtest",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "image": {
+          "imageUri": "https://i.imgur.com/eDeFrY9.jpg"
+        },
+        "platform": "FACEBOOK"
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/f8f61c25-7b2a-4d97-8f9d-d03977b7dc1a",
+      "displayName": "[Meta] Test"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

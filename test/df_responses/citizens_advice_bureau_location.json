@@ -1,0 +1,24 @@
+{
+  "responseId": "adfa77cd-6a97-43c2-b305-0ac8dd05e543",
+  "queryResult": {
+    "queryText": "where can I find a CAB",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "You can find Citizen Advice Bureaus here: [Find a CAB https://www.google.com/maps/search/citizen's+advice+near+me/]",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "You can find Citizen Advice Bureaus here:\n[Find a CAB https://www.google.com/maps/search/citizen's+advice+near+me/]"
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/1a037ae3-0cc6-4903-ac71-6c07ab897cbe",
+      "displayName": "Citizens Advice Bureau location"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

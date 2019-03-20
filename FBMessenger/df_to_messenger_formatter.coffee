@@ -24,7 +24,6 @@ image_reply = (df_message) ->
 
 
 card_reply = (df_message) ->
-  # console.log 'card_reply (df_message):', df_message
   generic_template
     title: df_message.card.title
     subtitle: df_message.card.subtitle
@@ -170,16 +169,12 @@ has_qr_before_more = (text) ->
 
 
 follow_up_reply = (text) ->
-  console.log 'follow_up_reply (text): ', Js text
   [, label, payload] = text.match regex.follow_up_tag
   rest_of_line = text.replace(regex.follow_up_tag, '').trim()
-  output =
-    [
-      text_reply rest_of_line
-      follow_up_button {label, payload}
-    ]
-  console.log 'follow_up_reply (output): ', Js output
-  output
+  [
+    text_reply rest_of_line
+    follow_up_button {label, payload}
+  ]
 
 
 quick_replies_reply = (text) ->
@@ -191,17 +186,15 @@ quick_replies_reply = (text) ->
 
 
 text_processor = (df_message) ->
-  console.log 'text_processor (df_message): ', Js df_message
   cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
-    if has_followup_before_more line
-      follow_up_reply line
-    else if has_qr_before_more line
-      quick_replies_reply line
-    else
-      text_reply line
+    switch
+      when has_followup_before_more line  then follow_up_reply line
+      when has_qr_before_more line        then quick_replies_reply line
+      else
+        text_reply line
 
 
 msec_delay = (message) ->
@@ -252,14 +245,13 @@ fb_messages_text_contains = (messages, term) ->
 
 
 format = (df_messages) ->
-  console.log 'format (df_messages):', Js df_messages
   unique_df_messages = filter_dialogflow_duplicates df_messages
   flatmap unique_df_messages, (df_message) ->
-    switch df_message.message
-      when 'text' then         text_processor df_message
-      when 'card' then         card_reply df_message
-      when 'quickReplies' then quick_replies_reply_df_native df_message
-      when 'image' then        image_reply df_message
+    switch
+      when df_message.text? then            text_processor df_message
+      when df_message.card? then            card_reply df_message
+      when df_message.quickReplies? then    quick_replies_reply_df_native df_message
+      when df_message.image? then           image_reply df_message
       else
         bus.emit 'error: message from dialogflow with unknown type', "Message: #{df_message}"
 
@@ -281,6 +273,4 @@ module.exports = {
   # for testing
   text_reply
   text_processor
-  quick_replies_reply_handrolled
-  quick_replies_reply_df_native
 }

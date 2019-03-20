@@ -1,0 +1,24 @@
+{
+  "responseId": "faa01eb7-e577-4e23-b902-12f7cece48c9",
+  "queryResult": {
+    "queryText": "testtest",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "Line 1 [FU: text to user: text to DF] [more] Line 2",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Line 1\n[FU: text to user: text to DF]\n[more]\nLine 2"
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/f8f61c25-7b2a-4d97-8f9d-d03977b7dc1a",
+      "displayName": "[Meta] Test"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

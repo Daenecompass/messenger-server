@@ -15,4 +15,3 @@ describe 'tell_me_more', ->
     tell_me_more_content = fb_message.text.match(/^tell_me_more: ?([\s\S]*)/i)?[1]
     tell_me_more_content #
     fb_messages = format df_text_message_format tell_me_more_content
-    console.log fb_messages

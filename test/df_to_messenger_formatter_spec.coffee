@@ -6,7 +6,7 @@
   quick_replies_reply_df_native
   quick_replies_reply_handrolled
 } = require '../FBMessenger/df_to_messenger_formatter'
-{cl} = require '../helpers'
+{cl, Js} = require '../helpers'
 
 chai = require 'chai'
 chai.use require 'chai-subset'
@@ -14,11 +14,38 @@ chai.use require 'chai-subset'
 
 
 describe 'format', ->
+  it 'should handle messages with an image', ->
+    df_response = require './df_responses/image.json'
+    expect format df_response.queryResult.fulfillmentMessages
+      .to.containSubset [
+        attachment:
+          type: 'image'
+          payload: url: 'https://i.imgur.com/eDeFrY9.jpg'
+        ]
+
+  it 'should handle messages with a correctly formatted QR tag contents', ->
+    df_response = require './df_responses/qr_native_format.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0].quick_replies[1].title
+      .to.equal 'No'
+    expect output[0].quick_replies[1].payload
+      .to.equal 'No'
+
+
+  it 'should handle messages including a card', ->
+    df_response = require './df_responses/bond_refund_form.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0].attachment.payload.elements[0].buttons[0]
+      .to.containSubset
+        type: 'web_url'
+        url: 'https://www.tenancy.govt.nz/assets/Forms-templates/bond-refund-form.pdf'
+        title: 'Download the pdf'
+
+
   it 'should handle a message with both a button and follow-up', ->
-    fake_df_response = require './df_responses/insulation_responsibility.json'
-    formatted = format fake_df_response.result.fulfillment.messages
-    formatted #
-    expect formatted[0]
+    df_response = require './df_responses/insulation_responsibility.json'
+    formatted = format df_response.queryResult.fulfillmentMessages
+    expect formatted[1]
       .to.containSubset
         attachment:
           payload:
@@ -26,8 +53,8 @@ describe 'format', ->
 
 
   it 'should handle Dialogflow native quick-reply messages', ->
-    fake_df_response = require './df_responses/get_started.json'
-    formatted = format fake_df_response.result.fulfillment.messages
+    df_response = require './df_responses/get_started.json'
+    formatted = format df_response.queryResult.fulfillmentMessages
     expect formatted[1]
       .to.containSubset
         quick_replies: [
@@ -37,10 +64,8 @@ describe 'format', ->
         ]
 
   it 'should properly format this complicated message', ->
-    expect format [
-      type: 0
-      speech: "Line 1 [FU: Follow-up: follow-up] \nLine 2\n \n[more]\nLine 3 \n Line 4 \n[more] Line 5 \n Line 6"
-    ]
+    df_response = require './df_responses/complicated_message.json'
+    expect format df_response.queryResult.fulfillmentMessages
       .to.containSubset [
         'Line 1'
       ,
@@ -68,17 +93,58 @@ describe 'format', ->
       ]
 
   it 'should give just one message if a dialogflow response has the [FU] after [more]', ->
-    expect format [type: 0, speech: "Line 1\n[more]\nLine 2\n[FU: Follow-up: follow-up]"]
+    df_response = require './df_responses/fu_after_more.json'
+    expect format df_response.queryResult.fulfillmentMessages
       .to.have.length(1)
 
   it 'should give two messages if a dialogflow response has the [FU] before [more]', ->
-    expect format [type: 0, speech: "Line 1 [FU: Follow-up: follow-up][more]\nLine 2"]
+    df_response = require './df_responses/fu_before_more.json'
+    expect format df_response.queryResult.fulfillmentMessages
       .to.have.length(2)
 
-  it 'should split a two-line df response into two messages', ->
-    fake_df_response = require './df_responses/being_taken_to_tt.json'
-    expect format fake_df_response.result.fulfillment.messages
+  it 'should split a three-line df response into two messages', ->
+    df_response = require './df_responses/bond_lodging_correct_process.json'
+    expect format df_response.queryResult.fulfillmentMessages
       .to.have.length(2)
+
+  it 'should use a pin emoji for google maps links', ->
+    df_response = require './df_responses/citizens_advice_bureau_location.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0].attachment.payload.buttons[0]
+      .to.eql
+        type: 'web_url'
+        title: '📍 Find a CAB'
+        url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
+
+  it 'should use a book emoji for Community Law Manual links', ->
+    df_response = require './df_responses/neighbours_tree_problems.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0].attachment.payload.buttons[0]
+      .to.eql
+        type: 'web_url'
+        title: '📖 Community Law Manual'
+        url: "http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/"
+
+  it 'should handle phone numbers & web sites', ->
+    df_response = require './df_responses/tenancy_services_contacts.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0]
+      .to.containSubset
+        attachment:
+          type: 'template'
+          payload:
+            template_type: 'button'
+            text: "Here are Tenancy Services' contacts:"
+            buttons: [
+              type: 'web_url'
+              title: '🔗 Tenancy Services'
+              url: 'https://www.tenancy.govt.nz/'
+            ,
+              type: 'phone_number'
+              title: '📞 Tenancy Services'
+              payload: '0800 836 262'
+            ]
+
 
 
 describe 'text_reply', ->
@@ -109,16 +175,16 @@ describe 'text_reply', ->
 
 describe 'text_processor', ->
   it 'should include no empty messages', ->
-    processed = text_processor speech: """
+    processed = text_processor text: text: ["""
 If you need to build a fence for your pet.
 [FU: Want to know more?: Fixture definition]
 [Source: https://www.aucklandcouncil.govt.nz/; s42(1) RTA]
-    """
+    """]
     expect processed
       .to.not.containSubset ['']
 
   it 'should, given a df_message with QR tags, handle it properly', ->
-    processed = text_processor speech: 'Something [QR: Title; Option 1: opt1]'
+    processed = text_processor text: text: ['Something [QR: Title; Option 1: opt1]']
     expect processed
       .to.containSubset [
         'Something'
@@ -131,20 +197,15 @@ If you need to build a fence for your pet.
         ]
       ]
 
-  # it 'should preseve newlines in Tell me more payload', ->
-  #   formatted = text_processor speech: 'Line 1\n[more]\nLine 2\nLine 3\n[more]\nLine 4'
-  #   expect formatted[0].attachment.payload.buttons[0].payload
-  #     .to.equal 'TELL_ME_MORE:Line 2\nLine 3\n[more]\nLine 4'
-  #
-  #
   it 'should, given a df_message with a source, omit that part', ->
-    fake_df_message = speech: 'If the boarding house.\n[Sources: https://www.tenancy.govt.nz; http://communitylaw.org.nz]'
+    fake_df_message = text: text:
+      ['If the boarding house.\n[Sources: https://www.tenancy.govt.nz; http://communitylaw.org.nz]']
     expect (text_processor fake_df_message)[0]
       .to.equal 'If the boarding house.'
 
   it 'should, given a df_message with a follow-up tag, return an appropriately formatted message', ->
-    fake_df_message =
-      speech: '[FU: Want to know about your rights as a boarding house tenant?: What are my rights as a boarding house tenant?]'
+    fake_df_message = text: text:
+      ['[FU: Want to know about your rights as a boarding house tenant?: What are my rights as a boarding house tenant?]']
     expect text_processor fake_df_message
       .to.containSubset [
         text: 'Want to know about your rights as a boarding house tenant?'
@@ -155,11 +216,11 @@ If you need to build a fence for your pet.
       ]
 
   it 'should handle df_messages with multiple button tags, both formats', ->
-    fake_df_message = speech: """
+    fake_df_message = text: text: ["""
 Citizen AI is developing Rentbot.
 [Citizen AI http://citizenai.nz; Google http://google.com]
 [Community Law http://communitylaw.org.nz/]
-"""
+"""]
     processed = text_processor fake_df_message
     expect processed[0].attachment.payload
       .to.containSubset
@@ -179,53 +240,9 @@ Citizen AI is developing Rentbot.
           title: '🔗 Community Law'
         ]
 
-  it 'should handle phone numbers', ->
-    fake_df_message =
-      speech: 'Call the police \n [OHRP 09 375 8623] [Hell Pizza 0800 666 111]\n[Police 111]'
-    expect text_processor fake_df_message
-      .to.containSubset [
-        attachment:
-          type: 'template'
-          payload:
-            template_type: 'button'
-            text: 'Call the police'
-            buttons: [
-              type: 'phone_number'
-              title: '📞 OHRP'
-              payload: '09 375 8623'
-            ,
-              type: 'phone_number'
-              title: '📞 Hell Pizza'
-              payload: '0800 666 111'
-            ,
-              type: 'phone_number'
-              title: '📞 Police'
-              payload: '111'
-            ]
-      ]
-
-  it 'should use a pin emoji for google maps links', ->
-    fake_df_message = speech: "Hi [CABs near you https://www.google.com/maps/search/citizen's+advice+near+me/]"
-    result = text_processor fake_df_message
-    expect result[0].attachment.payload.buttons[0]
-      .to.eql
-        type: 'web_url'
-        title: '📍 CABs near you'
-        url: "https://www.google.com/maps/search/citizen's+advice+near+me/"
-
-  it 'should use a book emoji for Community Law Manual links', ->
-    fake_df_message = speech: "Hi [Trees http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/]"
-    result = text_processor fake_df_message
-    expect result[0].attachment.payload.buttons[0]
-      .to.eql
-        type: 'web_url'
-        title: '📖 Trees'
-        url: "http://communitylaw.org.nz/community-law-manual/chapter-25-neighbourhood-life/trees/"
-
-
   it 'should return the same result whether or not there are newlines before tags', ->
-    fake_df_message1 = speech: 'Call the police [Police 111]'
-    fake_df_message2 = speech: "Call the police\n[Police 111]"
+    fake_df_message1 = text: text: ['Call the police [Police 111]']
+    fake_df_message2 = text: text: ["Call the police\n[Police 111]"]
     subset = [
       attachment:
         type: 'template'
@@ -292,23 +309,3 @@ describe 'msec_delay', ->
           title: "Google"
     expect msec_delay message
       .equal 3000
-
-
-describe 'quick_replies_reply_handrolled', ->
-  it 'should work, given a correctly formatted QR tag contents', ->
-    qr_tag_content = 'Some title; Yeah: Tenancy agreement definition; Nah: Subletting'
-    output = quick_replies_reply_handrolled qr_tag_content
-    expect output.quick_replies[1].title
-      .to.equal('Nah')
-    expect output.quick_replies[1].payload
-      .to.equal('FOLLOW_UP: Subletting')
-
-
-describe 'quick_replies_reply_df_native', ->
-  it 'should work, given a properly formatted Dialogflow-style quick replies message', ->
-    fake_df_message = require './df_responses/message_qr.json'
-    output = quick_replies_reply_df_native fake_df_message
-    expect output.quick_replies[2].title
-      .to.equal('Maybe')
-    expect output.quick_replies[2].payload
-      .to.equal('Maybe')

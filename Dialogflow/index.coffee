@@ -27,12 +27,10 @@ response_wellformed = (df_result) ->
 
 process_fb_message = ({fb_message, bot}) ->
   # TODO: check for long messages
-  console.log 'process_fb_message (fb_message): ', Js fb_message
   df_result = await df_api_v2
     query: fb_message.text
     bot: bot
     sessionId: fb_message.sender.id
-  # console.log 'process_fb_message (df_result): ', df_result
 
   switch
     when not response_wellformed df_result
@@ -67,7 +65,6 @@ interview_user = ({fb_message, bot}) ->
 
 
 welcome_returning_user = ({fb_message, bot}) ->
-  console.log 'welcome_returning_user (fb_message): ', Js fb_message
   fb_message.text = 'RETURNING_USER_GREETING_INTENT'
   process_fb_message {fb_message, bot}
 
@@ -79,7 +76,6 @@ follow_up = ({fb_message, bot}) ->
 
 qr_follow_up = ({fb_message, bot}) ->
   fb_message.text = fb_message.quick_reply?.payload.replace regex.follow_up, ''
-  console.log 'qr_follow_up (fb_message)', Js fb_message
   process_fb_message {fb_message, bot}
 
 

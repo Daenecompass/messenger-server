@@ -1,0 +1,24 @@
+{
+  "responseId": "6a00c019-0728-41f6-a1e4-ba59b98bbf7f",
+  "queryResult": {
+    "queryText": "testtest",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "[QR: Some title text; Opt 1: opt 1 to df; Opt 2: opt 2 to df]",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "[QR: Some title text; Opt 1: opt 1 to df; Opt 2: opt 2 to df]"
+          ]
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/f8f61c25-7b2a-4d97-8f9d-d03977b7dc1a",
+      "displayName": "[Meta] Test"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}

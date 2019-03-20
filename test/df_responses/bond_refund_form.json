@@ -1,0 +1,42 @@
+{
+  "responseId": "d8fb7544-c1e2-43d4-8094-754a316f29d1",
+  "queryResult": {
+    "queryText": "bond refund form",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "card": {
+          "title": "Bond refund form",
+          "imageUri": "https://i.imgur.com/lVdKV3i.png",
+          "buttons": [
+            {
+              "text": "Download the pdf",
+              "postback": "https://www.tenancy.govt.nz/assets/Forms-templates/bond-refund-form.pdf"
+            }
+          ]
+        },
+        "platform": "FACEBOOK"
+      },
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects/rentbot-apiv2/agent/sessions/474156e3-5e11-9bce-68d4-8cee283427f0/contexts/interviewuser-followup",
+        "lifespanCount": 1
+      }
+    ],
+    "intent": {
+      "name": "projects/rentbot-apiv2/agent/intents/67f51b15-f3f5-4dec-a40e-7d43679ddbe3",
+      "displayName": "Bond Refund form"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  }
+}
