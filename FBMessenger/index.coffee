@@ -82,9 +82,8 @@ check_user_type = ({fb_message, bot}) ->
       bus.emit 'user with unknown type starts', {fb_message, bot}
 
 
-store_user_type = ({df_response, fb_message}) ->
+store_user_type = ({user_type, fb_message}) ->
   bus.emit 'Saving user type to db'
-  user_type = df_response.result.action.match(/Interviewuser\.(.*)/)[1]
   botkit.storage.users.get fb_message.user, (err, user_data) ->
     user_data.user_type = user_type
     botkit.storage.users.save user_data

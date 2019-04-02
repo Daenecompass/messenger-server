@@ -32,6 +32,8 @@ process_fb_message = ({fb_message, bot}) ->
     bot: bot
     sessionId: fb_message.sender.id
 
+  console.log 'process_fb_message: df_result.action:', Js df_result.action
+
   switch
     when not response_wellformed df_result
       bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
@@ -43,20 +45,11 @@ process_fb_message = ({fb_message, bot}) ->
         df_session: fb_message.sender.id
       }
 
-# TODO:
-# dialogflow_botkit
-#   .all (fb_message, df_response, bot) ->
-#     if no_speech_in_response df_response
-#       bus.emit 'error: message from dialogflow without speech in it'
-#     else
-#       if not response_wellformed df_response
-#         bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
-#       df_session = dialogflow_botkit.sessionIds[fb_message.user]
-#       bus.emit 'message from dialogflow', {fb_message, df_response, bot, df_session}
-#   .action 'Interviewuser.landlord', user_type_interview_event
-#   .action 'Interviewuser.boardinghouse', user_type_interview_event
-#   .action 'Interviewuser.private', user_type_interview_event
-#   .action 'Interviewuser.social-housing', user_type_interview_event
+  if df_result.action?.match /Interviewuser\..*/
+    bus.emit 'message from user: user_type interview', {
+      user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
+      fb_message
+    }
 
 
 interview_user = ({fb_message, bot}) ->
@@ -87,10 +80,6 @@ set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_
     on_success: bus.emit 'context sent to dialogflow', {fb_message, bot, user_type, df_response}
     on_failure: (err) -> bus.emit 'Error: problem communicating with Dialogflow: ', err
   }
-
-
-user_type_interview_event = (fb_message, df_response, bot) ->
-  bus.emit 'message from user: user_type interview', {df_response, fb_message}
 
 
 module.exports = {
