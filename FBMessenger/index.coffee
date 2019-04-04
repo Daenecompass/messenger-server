@@ -9,7 +9,7 @@ botkit = require './botkit'
   format
   df_text_message_format
 } = require './df_to_messenger_formatter'
-{regex} = require '../helpers'
+{regex, Js} = require '../helpers'
 
 
 is_get_started_postback = (fb_message) ->
@@ -77,7 +77,12 @@ tell_me_more = ({fb_message, bot}) ->
 check_user_type = ({fb_message, bot}) ->
   botkit.storage.users.get fb_message.user, (err, user_data) ->
     if user_data.user_type?
-      bus.emit 'user returns with type set', {fb_message, bot, user_type:user_data.user_type}
+      bus.emit 'user returns with type set', {
+        fb_message
+        bot
+        user_type: user_data.user_type
+        df_session: fb_message.sender.id
+      }
     else
       bus.emit 'user with unknown type starts', {fb_message, bot}
 

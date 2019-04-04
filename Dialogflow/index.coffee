@@ -2,8 +2,7 @@ is_balanced = require 'is-balanced'
 
 bus = require '../event_bus'
 {regex, Js} = require '../helpers'
-df_api = require './df_api'
-df_api_v2 = require './df_api_v2'
+{df_query, send_context} = require './df_api_v2'
 
 
 no_speech_in_response = (df_response) ->
@@ -26,14 +25,10 @@ response_wellformed = (df_result) ->
 
 
 process_fb_message = ({fb_message, bot}) ->
-  # TODO: check for long messages
-  df_result = await df_api_v2
+  df_result = await df_query
     query: fb_message.text
+    session_id: fb_message.sender.id
     bot: bot
-    sessionId: fb_message.sender.id
-
-  console.log 'process_fb_message: df_result.action:', Js df_result.action
-
   switch
     when not response_wellformed df_result
       bus.emit 'error: message from dialogflow is malformed', "Message text: #{fb_message.message.text}"
@@ -44,7 +39,6 @@ process_fb_message = ({fb_message, bot}) ->
         bot
         df_session: fb_message.sender.id
       }
-
   if df_result.action?.match /Interviewuser\..*/
     bus.emit 'message from user: user_type interview', {
       user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
@@ -72,14 +66,13 @@ qr_follow_up = ({fb_message, bot}) ->
   process_fb_message {fb_message, bot}
 
 
-set_user_type = ({fb_message, bot, user_type, df_session, df_response, fb_first_name}) ->
-  df_api.send_context {
-    session: df_session
+set_user_type = ({user_type, df_session, fb_first_name}) ->
+  send_context
+    session_id: df_session
     user_type: user_type
     fb_first_name: fb_first_name
-    on_success: bus.emit 'context sent to dialogflow', {fb_message, bot, user_type, df_response}
-    on_failure: (err) -> bus.emit 'Error: problem communicating with Dialogflow: ', err
-  }
+    on_success: () -> bus.emit 'context sent to dialogflow'
+    on_failure: () -> bus.emit 'Error: problem communicating with Dialogflow'
 
 
 module.exports = {
