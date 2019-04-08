@@ -2,7 +2,6 @@ require('dotenv').load()
 envalid = require 'envalid'
 {str} = envalid
 envalid.cleanEnv process.env,
-  dialogflow_client_token: str()
   mongoatlas_user: str()
   mongoatlas_password: str()
   mongoatlas_db_string: str()
