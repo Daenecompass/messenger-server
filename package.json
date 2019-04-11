@@ -16,13 +16,14 @@
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",
-    "coffeescript": "^2.4.0",
+    "coffeescript": "^2.4.1",
     "dialogflow": "^0.8.2",
     "dotenv": "^6.2.0",
     "envalid": "^4.2.1",
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
     "is-balanced": "^1.0.2",
+    "mongodb": "^3.2.3",
     "raven": "^2.6.4"
   },
   "devDependencies": {
