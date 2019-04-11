@@ -1,33 +1,24 @@
-MongoClient = require('mongodb').MongoClient
+mongoose = require 'mongoose'
+
 bus = require '../event_bus'
-{Js} = require '../helpers'
-
-url = "mongodb://localhost"
-dbName = 'rentbot-local'
-client = new MongoClient url
 
 
-connect = () ->
-  try
-    conn = await client.connect()
-    conn.db dbName
-  catch e
-    bus.emit 'error:', e, 'Logging is disabled'
-    null
+mongoose.connect 'mongodb://localhost/rentbot-local', useNewUrlParser: true
+  .then (m) ->
+    bus.emit "connected to database: #{m.connections[0].host}/#{m.connections[0].name}"
+
+Schema = mongoose.Schema
+ObjectId = mongoose.Schema.Types.ObjectId
+
+Event = mongoose.model 'Event',
+  event_type: String
+  user: ObjectId
+  user_said: String
+  bot_said: String
+  df_session: String
+  df_messages: Array
 
 
-db = connect()
-if db
-  db.then (conn) ->
-    bus.emit "connected to database: #{conn.s.databaseName}"
-
-module.exports =
-  db: db
-
-  users_collection: () ->
-    conn = await db
-    conn.collection 'users'
-
-  events_collection: () ->
-    conn = await db
-    conn.collection 'events'
+module.exports = {
+  Event
+}
