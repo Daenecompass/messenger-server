@@ -3,7 +3,7 @@ mongoose = require 'mongoose'
 bus = require '../event_bus'
 
 
-mongoose.connect 'mongodb://localhost/rentbot-local', useNewUrlParser: true
+mongoose.connect process.env.mongoatlas_db_string, useNewUrlParser: true
   .then (m) ->
     bus.emit "STARTUP: connected to database #{m.connections[0].host}/#{m.connections[0].name}"
 
