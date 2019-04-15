@@ -39,11 +39,17 @@ process_fb_message = ({fb_message, bot}) ->
         bot
         df_session: fb_message.sender.id
       }
-  if df_result.action?.match /Interviewuser\..*/
-    bus.emit 'message from user: user_type interview', {
-      user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
-      fb_message
-    }
+  switch
+    when df_result.action?.match /Interviewuser\..*/
+      bus.emit 'message from user: user_type interview', {
+        user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
+        fb_message
+      }
+    when df_result.action is 'feedback' and df_result.parameters?.fields?.feedback?.stringValue?
+      bus.emit 'user feedback received', {
+        user_id: fb_message.sender.id
+        feedback: df_result.parameters.fields.feedback.stringValue
+      }
 
 
 interview_user = ({fb_message, bot}) ->

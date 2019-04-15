@@ -23,7 +23,7 @@
     "eventemitter2": "^5.0.1",
     "flatmap": "0.0.3",
     "is-balanced": "^1.0.2",
-    "mongoose": "^5.5.0",
+    "mongoose": "^5.5.1",
     "raven": "^2.6.4"
   },
   "devDependencies": {

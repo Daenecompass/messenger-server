@@ -2,25 +2,19 @@ chai = require 'chai'
 chai.use require 'chai-subset'
 {expect} = chai
 
+mongoose = require 'mongoose'
 
-{users_collection, events_collection} = require('../logger/db')
+{User, Event} = require '../logger/db'
+{Js} = require '../helpers'
+
+ObjectId = mongoose.Schema.Types.ObjectId
 
 
 describe 'db', ->
-  # it 'should connect to the database', ->
-  #   db_connection (conn) ->
-  #     expect conn.db()
-  #       .to.not.be.null
-
-  it 'should find some records', ->
-    users = await users_collection()
-    all_users = await users.find({}).toArray()
-    expect all_users.length
-      .to.be.at.least 1
-
-
-  it 'should let me insert a record', ->
-    events = await events_collection()
-    events.insertOne
-      timestamp: Date.now()
-      note: 'Wallaby test run'
+  it 's models should populate', ->
+    User
+      .find()
+      .populate 'events'
+      .then (x) ->
+        expect x[0].events.length
+          .to.be.at.least 4

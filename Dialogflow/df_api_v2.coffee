@@ -5,10 +5,12 @@
 dialogflow = require 'dialogflow'
 
 {regex, Js} = require '../helpers'
+bus = require '../event_bus'
 
 
 project_id = process.env.google_project_id
 config = credentials: JSON.parse process.env.google_creds
+bus.emit "STARTUP: using Dialogflow project #{project_id}"
 
 user_type_to_contexts =
   'landlord': ['landlord']

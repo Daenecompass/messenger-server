@@ -50,6 +50,10 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
       setTimeout () ->
         bot.reply original_fb_message, message
         bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
+        bus.emit 'message to user', {
+          fb_message: original_fb_message
+          message
+        }
       , cumulative_wait
 
       if index < processed_fb_messages.length - 1

@@ -1,6 +1,7 @@
-module.exports =
-  cl: console.log
+bus = require '../event_bus'
 
+
+module.exports =
   regex:
     tell_me_more: /^tell_me_more: ?/i
     follow_up: /^follow_up: ?/i
@@ -29,3 +30,5 @@ module.exports =
     'boardinghouse': 'SET_BOARDINGHOUSE_CONTEXT_INTENT'
 
   Js: (object) -> JSON.stringify object, null, 2
+
+  emit_error: (e) -> bus.emit 'error', e.stack

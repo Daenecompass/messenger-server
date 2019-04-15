@@ -1,36 +1,41 @@
 mongoose = require 'mongoose'
 
-db = require './db'
-bus = require '../event_bus'
+{Event, User} = require './db'
+{emit_error} = require '../helpers'
 
 
 log_event = (obj) ->
-  event = new db.Event {
-    obj...
-    # timestamp: Date.now()
-  }
-  event.save()
-    .catch (e) -> bus.emit 'error', e
+  new Event { obj... }
+    .save()
+    .catch emit_error
 
 
 module.exports =
   from_fb: ({fb_message}) ->
     log_event
-      # user_id: fb_message.user
+      user: fb_message.user
       event_type: 'from_fb'
       user_said: fb_message.text
+      user_quick_reply: fb_message.quick_reply?.payload
 
 
   from_df: ({fb_message, df_result, df_session}) ->
     log_event
       event_type: 'from_df'
-      # user_id: fb_message.user
+      user: fb_message.user
       df_session: df_session
       df_messages: df_result.fulfillmentMessages
+      df_intent: df_result.intent.displayName
+      df_confidence: df_result.intentDetectionConfidence
 
 
   to_fb: ({fb_message, message}) ->
     log_event
-      type: 'to_fb'
-      # user_id: fb_message.user
+      event_type: 'to_fb'
+      user: fb_message.user
       bot_said: message
+
+
+  feedback: ({user_id, feedback}) ->
+    User.findOneAndUpdate user_id, {$push: feedback: feedback: feedback }, upsert: true
+      .catch emit_error
