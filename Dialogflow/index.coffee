@@ -14,7 +14,7 @@ response_wellformed = (df_result) ->
   df_result.fulfillmentMessages.every (message) ->
     speech = ''
     if message.speech? then speech = remove_smiley message.speech
-    balanced = is_balanced(speech, '{[(', '}])')
+    balanced = is_balanced speech, '{[(', '}])'
     more_wrong = speech?.match /\[more:.*\]/i
     follow_up_right =
       if speech?.match(/\[FU/i)

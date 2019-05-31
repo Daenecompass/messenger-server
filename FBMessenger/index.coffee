@@ -1,7 +1,7 @@
-bus = require '../event_bus'
-botkit = require './botkit'
 {replace} = require 'lodash/fp'
 
+bus = require '../event_bus'
+botkit = require './botkit'
 {
   fb_messages_text_contains
   apply_fn_to_fb_messages

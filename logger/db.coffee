@@ -1,11 +1,15 @@
 mongoose = require 'mongoose'
 
 bus = require '../event_bus'
+{emit_error} = require '../helpers'
 
 
-mongoose.connect process.env.mongoatlas_db_string, useNewUrlParser: true
+{mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
+
+mongoose.connect "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}", useNewUrlParser: true
   .then (m) ->
     bus.emit "STARTUP: connected to database #{m.connections[0].host}/#{m.connections[0].name}"
+  .catch emit_error
 
 Schema = mongoose.Schema
 ObjectId = mongoose.Schema.Types.ObjectId
