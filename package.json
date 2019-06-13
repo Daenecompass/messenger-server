@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "An experimental chatbot that answers questions about New Zealand tenancy problems",
   "repository": "github:Citizen-AI/rentbot",
-  "main": "index.js",
+  "main": "app.coffee",
   "scripts": {
-    "start": "coffee app.coffee",
+    "start": "coffee -c -o bundle.js app.coffee && node bundle.js",
     "debug": "coffee --nodejs --inspect-brk app.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

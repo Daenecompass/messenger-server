@@ -10,5 +10,5 @@ ngrok
     subdomain: process.env.ngrok_subdomain
     addr: process.env.PORT or 3000
   .then (url) ->
-    bus.emit "Startup: Webhook available at #{url}/facebook/receive"
+    bus.emit "STARTUP: Webhook available at #{url}/facebook/receive"
   .catch emit_error

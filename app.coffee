@@ -1,8 +1,8 @@
-require './env'
-Sentry = require '@sentry/node'
-Sentry.init dsn: process.env.sentry_dsn
+require 'coffeescript/register'
 
+require './env'
 bus = require './event_bus'
+
 
 df = require './Dialogflow'   # connects to Dialogflow agent (via botkit & DF api)
 fb = require './FBMessenger'  # connects to Messenger; receives messages from user
