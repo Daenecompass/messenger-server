@@ -11,7 +11,7 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ---
 
-## Running locally
+## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
 
 * You will need
 

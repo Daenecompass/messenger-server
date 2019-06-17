@@ -142,7 +142,23 @@ describe 'format', ->
             ,
               type: 'phone_number'
               title: '📞 Tenancy Services'
-              payload: '0800 836 262'
+              payload: '+64 800 836 262'
+            ]
+
+  it 'should handle phone numbers before quick reply', ->
+    df_response = require './df_responses/reporting_someone_elses_landlord.json'
+    output = format df_response.queryResult.fulfillmentMessages
+    expect output[0]
+      .to.containSubset
+        attachment:
+          type: 'template'
+          payload:
+            template_type: 'button'
+            text: "Anyone can ask Tenancy Services for free, confidential advice about renting. You can ask for advice on behalf of someone else, but Tenancy Services won’t investigate a landlord in a way that might identify the tenant without the tenant’s permission. If a dispute goes to mediation or the Tenancy Tribunal, a tenant can take a friend or other support person with them."
+            buttons: [
+              type: 'phone_number'
+              title: '📞 Tenancy Services'
+              payload: '+64 800 836 262'
             ]
 
 

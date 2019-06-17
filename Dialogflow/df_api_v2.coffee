@@ -5,10 +5,12 @@
 dialogflow = require 'dialogflow'
 
 {regex, Js} = require '../helpers'
+bus = require '../event_bus'
 
 
 project_id = process.env.google_project_id
 config = credentials: JSON.parse process.env.google_creds
+bus.emit "STARTUP: using Dialogflow project #{project_id}"
 
 user_type_to_contexts =
   'landlord': ['landlord']
@@ -42,6 +44,7 @@ module.exports =
         name: contextsClient.contextPath project_id, session_id, 'generic'
         parameters: fb_first_name: fb_first_name
         lifespanCount: 999
+
     for context_name in user_type_to_contexts[user_type]
       responses.push await contextsClient.createContext
         parent: session_path

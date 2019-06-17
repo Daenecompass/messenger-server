@@ -1,10 +1,10 @@
 {
-  "responseId": "407eba15-18bf-441a-be46-e86dfe5fa732",
+  "responseId": "9dfcc501-f532-4e3f-ac66-ec9e49843479-baaf0c1f",
   "queryResult": {
     "queryText": "tenancy services contacts",
     "parameters": {},
     "allRequiredParamsPresent": true,
-    "fulfillmentText": "Here are Tenancy Services' contacts: [Tenancy Services https://www.tenancy.govt.nz/] [Tenancy Services 0800 836 262] [FU: For serious or ongoing issues, you might like to talk to their compliance and investigations team. Want the details?: Compliance and investigations team]",
+    "fulfillmentText": "Here are Tenancy Services' contacts:\n[Tenancy Services https://www.tenancy.govt.nz/]\n[Tenancy Services 0800 836 262]\n[FU: For serious or ongoing issues, you might like to talk to their compliance and investigations team. Want the details?: Compliance and investigations team]",
     "fulfillmentMessages": [
       {
         "text": {
@@ -15,7 +15,7 @@
       }
     ],
     "intent": {
-      "name": "projects/rentbot-apiv2/agent/intents/909c6712-1a02-4115-aecc-a5dcd4cfe9a9",
+      "name": "projects/rentbot-apiv2-live/agent/intents/909c6712-1a02-4115-aecc-a5dcd4cfe9a9",
       "displayName": "Tenancy Services contacts"
     },
     "intentDetectionConfidence": 1,

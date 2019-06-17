@@ -14,7 +14,7 @@ response_wellformed = (df_result) ->
   df_result.fulfillmentMessages.every (message) ->
     speech = ''
     if message.speech? then speech = remove_smiley message.speech
-    balanced = is_balanced(speech, '{[(', '}])')
+    balanced = is_balanced speech, '{[(', '}])'
     more_wrong = speech?.match /\[more:.*\]/i
     follow_up_right =
       if speech?.match(/\[FU/i)
@@ -39,11 +39,17 @@ process_fb_message = ({fb_message, bot}) ->
         bot
         df_session: fb_message.sender.id
       }
-  if df_result.action?.match /Interviewuser\..*/
-    bus.emit 'message from user: user_type interview', {
-      user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
-      fb_message
-    }
+  switch
+    when df_result.action?.match /Interviewuser\..*/
+      bus.emit 'message from user: user_type interview', {
+        user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
+        fb_message
+      }
+    when df_result.action is 'feedback' and df_result.parameters?.fields?.feedback?.stringValue?
+      bus.emit 'user feedback received', {
+        user_id: fb_message.sender.id
+        feedback: df_result.parameters.fields.feedback.stringValue
+      }
 
 
 interview_user = ({fb_message, bot}) ->

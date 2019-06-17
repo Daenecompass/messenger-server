@@ -186,7 +186,10 @@ quick_replies_reply = (text) ->
   rest_of_line = text
     .replace regex.quick_replies_tag, ''
     .trim()
-  [rest_of_line, quick_replies_reply_handrolled qr_tag_contents]
+  [
+    text_reply rest_of_line
+    quick_replies_reply_handrolled qr_tag_contents
+  ]
 
 
 text_processor = (df_message) ->
