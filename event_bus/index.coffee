@@ -7,7 +7,6 @@ Sentry = require '@sentry/node'
 Sentry.init
     dsn: process.env.sentry_dsn
     environment: process.env.NODE_ENV
-    debug: true
 
 
 bus = new EventEmitter

@@ -8,6 +8,7 @@ module.exports = function (w) {
       '*/*/*.coffee',
       '*/*.json',
       '*/*/*.json',
+      '!node_modules/**',
       { pattern: 'test/*.coffee', ignore: true }
     ],
 

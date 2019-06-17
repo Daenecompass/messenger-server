@@ -2,6 +2,8 @@
 
 _ = require 'lodash'
 flatmap = require 'flatmap'
+PNF = require('google-libphonenumber').PhoneNumberFormat
+phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 
 bus = require '../event_bus'
 {regex, remove_empties, Js} = require '../helpers'
@@ -111,9 +113,11 @@ buttons_prep = (button_tags) ->
         url: page_url[2]
         title: "🔗 #{page_url[1]}"
       else if phone_number
+        parsed_number = phoneUtil.parse phone_number[2], 'NZ'
+        international_number = phoneUtil.format parsed_number, PNF.INTERNATIONAL
         type: 'phone_number'
         title: "📞 #{phone_number[1]}"
-        payload: phone_number[2]
+        payload: international_number
       else
         bus.emit "Error: Badly formatted button instruction in Dialogflow: #{button_text}"
 
@@ -182,7 +186,10 @@ quick_replies_reply = (text) ->
   rest_of_line = text
     .replace regex.quick_replies_tag, ''
     .trim()
-  [rest_of_line, quick_replies_reply_handrolled qr_tag_contents]
+  [
+    text_reply rest_of_line
+    quick_replies_reply_handrolled qr_tag_contents
+  ]
 
 
 text_processor = (df_message) ->

@@ -44,8 +44,6 @@ module.exports =
         name: contextsClient.contextPath project_id, session_id, 'generic'
         parameters: fb_first_name: fb_first_name
         lifespanCount: 999
-    console.log Js responses
-    console.log Js arguments
 
     for context_name in user_type_to_contexts[user_type]
       responses.push await contextsClient.createContext
