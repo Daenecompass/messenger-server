@@ -24,14 +24,14 @@ controller = new Botkit
   storage: storage
 
 
-fbuser = require('botkit-middleware-fbuser')
-  accessToken: process.env.fb_page_token
-  fields: ['first_name', 'last_name', 'profile_pic']
-  logLevel: 'error'
-  expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
-  storage: controller.storage
+# fbuser = require('botkit-middleware-fbuser')
+#   accessToken: process.env.fb_page_token
+#   fields: ['first_name', 'last_name', 'profile_pic']
+#   logLevel: 'error'
+#   expire: 24 * 60 * 60 * 1000 # refresh profile info every 24 hours
+#   storage: controller.storage
 
-controller.middleware.receive.use fbuser.receive
+# controller.middleware.receive.use fbuser.receive
 
 # bot = controller.spawn()
 
