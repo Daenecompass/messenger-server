@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@sentry/node": "^5.4.0",
-    "botkit": "^0.6.21",
+    "botbuilder-adapter-facebook": "^1.0.3",
+    "botkit": "^4.0.2",
     "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
     "botkit-storage-mongo": "^1.0.7",
     "chalk": "^2.4.1",

@@ -1,21 +1,28 @@
-Botkit = require 'botkit'
+{ Botkit } = require 'botkit'
+{ FacebookAdapter, FacebookEventTypeMiddleware } = require 'botbuilder-adapter-facebook'
 
 persistent_menu = require './persistent_menu.json'
-
+require '../ngrok' if process.env.ngrok_subdomain and process.env.ngrok_authtoken
 
 {mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
-mongoStorage = require('botkit-storage-mongo')
+storage = require('botkit-storage-mongo')
   mongoUri: "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}"
 
-controller = Botkit.facebookbot
+adapter = new FacebookAdapter
+    verify_token: process.env.fb_verify_token
+    access_token: process.env.fb_page_token
+    app_secret: process.env.fb_app_secret
+
+adapter.use new FacebookEventTypeMiddleware()
+
+controller = new Botkit
   debug: process.env.NODE_ENV is 'development' ? true : false
-  # log: true
-  access_token: process.env.fb_page_token
-  verify_token: process.env.fb_verify_token
-  app_secret: process.env.fb_app_secret
   validate_requests: true
-  receive_via_postback: true
-  storage: mongoStorage
+  # receive_via_postback: true
+  webhook_uri: '/facebook/receive'
+  adapter: adapter
+  storage: storage
+
 
 fbuser = require('botkit-middleware-fbuser')
   accessToken: process.env.fb_page_token
@@ -26,14 +33,9 @@ fbuser = require('botkit-middleware-fbuser')
 
 controller.middleware.receive.use fbuser.receive
 
-bot = controller.spawn()
+# bot = controller.spawn()
 
-port = process.env.PORT or 3000
-controller.setupWebserver port, (err, webserver) ->
-  controller.createWebhookEndpoints webserver, bot, () ->
-    require '../ngrok' if process.env.ngrok_subdomain and process.env.ngrok_authtoken
-
-controller.api.messenger_profile.get_started 'GET_STARTED'
-controller.api.thread_settings.menu [persistent_menu]
+# controller.api.messenger_profile.get_started 'GET_STARTED'
+# controller.api.thread_settings.menu [persistent_menu]
 
 module.exports = controller

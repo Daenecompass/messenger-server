@@ -1,4 +1,9 @@
+{ Botkit } = require 'botkit'
+{ FacebookAdapter, FacebookEventTypeMiddleware } = require 'botbuilder-adapter-facebook'
+
 {replace} = require 'lodash/fp'
+
+
 
 bus = require '../event_bus'
 botkit = require './botkit'
