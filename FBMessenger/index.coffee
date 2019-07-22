@@ -47,6 +47,7 @@ swap_in_user_name = ({fb_message, fb_messages}) ->
 
 
 send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
+  await bot.changeContext original_fb_message.reference
   bot.reply original_fb_message, fb_messages[0]
   # bot.reply original_fb_message, {"type": "typing"}
   # bot.reply original_fb_message, sender_action: 'typing_on'
