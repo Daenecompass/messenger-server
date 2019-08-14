@@ -1,27 +1,40 @@
+{
+  fb_verify_token
+  fb_page_token
+  fb_app_secret
+  ngrok_subdomain
+  ngrok_authtoken
+  mongoatlas_conn_string
+  NODE_ENV
+  google_creds
+} = process.env
+credentials = JSON.parse google_creds
+
+
 { Botkit } = require 'botkit'
 { FacebookAdapter, FacebookEventTypeMiddleware } = require 'botbuilder-adapter-facebook'
 
 persistent_menu = require './persistent_menu.json'
-require '../ngrok' if process.env.ngrok_subdomain and process.env.ngrok_authtoken
+require '../ngrok' if ngrok_subdomain and ngrok_authtoken
 
-{mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
-storage = require('botkit-storage-mongo')
-  mongoUri: "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}"
+# {mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
+# storage = require('botkit-storage-mongo')
+#   mongoUri: "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}"
 
 adapter = new FacebookAdapter
-    verify_token: process.env.fb_verify_token
-    access_token: process.env.fb_page_token
-    app_secret: process.env.fb_app_secret
+  verify_token: fb_verify_token
+  access_token: fb_page_token
+  app_secret: fb_app_secret
+  validate_requests: true
+  receive_via_postback: true
 
-adapter.use new FacebookEventTypeMiddleware()
+# adapter.use new FacebookEventTypeMiddleware()
 
 controller = new Botkit
-  debug: process.env.NODE_ENV is 'development' ? true : false
-  validate_requests: true
-  # receive_via_postback: true
+  debug: NODE_ENV is 'development'
   webhook_uri: '/facebook/receive'
   adapter: adapter
-  storage: storage
+  # storage: storage
 
 
 # fbuser = require('botkit-middleware-fbuser')
