@@ -11,6 +11,12 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ---
 
+## Todo
+
+* typing indicator (waiting on Ben https://github.com/howdyai/botkit/issues/1728#issuecomment-530178659)
+* ditch storage module / use mongo_conn_string
+
+
 ## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
 
 * You will need

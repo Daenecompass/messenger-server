@@ -1,9 +1,6 @@
-{ Botkit } = require 'botkit'
-{ FacebookAdapter, FacebookEventTypeMiddleware } = require 'botbuilder-adapter-facebook'
+'use strict'
 
-{replace} = require 'lodash/fp'
-
-
+{ replace } = require 'lodash/fp'
 
 bus = require '../event_bus'
 botkit = require './botkit'
@@ -47,34 +44,35 @@ swap_in_user_name = ({fb_message, fb_messages}) ->
 
 
 send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
-  bot.reply original_fb_message, fb_messages[0]
-  # bot.reply original_fb_message, {"type": "typing"}
+  await bot.changeContext original_fb_message.reference
   # bot.reply original_fb_message, sender_action: 'typing_on'
-  # cumulative_wait = 1000
+  bot.reply original_fb_message, { type: 'typing' }
+  cumulative_wait = 1000
   # processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
-  # processed_fb_messages.forEach (message, index) ->
-  #   do (bot, original_fb_message, message, cumulative_wait) ->
-  #     setTimeout () ->
-  #       await bot.changeContext original_fb_message.reference
-  #       bot.reply original_fb_message, message
-  #       bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
-  #       bus.emit 'message to user', {
-  #         fb_message: original_fb_message
-  #         message
-  #       }
-  #     , cumulative_wait
+  processed_fb_messages = fb_messages
+  processed_fb_messages.forEach (message, index) ->
+    do (bot, original_fb_message, message, cumulative_wait) ->
+      setTimeout () ->
+        await bot.changeContext original_fb_message.reference
+        bot.reply original_fb_message, message
+        bus.emit "Sending message #{index} to Messenger, delayed by #{cumulative_wait}"
+        bus.emit 'message to user', {
+          fb_message: original_fb_message
+          message
+        }
+      , cumulative_wait
 
-  #     # if index < processed_fb_messages.length - 1
-  #     #   next_message_delay = msec_delay message
-  #     #   typing_delay = cumulative_wait + (next_message_delay * 0.75)
-  #     #   setTimeout () ->
-  #     #     await bot.changeContext original_fb_message.reference
-  #     #     # bot.reply original_fb_message, {"type": "typing"}
-  #     #     # bot.reply original_fb_message, sender_action: 'typing_on'
-  #     #     bus.emit "Sending typing indicator to Messenger, delayed by #{typing_delay}"
-  #     #   , typing_delay
+      if index < processed_fb_messages.length - 1
+        next_message_delay = msec_delay message
+        typing_delay = cumulative_wait + (next_message_delay * 0.75)
+        setTimeout () ->
+          await bot.changeContext original_fb_message.reference
+          bot.reply original_fb_message, { type: 'typing', text: '......' }
+          # bot.reply original_fb_message, sender_action: 'typing_on'
+          bus.emit "Sending typing indicator to Messenger, delayed by #{typing_delay}"
+        , typing_delay
 
-  #   cumulative_wait += msec_delay message
+    cumulative_wait += msec_delay message
 
 
 process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
@@ -123,7 +121,7 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
       }
 
 
-botkit.hears ['(.*)'], 'message_received', (bot, fb_message) ->
+botkit.on 'message', (bot, fb_message) ->
   event = switch
     when is_get_started_postback fb_message then 'postback: get started'
     when is_tell_me_more_postback fb_message then 'postback: tell me more'

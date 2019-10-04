@@ -28,7 +28,7 @@ adapter = new FacebookAdapter
   validate_requests: true
   receive_via_postback: true
 
-# adapter.use new FacebookEventTypeMiddleware()
+adapter.use new FacebookEventTypeMiddleware()
 
 controller = new Botkit
   debug: NODE_ENV is 'development'
