@@ -3,7 +3,7 @@
 { replace } = require 'lodash/fp'
 
 bus = require '../event_bus'
-botkit = require './botkit'
+{ botkit, send_typing } = require './botkit'
 {
   fb_messages_text_contains
   apply_fn_to_fb_messages
@@ -46,8 +46,8 @@ swap_in_user_name = ({fb_message, fb_messages}) ->
 
 send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
   await bot.changeContext original_fb_message.reference
-  # bot.reply original_fb_message, sender_action: 'typing_on'
-  bot.reply original_fb_message, { type: 'typing' }
+  send_typing bot, original_fb_message
+ 
   cumulative_wait = 1000
   # processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
   processed_fb_messages = fb_messages
@@ -68,8 +68,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
         typing_delay = cumulative_wait + (next_message_delay * 0.75)
         setTimeout () ->
           await bot.changeContext original_fb_message.reference
-          bot.reply original_fb_message, { type: 'typing', text: '......' }
-          # bot.reply original_fb_message, sender_action: 'typing_on'
+          send_typing bot, original_fb_message
           bus.emit "Sending typing indicator to Messenger, delayed by #{typing_delay}"
         , typing_delay
 
@@ -110,7 +109,6 @@ store_user_type = ({user_type, fb_message}) ->
 check_session = ({fb_message, df_response, bot, df_session}) ->
   user = await User.findOne _id: fb_message.user
   if user and user.last_session_id is df_session
-    console.log 'same session'
     return
   if user and user.last_session_id isnt df_session
     user.last_session_id = df_session

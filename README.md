@@ -13,13 +13,13 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ## Todo
 
-* typing indicator (waiting on Ben https://github.com/howdyai/botkit/issues/1728#issuecomment-530178659). Or try https://botkit.ai/docs/v4/reference/facebook.html#sendactivities
 * ditch storage module (working on check_session at the moment)
 * get FB profile details ourselves
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
 * handle get_started and other postbacks
+* move persistent menu & get started to one-off utilities
 
 
 ## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
