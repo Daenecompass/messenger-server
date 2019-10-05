@@ -10,11 +10,9 @@
 } = process.env
 credentials = JSON.parse google_creds
 
-
 { Botkit } = require 'botkit'
 { FacebookAdapter, FacebookEventTypeMiddleware } = require 'botbuilder-adapter-facebook'
 
-persistent_menu = require './persistent_menu.json'
 require '../ngrok' if ngrok_subdomain and ngrok_authtoken
 
 # storage = require('botkit-storage-mongo')
@@ -33,16 +31,6 @@ controller = new Botkit
   debug: NODE_ENV is 'development'
   webhook_uri: '/facebook/receive'
   adapter: adapter
-
-
-controller.ready () ->
-  bot = await controller.spawn()
-  res = await bot.api.callAPI '/me/messenger_profile', 'delete', fields: [ 'persistent_menu', 'get_started' ]
-  console.log('results of delete menu & get started', res)
-  res = await bot.api.callAPI '/me/messenger_profile', 'post',
-    persistent_menu: [ persistent_menu ]
-    get_started: payload: 'GET_STARTED'
-  console.log('results of set menu & get started payload', res)
 
 
 send_typing = (bot, fb_message) ->

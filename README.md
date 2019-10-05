@@ -20,6 +20,9 @@ It processes some custom syntax in Dialogflow responses to handle images, button
   * env for persistent menu?
 * move persistent menu & get started to one-off utilities
 
+## Notes
+
+* `npm run set_menu` will set the bot's get_started postback and persistent menu
 
 ## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
 

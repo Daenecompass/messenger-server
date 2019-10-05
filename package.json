@@ -5,6 +5,7 @@
   "repository": "github:Citizen-AI/rentbot",
   "scripts": {
     "start": "coffee -c -o bundle.js app.coffee && node bundle.js",
+    "set_menu": "coffee FBMessenger/set_menu.coffee",
     "debug": "coffee --nodejs --inspect-brk app.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
