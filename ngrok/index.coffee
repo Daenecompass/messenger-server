@@ -1,7 +1,7 @@
 ngrok = require 'ngrok'
 
 bus = require '../event_bus'
-{emit_error} = require '../helpers'
+{ emit_error } = require '../helpers'
 
 
 ngrok
@@ -11,4 +11,4 @@ ngrok
     addr: process.env.PORT or 3000
   .then (url) ->
     bus.emit "STARTUP: Webhook available at #{url}/facebook/receive"
-  .catch emit_error
+  .catch (emit_error)

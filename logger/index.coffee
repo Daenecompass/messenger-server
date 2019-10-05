@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 
-{Event, User} = require './db'
-{emit_error} = require '../helpers'
+{ Event, User } = require '../db'
+{ emit_error } = require '../helpers'
 
 
 log_event = (obj) ->

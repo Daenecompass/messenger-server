@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 
-bus = require '../event_bus'
-{emit_error} = require '../helpers'
+bus = require './event_bus'
+{ emit_error } = require './helpers'
 
 
 {mongo_conn_string} = process.env
@@ -22,6 +22,7 @@ UserSchema = new Schema
       type: Date
       default: Date.now
   ]
+  last_session_id: String
   created_at:
     type: Date
     default: Date.now

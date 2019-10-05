@@ -11,7 +11,8 @@ botkit = require './botkit'
   format
   df_text_message_format
 } = require './df_to_messenger_formatter'
-{regex, Js} = require '../helpers'
+{ regex, emit_error } = require '../helpers'
+{ User } = require '../db'
 
 
 is_get_started_postback = (fb_message) ->
@@ -107,18 +108,30 @@ store_user_type = ({user_type, fb_message}) ->
 
 
 check_session = ({fb_message, df_response, bot, df_session}) ->
-  botkit.storage.users.get fb_message.user, (err, user_data) ->
-    if user_data.last_session_id isnt df_session
-      user_data.last_session_id = df_session
-      botkit.storage.users.save user_data
-      bus.emit 'user session changed', {
-        fb_message
-        bot
-        user_type: user_data.user_type
-        fb_first_name: user_data.first_name
-        df_session
-        df_response
+  user = await User.findOne _id: fb_message.user
+  if user and user.last_session_id is df_session
+    console.log 'same session'
+    return
+  if user and user.last_session_id isnt df_session
+    user.last_session_id = df_session
+    user.save()
+  else
+    new User {
+        _id: fb_message.user
+        last_session_id: df_session
       }
+      .save()
+      .catch(emit_error)
+
+  bus.emit 'user session changed', {
+    fb_message
+    bot
+    # user_type: user.user_type
+    # fb_first_name: user.first_name
+    df_session
+    df_response
+  }
+
 
 
 botkit.on 'message', (bot, fb_message) ->
