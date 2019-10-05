@@ -1,8 +1,8 @@
 is_balanced = require 'is-balanced'
 
 bus = require '../event_bus'
-{regex, Js} = require '../helpers'
-{df_query, send_context} = require './df_api_v2'
+{ regex, Js } = require '../helpers'
+{ df_query, send_context } = require './df_api_v2'
 
 
 no_speech_in_response = (df_response) ->

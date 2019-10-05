@@ -52,5 +52,5 @@ send_typing = (bot, fb_message) ->
 
 
 module.exports = 
-  botkit : controller
+  botkit: controller
   send_typing: send_typing

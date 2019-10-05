@@ -18,7 +18,6 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
-* handle get_started and other postbacks
 * move persistent menu & get started to one-off utilities
 
 

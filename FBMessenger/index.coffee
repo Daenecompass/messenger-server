@@ -15,22 +15,6 @@ bus = require '../event_bus'
 { User } = require '../db'
 
 
-is_get_started_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text.match 'GET_STARTED'
-
-
-is_tell_me_more_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text.match regex.tell_me_more
-
-
-is_follow_up_postback = (fb_message) ->
-  fb_message.type is 'facebook_postback' and fb_message.text?.match regex.follow_up
-
-
-is_follow_up_message = (fb_message) ->
-  fb_message.type is 'message_received' and fb_message.quick_reply?.payload.match regex.follow_up
-
-
 swap_in_user_name = ({fb_message, fb_messages}) ->
   new Promise (resolve, reject) ->
     if fb_messages_text_contains fb_messages, '#generic.fb_first_name'
@@ -131,14 +115,18 @@ check_session = ({fb_message, df_response, bot, df_session}) ->
   }
 
 
-
 botkit.on 'message', (bot, fb_message) ->
   event = switch
-    when is_get_started_postback fb_message then 'postback: get started'
-    when is_tell_me_more_postback fb_message then 'postback: tell me more'
-    when is_follow_up_postback fb_message then 'postback: follow up'
-    when is_follow_up_message fb_message then 'quick reply: follow up'
+    when fb_message.quick_reply?.payload.match regex.follow_up then 'quick reply: follow up'
     else 'message from user'
+  bus.emit event, {fb_message, bot}
+
+
+botkit.on 'facebook_postback', (bot, fb_message) ->
+  event = switch
+    when fb_message.text.match 'GET_STARTED' then 'postback: get started'
+    when fb_message.text.match regex.tell_me_more then 'postback: tell me more'
+    when fb_message.text?.match regex.follow_up then 'postback: follow up'   # can't remember what triggers this
   bus.emit event, {fb_message, bot}
 
 
