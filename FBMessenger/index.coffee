@@ -84,10 +84,16 @@ check_user_type = ({fb_message, bot}) ->
 
 
 store_user_type = ({user_type, fb_message}) ->
-  bus.emit 'Saving user type to db'
-  botkit.storage.users.get fb_message.user, (err, user_data) ->
-    user_data.user_type = user_type
-    botkit.storage.users.save user_data
+  query = _id: fb_message.user
+  update = user_type: user_type
+  options = new: true
+  User.findOneAndUpdate query, update, options, (err, doc) ->
+    if err
+      emit_error err
+    else if not doc
+      emit_error 'User not found in db'
+    else
+      bus.emit 'Saved user type to db'
 
 
 check_session = ({fb_message, df_response, bot, df_session}) ->

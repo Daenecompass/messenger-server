@@ -4,7 +4,9 @@ bus = require './event_bus'
 { emit_error } = require './helpers'
 
 
-{mongo_conn_string} = process.env
+{ mongo_conn_string } = process.env
+
+mongoose.set 'useFindAndModify', false
 
 mongoose.connect mongo_conn_string, useNewUrlParser: true
   .then (m) ->
@@ -23,6 +25,7 @@ UserSchema = new Schema
       default: Date.now
   ]
   last_session_id: String
+  user_type: String
   created_at:
     type: Date
     default: Date.now
