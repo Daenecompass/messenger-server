@@ -1,4 +1,3 @@
-require '../env'
 { fb_page_token } = process.env
 
 FB = require 'fb'
@@ -18,5 +17,12 @@ get_facebook_profile = (fb_user_id, cb) ->
       resolve fb_user
 
 
+send_typing = (fb_message) ->
+  FB.api '/me/messages', 'post',
+    recipient: id: fb_message.user
+    sender_action: 'typing_on'
+
+
 module.exports =
   get_facebook_profile: get_facebook_profile
+  send_typing: send_typing

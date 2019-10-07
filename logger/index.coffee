@@ -11,6 +11,19 @@ log_event = (obj) ->
 
 
 module.exports =
+  user_starts: ({ fb_message }) ->
+    User.findOneAndUpdate {
+        _id: fb_message.user
+      }, {
+        $push: starts: platform: 'messenger'
+        last_platform: 'messenger'
+      }, {
+        upsert: true
+        setDefaultsOnInsert: true
+      }
+      .catch emit_error
+
+
   from_fb: ({fb_message}) ->
     log_event
       user: fb_message.user

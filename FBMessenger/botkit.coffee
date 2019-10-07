@@ -30,12 +30,5 @@ controller = new Botkit
   adapter: adapter
 
 
-send_typing = (bot, fb_message) ->
-  await bot.api.callAPI '/me/messages', 'post',
-    recipient: id: fb_message.user
-    sender_action: 'typing_on'
-
-
 module.exports = 
   botkit: controller
-  send_typing: send_typing

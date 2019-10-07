@@ -24,7 +24,14 @@ UserSchema = new Schema
       type: Date
       default: Date.now
   ]
+  starts: [
+    platform: String
+    created_at:
+      type: Date
+      default: Date.now
+  ]
   last_session_id: String
+  last_platform: String
   user_type: String
   fb_user_profile:
     id: String            # duplicate of _id but kinda necessary presently to simplify return from FB api I think

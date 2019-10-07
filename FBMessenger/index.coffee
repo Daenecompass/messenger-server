@@ -3,8 +3,8 @@
 { replace } = require 'lodash/fp'
 
 bus = require '../event_bus'
-{ botkit, send_typing } = require './botkit'
-{ get_facebook_profile } = require './facebook_api'
+{ botkit } = require './botkit'
+{ get_facebook_profile, send_typing } = require './facebook_api'
 {
   fb_messages_text_contains
   apply_fn_to_fb_messages
@@ -29,7 +29,10 @@ swap_in_user_name = ({ fb_message, fb_messages }) ->
         { first_name } = fb_user
         query = _id: fb_user_id
         update = fb_user_profile: fb_user
-        options = new: true, upsert: true
+        options =
+          new: true
+          upsert: true
+          setDefaultsOnInsert: true
         User.findOneAndUpdate query, update, options, (err, doc) ->
           if err
             emit_error err
@@ -46,7 +49,7 @@ swap_in_user_name = ({ fb_message, fb_messages }) ->
 
 send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
   await bot.changeContext original_fb_message.reference
-  send_typing bot, original_fb_message
+  send_typing original_fb_message
  
   cumulative_wait = 1000
   processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
@@ -67,7 +70,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
         typing_delay = cumulative_wait + (next_message_delay * 0.75)
         setTimeout () ->
           await bot.changeContext original_fb_message.reference
-          send_typing bot, original_fb_message
+          send_typing original_fb_message
           bus.emit "Sending typing indicator to Messenger, delayed by #{typing_delay}"
         , typing_delay
 
@@ -101,7 +104,9 @@ check_user_type = ({fb_message, bot}) ->
 store_user_type = ({ user_type, fb_message }) ->
   query = _id: fb_message.user
   update = user_type: user_type
-  options = new: true
+  options =
+    new: true
+    setDefaultsOnInsert: true
   User.findOneAndUpdate query, update, options, (err, doc) ->
     if err
       emit_error err
