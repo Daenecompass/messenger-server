@@ -13,16 +13,22 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ## Todo
 
-* ditch storage module (working on check_session at the moment)
-* get FB profile details ourselves
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
-* move persistent menu & get started to one-off utilities
+* Make sure feedback works
+* Move send_typing into FB
+* Look up profile on get_started
+
 
 ## Notes
 
 * `npm run set_menu` will set the bot's get_started postback and persistent menu
+
+
+## Thanks to
+
+* https://github.com/mrbot-ai/botkit-middleware-fbuser/blob/master/src/botkit-middleware-fbuser.js
 
 ## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
 

@@ -15,8 +15,6 @@
     "@sentry/node": "5.6.2",
     "botbuilder-adapter-facebook": "1.0.5",
     "botkit": "4.0.2",
-    "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
-    "botkit-storage-mongo": "1.0.7",
     "chalk": "2.4.1",
     "coffeescript": "2.4.1",
     "dialogflow": "0.8.2",

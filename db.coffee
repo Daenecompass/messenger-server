@@ -26,6 +26,11 @@ UserSchema = new Schema
   ]
   last_session_id: String
   user_type: String
+  fb_user_profile:
+    id: String            # duplicate of _id but kinda necessary presently to simplify return from FB api I think
+    first_name: String
+    last_name: String
+    profile_pic: String
   created_at:
     type: Date
     default: Date.now

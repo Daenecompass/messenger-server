@@ -15,9 +15,6 @@ credentials = JSON.parse google_creds
 
 require '../ngrok' if ngrok_subdomain and ngrok_authtoken
 
-# storage = require('botkit-storage-mongo')
-#   mongoUri: mongo_conn_string
-
 adapter = new FacebookAdapter
   verify_token: fb_verify_token
   access_token: fb_page_token

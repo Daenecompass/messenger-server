@@ -4,6 +4,7 @@
 
 bus = require '../event_bus'
 { botkit, send_typing } = require './botkit'
+{ get_facebook_profile } = require './facebook_api'
 {
   fb_messages_text_contains
   apply_fn_to_fb_messages
@@ -15,15 +16,30 @@ bus = require '../event_bus'
 { User } = require '../db'
 
 
-swap_in_user_name = ({fb_message, fb_messages}) ->
+swap_in_user_name = ({ fb_message, fb_messages }) ->
+  fb_user_id = fb_message.user
   new Promise (resolve, reject) ->
     if fb_messages_text_contains fb_messages, '#generic.fb_first_name'
       bus.emit 'Looking up username in storage'
-      botkit.storage.users.get fb_message.user, (err, user_data) ->
-        if user_data.first_name?
-          resolve apply_fn_to_fb_messages fb_messages, replace '#generic.fb_first_name', user_data.first_name
-        else
-          resolve fb_messages
+      user = await User.findOne _id: fb_user_id
+      if user?.fb_user_profile?.first_name?
+        { first_name } = user.fb_user_profile
+      else
+        fb_user = await get_facebook_profile fb_user_id
+        { first_name } = fb_user
+        query = _id: fb_user_id
+        update = fb_user_profile: fb_user
+        options = new: true, upsert: true
+        User.findOneAndUpdate query, update, options, (err, doc) ->
+          if err
+            emit_error err
+          else if not doc
+            emit_error 'User not found in db'
+          else
+            bus.emit 'Saved FB profile to db'
+
+      resolve apply_fn_to_fb_messages fb_messages, replace '#generic.fb_first_name', first_name
+
     else
       resolve fb_messages
 
@@ -33,8 +49,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
   send_typing bot, original_fb_message
  
   cumulative_wait = 1000
-  # processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
-  processed_fb_messages = fb_messages
+  processed_fb_messages = await swap_in_user_name {fb_messages, fb_message:original_fb_message}
   processed_fb_messages.forEach (message, index) ->
     do (bot, original_fb_message, message, cumulative_wait) ->
       setTimeout () ->
@@ -71,19 +86,19 @@ tell_me_more = ({fb_message, bot}) ->
 
 
 check_user_type = ({fb_message, bot}) ->
-  botkit.storage.users.get fb_message.user, (err, user_data) ->
-    if user_data.user_type?
-      bus.emit 'user returns with type set', {
-        fb_message
-        bot
-        user_type: user_data.user_type
-        df_session: fb_message.sender.id
-      }
-    else
-      bus.emit 'user with unknown type starts', {fb_message, bot}
+  user = await User.findOne _id: fb_message.user
+  if user?.user_type?
+    bus.emit 'user returns with type set', {
+      fb_message
+      bot
+      user_type: user.user_type
+      df_session: fb_message.sender.id
+    }
+  else
+    bus.emit 'user with unknown type starts', { fb_message, bot }
 
 
-store_user_type = ({user_type, fb_message}) ->
+store_user_type = ({ user_type, fb_message }) ->
   query = _id: fb_message.user
   update = user_type: user_type
   options = new: true
@@ -96,29 +111,21 @@ store_user_type = ({user_type, fb_message}) ->
       bus.emit 'Saved user type to db'
 
 
-check_session = ({fb_message, df_response, bot, df_session}) ->
+check_session = ({ fb_message, df_response, bot, df_session }) ->
   user = await User.findOne _id: fb_message.user
-  if user and user.last_session_id is df_session
+  if user?.last_session_id is df_session
     return
-  if user and user.last_session_id isnt df_session
-    user.last_session_id = df_session
-    user.save()
-  else
-    new User {
-        _id: fb_message.user
-        last_session_id: df_session
-      }
-      .save()
-      .catch(emit_error)
-
-  bus.emit 'user session changed', {
-    fb_message
-    bot
-    # user_type: user.user_type
-    # fb_first_name: user.first_name
-    df_session
-    df_response
-  }
+  if user?.last_session_id isnt df_session
+    bus.emit 'putting session in db'
+    User.findOneAndUpdate { _id: fb_message.user }, { last_session_id: df_session }, { upsert: true }
+    bus.emit 'user session changed', {
+      fb_message
+      bot
+      # user_type: user.user_type
+      # fb_first_name: user.first_name
+      df_session
+      df_response
+    }
 
 
 botkit.on 'message', (bot, fb_message) ->
