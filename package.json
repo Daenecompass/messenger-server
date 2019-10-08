@@ -21,6 +21,7 @@
     "dotenv": "6.2.0",
     "envalid": "4.2.1",
     "eventemitter2": "5.0.1",
+    "fb": "^2.0.0",
     "flatmap": "0.0.3",
     "google-libphonenumber": "3.2.5",
     "grpc": "1.24.0",

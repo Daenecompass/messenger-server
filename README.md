@@ -19,6 +19,7 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 * Look up profile on get_started?
 * make get started look up and supply context?
 * make a models folder?
+* Rather than using session_id to figure out whether to refresh context; use has-20-minutes-passed-since-last-interaction-with-DF (https://stackoverflow.com/questions/53717717/what-is-the-lifetime-of-dialog-flow-session)
 
 
 ## Notes
