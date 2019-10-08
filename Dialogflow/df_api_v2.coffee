@@ -33,7 +33,7 @@ module.exports =
     responses[0].queryResult
 
 
-  send_context: ({session_id, user_type, fb_first_name, on_success, on_failure}) ->
+  send_context: ({ session_id, user_type, fb_first_name, on_success, on_failure }) ->
     session_id = session_id.toString()
     contextsClient = new dialogflow.ContextsClient config
     session_path = contextsClient.sessionPath project_id, session_id

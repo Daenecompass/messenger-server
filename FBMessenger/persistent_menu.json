@@ -5,17 +5,17 @@
       {
          "type": "postback",
          "title": "Who Made This?",
-         "payload": "Who made this?"
+         "payload": "FOLLOW_UP: Who made this?"
       },
       {
          "type": "postback",
          "title": "Give Feedback",
-         "payload": "Give feedback"
+         "payload": "FOLLOW_UP: Give feedback"
       },
       {
          "type": "web_url",
          "title": "Privacy policy",
-         "url": "http://citizenai.nz/privacy-and-confidentiality-policy.html"
+         "url": "http://rentbot.nz/privacy-and-confidentiality-policy.html"
       }
    ]
 }

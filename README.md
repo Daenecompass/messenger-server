@@ -11,6 +11,25 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ---
 
+## Todo
+
+* abstract to be able to use same codebase for Workbot
+  * env for privacy policy link
+  * env for persistent menu?
+* Look up profile on get_started?
+* make get started look up and supply context?
+* make a models folder?
+
+
+## Notes
+
+* `npm run set_menu` will set the bot's get_started postback and persistent menu
+
+
+## Thanks to
+
+* https://github.com/mrbot-ai/botkit-middleware-fbuser/blob/master/src/botkit-middleware-fbuser.js
+
 ## Running locally [NOTE THIS NEEDS UPDATING FOR DIALOGFLOW v2]
 
 * You will need

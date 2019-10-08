@@ -1,8 +1,8 @@
 is_balanced = require 'is-balanced'
 
 bus = require '../event_bus'
-{regex, Js} = require '../helpers'
-{df_query, send_context} = require './df_api_v2'
+{ regex, Js } = require '../helpers'
+{ df_query, send_context } = require './df_api_v2'
 
 
 no_speech_in_response = (df_response) ->
@@ -45,7 +45,7 @@ process_fb_message = ({fb_message, bot}) ->
         user_type: df_result.action.match(/Interviewuser\.(.*)/)[1]
         fb_message
       }
-    when df_result.action is 'feedback' and df_result.parameters?.fields?.feedback?.stringValue?
+    when df_result.action is 'feedback' and df_result.parameters?.fields?.feedback?.stringValue?.length
       bus.emit 'user feedback received', {
         user_id: fb_message.sender.id
         feedback: df_result.parameters.fields.feedback.stringValue
@@ -72,13 +72,15 @@ qr_follow_up = ({fb_message, bot}) ->
   process_fb_message {fb_message, bot}
 
 
-set_user_type = ({user_type, df_session, fb_first_name}) ->
-  send_context
-    session_id: df_session
-    user_type: user_type
-    fb_first_name: fb_first_name
-    on_success: () -> bus.emit 'context sent to dialogflow'
-    on_failure: () -> bus.emit 'Error: problem communicating with Dialogflow'
+set_user_type = ({ user_type, df_session, fb_first_name }) ->
+  console.log 'set_user_type: ', user_type?
+  if user_type?
+    send_context
+      session_id: df_session
+      user_type: user_type
+      fb_first_name: fb_first_name
+      on_success: () -> bus.emit 'context sent to dialogflow'
+      on_failure: () -> bus.emit 'Error: problem communicating with Dialogflow'
 
 
 module.exports = {

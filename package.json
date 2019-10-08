@@ -5,32 +5,31 @@
   "repository": "github:Citizen-AI/rentbot",
   "scripts": {
     "start": "coffee -c -o bundle.js app.coffee && node bundle.js",
+    "set_menu": "coffee FBMessenger/set_menu.coffee",
     "debug": "coffee --nodejs --inspect-brk app.coffee",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sentry/node": "^5.5.0",
-    "botbuilder-adapter-facebook": "^1.0.3",
-    "botkit": "^4.0.2",
-    "botkit-middleware-fbuser": "github:mrbot-ai/botkit-middleware-fbuser",
-    "botkit-storage-mongo": "^1.0.7",
-    "chalk": "^2.4.1",
-    "coffeescript": "^2.4.1",
-    "dialogflow": "^0.8.2",
-    "dotenv": "^6.2.0",
-    "envalid": "^4.2.1",
-    "eventemitter2": "^5.0.1",
+    "@sentry/node": "5.6.2",
+    "botbuilder-adapter-facebook": "1.0.5",
+    "botkit": "4.0.2",
+    "chalk": "2.4.1",
+    "coffeescript": "2.4.1",
+    "dialogflow": "0.8.2",
+    "dotenv": "6.2.0",
+    "envalid": "4.2.1",
+    "eventemitter2": "5.0.1",
     "flatmap": "0.0.3",
-    "google-libphonenumber": "^3.2.3",
-    "grpc": "^1.22.2",
-    "is-balanced": "^1.0.2",
-    "mongoose": "^5.6.5"
+    "google-libphonenumber": "3.2.5",
+    "grpc": "1.24.0",
+    "is-balanced": "1.0.2",
+    "mongoose": "5.7.3"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-subset": "^1.6.0",
-    "ngrok": "^3.2.3"
+    "chai": "4.2.0",
+    "chai-subset": "1.6.0",
+    "ngrok": "3.2.5"
   }
 }

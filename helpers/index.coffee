@@ -31,4 +31,4 @@ module.exports =
 
   Js: (object) -> JSON.stringify object, null, 2
 
-  emit_error: (e) -> bus.emit 'error', e.stack
+  emit_error: (e) -> bus.emit "error #{e}", e.stack

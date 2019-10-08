@@ -1,7 +1,7 @@
 mongoose = require 'mongoose'
 
-{Event, User} = require './db'
-{emit_error} = require '../helpers'
+{ Event, User } = require '../db'
+{ emit_error } = require '../helpers'
 
 
 log_event = (obj) ->
@@ -11,7 +11,20 @@ log_event = (obj) ->
 
 
 module.exports =
-  from_fb: ({fb_message}) ->
+  user_starts: ({ fb_message }) ->
+    User.findOneAndUpdate {
+        _id: fb_message.user
+      }, {
+        $push: starts: platform: 'messenger'
+        last_platform: 'messenger'
+      }, {
+        upsert: true
+        setDefaultsOnInsert: true
+      }
+      .catch emit_error
+
+
+  from_fb: ({ fb_message }) ->
     log_event
       user: fb_message.user
       event_type: 'from_fb'
@@ -19,7 +32,7 @@ module.exports =
       user_quick_reply: fb_message.quick_reply?.payload
 
 
-  from_df: ({fb_message, df_result, df_session}) ->
+  from_df: ({ fb_message, df_result, df_session }) ->
     log_event
       event_type: 'from_df'
       user: fb_message.user
@@ -29,13 +42,13 @@ module.exports =
       df_confidence: df_result.intentDetectionConfidence
 
 
-  to_fb: ({fb_message, message}) ->
+  to_fb: ({ fb_message, message }) ->
     log_event
       event_type: 'to_fb'
       user: fb_message.user
       bot_said: message
 
 
-  feedback: ({user_id, feedback}) ->
-    User.findOneAndUpdate user_id, {$push: feedback: feedback: feedback }, upsert: true
+  feedback: ({ user_id, feedback }) ->
+    await User.findOneAndUpdate user_id, { $push: feedback: feedback: feedback }, upsert: true
       .catch emit_error

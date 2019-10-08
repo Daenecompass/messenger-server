@@ -1,12 +1,14 @@
 mongoose = require 'mongoose'
 
-bus = require '../event_bus'
-{emit_error} = require '../helpers'
+bus = require './event_bus'
+{ emit_error } = require './helpers'
 
 
-{mongoatlas_user, mongoatlas_password, mongoatlas_db_string} = process.env
+{ mongo_conn_string } = process.env
 
-mongoose.connect "mongodb://#{mongoatlas_user}:#{mongoatlas_password}@#{mongoatlas_db_string}", useNewUrlParser: true
+mongoose.set 'useFindAndModify', false
+
+mongoose.connect mongo_conn_string, useNewUrlParser: true
   .then (m) ->
     bus.emit "STARTUP: connected to database #{m.connections[0].host}/#{m.connections[0].name}"
   .catch emit_error
@@ -22,6 +24,20 @@ UserSchema = new Schema
       type: Date
       default: Date.now
   ]
+  starts: [
+    platform: String
+    created_at:
+      type: Date
+      default: Date.now
+  ]
+  last_session_id: String
+  last_platform: String
+  user_type: String
+  fb_user_profile:
+    id: String            # duplicate of _id but kinda necessary presently to simplify return from FB api I think
+    first_name: String
+    last_name: String
+    profile_pic: String
   created_at:
     type: Date
     default: Date.now
