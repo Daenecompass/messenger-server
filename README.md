@@ -16,9 +16,8 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
-* Make sure feedback works
-* Look up profile on get_started
-* make get started look up and supply context
+* Look up profile on get_started?
+* make get started look up and supply context?
 * make a models folder?
 
 
