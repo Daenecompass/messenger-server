@@ -122,12 +122,12 @@ check_session = ({ fb_message, df_response, bot, df_session }) ->
     return
   if user?.last_session_id isnt df_session
     bus.emit 'putting session in db'
-    User.findOneAndUpdate { _id: fb_message.user }, { last_session_id: df_session }, { upsert: true }
+    await User.findOneAndUpdate { _id: fb_message.user }, { last_session_id: df_session }, { upsert: true, new: true }
     bus.emit 'user session changed', {
       fb_message
       bot
-      # user_type: user.user_type
-      # fb_first_name: user.first_name
+      user_type: user?.user_type
+      fb_first_name: user?.fb_user_profile?.first_name
       df_session
       df_response
     }
@@ -144,8 +144,11 @@ botkit.on 'facebook_postback', (bot, fb_message) ->
   event = switch
     when fb_message.text.match 'GET_STARTED' then 'postback: get started'
     when fb_message.text.match regex.tell_me_more then 'postback: tell me more'
-    when fb_message.text?.match regex.follow_up then 'postback: follow up'   # can't remember what triggers this
-  bus.emit event, {fb_message, bot}
+    when fb_message.text?.match regex.follow_up then 'postback: follow up'
+  if event
+    bus.emit event, {fb_message, bot}
+  else
+    bus.emit "error: unknown kinda postback: #{fb_message.text}"
 
 
 module.exports = {

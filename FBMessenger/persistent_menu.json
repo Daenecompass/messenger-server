@@ -5,12 +5,12 @@
       {
          "type": "postback",
          "title": "Who Made This?",
-         "payload": "Who made this?"
+         "payload": "FOLLOW_UP: Who made this?"
       },
       {
          "type": "postback",
          "title": "Give Feedback",
-         "payload": "Give feedback"
+         "payload": "FOLLOW_UP: Give feedback"
       },
       {
          "type": "web_url",

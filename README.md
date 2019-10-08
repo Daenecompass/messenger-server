@@ -13,7 +13,6 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ## Todo
 
-* Make the stats work nicely with Web version
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
