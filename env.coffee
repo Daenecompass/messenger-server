@@ -2,9 +2,7 @@ require('dotenv').load()
 envalid = require 'envalid'
 {str} = envalid
 envalid.cleanEnv process.env,
-  mongoatlas_user: str()
-  mongoatlas_password: str()
-  mongoatlas_db_string: str()
+  mongo_conn_string: str()
   fb_page_token: str()
   fb_verify_token: str()
   fb_app_secret: str()

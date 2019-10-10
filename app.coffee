@@ -11,10 +11,10 @@ logger = require './logger'
 
 bus
 # events from FBMessenger
+  .on 'postback: get started', fb.check_user_type
+  .on 'postback: get started', logger.user_starts
   .on 'message from user', df.process_fb_message
   .on 'message from user', logger.from_fb
-  .on 'postback: get started', fb.check_user_type
-  .on 'postback: get started', logger.from_fb
   .on 'postback: tell me more', fb.tell_me_more
   .on 'postback: tell me more', logger.from_fb
   .on 'postback: follow up', df.follow_up
