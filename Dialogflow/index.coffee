@@ -73,7 +73,6 @@ qr_follow_up = ({fb_message, bot}) ->
 
 
 set_user_type = ({ user_type, df_session, fb_first_name }) ->
-  console.log 'set_user_type: ', user_type?
   if user_type?
     send_context
       session_id: df_session
