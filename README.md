@@ -1,6 +1,4 @@
-# Rentbot
-An experimental chatbot that answers questions about New Zealand tenancy problems.
-Try it live at https://m.me/rentbotnz (you'll need a Facebook account).
+# Citizen AI Messenger bot
 
 For more details, get in touch with matthew@citizenai.nz / +64 27 211 3455
 

@@ -3,10 +3,8 @@
 # TODO: Default action (first button)
 # TODO: collect up all cards into a carousel
 
-_ = require 'lodash'
 
-
-module.exports = ({title, subtitle, buttons, image_url}) ->
+module.exports = ({ title, subtitle, buttons, image_url }) ->
   attachment:
     type: 'template'
     payload:
@@ -16,7 +14,7 @@ module.exports = ({title, subtitle, buttons, image_url}) ->
           title: title
           image_url: image_url
           subtitle: subtitle
-          buttons: _.map buttons, (button) ->
+          buttons: buttons.map (button) ->
             type: 'web_url'
             url: button.postback
             title: button.text

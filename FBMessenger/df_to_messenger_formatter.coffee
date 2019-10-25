@@ -207,7 +207,7 @@ text_processor = (df_message) ->
 
 
 msec_delay = (message) ->
-  if process.env.delay_ms? then msecs = process.env.delay_ms else msecs = 40
+  if process.env.delay_ms? then msecs = process.env.delay_ms else msecs = 25
   delay =
     if typeof message is 'string'
       message.length * msecs
