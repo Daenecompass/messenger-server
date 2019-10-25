@@ -5,6 +5,7 @@ module.exports =
   regex:
     tell_me_more: /^tell_me_more: ?/i
     follow_up: /^follow_up: ?/i
+    card_button: /^card_button: ?/i
     button_tag: /\[.*?(0800|111|0[0-9]|http).*?\]/ig
     whitespace_around_button_tags: /[\s]*(\[(.+(0800|111|0[0-9]|http).*)\][\s]*)/ig
     whitespace_around_first_more: /[\s]*(\[more\])[\s]*/i
@@ -16,6 +17,7 @@ module.exports =
     map_url: /(.+) (https?:\/\/.+\/maps\/.+)/i
     follow_up_tag: /\[fu: ?(.*?): ?(.*?)\]/i
     quick_replies_tag: /\[qr: (.+?)\]/i
+    cards_tag: /\[cards?: (.+?)\]/i
 
   remove_empties: (arr) -> arr.filter (x) -> x isnt ''
 

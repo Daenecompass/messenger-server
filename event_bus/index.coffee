@@ -4,6 +4,7 @@ EventEmitter = require('eventemitter2').EventEmitter2
 chalk = require 'chalk'
 Sentry = require '@sentry/node'
 
+{ Js } = require '../helpers'
 
 { 
   sentry_dsn
@@ -28,11 +29,11 @@ bus.onAny (event, payload) ->
     if payload? and (NODE_ENV is 'development')
       console.log 'Event payload:', Object.keys(payload)
       if payload.message?
-        console.log 'message', payload.message
+        console.log 'message', Js payload.message
       else if payload.fb_message?
-        console.log 'fb_message.message', payload.fb_message?.message
+        console.log 'fb_message.message', Js payload.fb_message?.message
       if payload.df_result?.fulfillmentMessages?
-        console.log 'df_result.fulfillmentMessages', payload.df_result?.fulfillmentMessages
+        console.log 'df_result.fulfillmentMessages', Js payload.df_result?.fulfillmentMessages
 
 bus.emit 'STARTUP: Sending errors to ' + process.env.sentry_dsn
 

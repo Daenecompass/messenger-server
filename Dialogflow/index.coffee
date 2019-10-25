@@ -24,7 +24,7 @@ response_wellformed = (df_result) ->
     balanced and not more_wrong and follow_up_right
 
 
-process_fb_message = ({fb_message, bot}) ->
+process_fb_message = ({ fb_message, bot }) ->
   df_result = await df_query
     query: fb_message.text
     session_id: fb_message.sender.id
@@ -52,24 +52,29 @@ process_fb_message = ({fb_message, bot}) ->
       }
 
 
-interview_user = ({fb_message, bot}) ->
+interview_user = ({ fb_message, bot }) ->
   fb_message.text = 'INTERVIEW_USER_INTENT'
-  process_fb_message {fb_message, bot}
+  process_fb_message { fb_message, bot }
 
 
-welcome_returning_user = ({fb_message, bot}) ->
+welcome_returning_user = ({ fb_message, bot }) ->
   fb_message.text = 'RETURNING_USER_GREETING_INTENT'
-  process_fb_message {fb_message, bot}
+  process_fb_message { fb_message, bot }
 
 
-follow_up = ({fb_message, bot}) ->
+follow_up = ({ fb_message, bot }) ->
   fb_message.text = fb_message.text.replace regex.follow_up, ''
-  process_fb_message {fb_message, bot}
+  process_fb_message { fb_message, bot }
 
 
-qr_follow_up = ({fb_message, bot}) ->
+card_button = ({ fb_message, bot }) ->
+  fb_message.text = fb_message.text.replace regex.card_button, ''
+  process_fb_message { fb_message, bot }
+
+
+qr_follow_up = ({ fb_message, bot }) ->
   fb_message.text = fb_message.quick_reply?.payload.replace regex.follow_up, ''
-  process_fb_message {fb_message, bot}
+  process_fb_message { fb_message, bot }
 
 
 set_user_type = ({ user_type, df_session, fb_first_name }) ->
@@ -87,6 +92,7 @@ module.exports = {
   interview_user
   welcome_returning_user
   follow_up
+  card_button
   qr_follow_up
   set_user_type
   # for testing

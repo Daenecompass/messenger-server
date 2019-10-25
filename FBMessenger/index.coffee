@@ -145,8 +145,9 @@ botkit.on 'facebook_postback', (bot, fb_message) ->
     when fb_message.text.match 'GET_STARTED' then 'postback: get started'
     when fb_message.text.match regex.tell_me_more then 'postback: tell me more'
     when fb_message.text?.match regex.follow_up then 'postback: follow up'
+    when fb_message.text?.match regex.card_button then 'postback: card button'
   if event
-    bus.emit event, {fb_message, bot}
+    bus.emit event, { fb_message, bot }
   else
     bus.emit "error: unknown kinda postback: #{fb_message.text}"
 

@@ -5,6 +5,7 @@
   format
   quick_replies_reply_df_native
   quick_replies_reply_handrolled
+  cards_reply
 } = require '../FBMessenger/df_to_messenger_formatter'
 {cl, Js} = require '../helpers'
 
@@ -290,7 +291,7 @@ describe 'msec_delay', ->
         .equal message.length * process.env.delay_ms
     else
       expect msec_delay message
-        .equal message.length * 40
+        .equal message.length * 25
 
   it 'should return the right delay the number of characters in the message for structured messages', ->
     message = attachment: payload: text: 'A longer structured message. Some more text to pad it out a bit. And yet more text'
@@ -299,7 +300,7 @@ describe 'msec_delay', ->
         .equal message.attachment.payload.text.length * process.env.delay_ms
     else
       expect msec_delay message
-        .equal message.attachment.payload.text.length * 40
+        .equal message.attachment.payload.text.length * 25
 
   it 'should return 3000 for messages with quick replies', ->
     message =
@@ -325,3 +326,9 @@ describe 'msec_delay', ->
           title: "Google"
     expect msec_delay message
       .equal 3000
+
+
+describe 'cards_reply', ->
+  it.only 'should work', ->
+    result = cards_reply "Some text [Cards: A title without subtitle: Get started: do it;  Constructive dismissal (being forced to resign): Get started: constructive dismissal; Bullying (I think I'm being bullied): Get started: bully flow]"
+    console.log result

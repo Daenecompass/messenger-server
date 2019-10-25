@@ -18,6 +18,7 @@ bus
   .on 'postback: tell me more', fb.tell_me_more
   .on 'postback: tell me more', logger.from_fb
   .on 'postback: follow up', df.follow_up
+  .on 'postback: card button', df.card_button
   .on 'quick reply: follow up', df.qr_follow_up
   .on 'quick reply: follow up', logger.from_fb
   .on 'user session changed', df.set_user_type

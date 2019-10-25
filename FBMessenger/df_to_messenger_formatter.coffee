@@ -160,18 +160,6 @@ remove_extra_whitespace = (text) ->
     .replace /[\s]*(\[.*?\])/ig, '$1'
 
 
-has_followup_before_more = (text) ->
-  text
-    .replace /(\[more\][\s\S]*)/i, ''  # strip out from first more on
-    .match regex.follow_up_tag
-
-
-has_qr_before_more = (text) ->
-  text
-    .replace /(\[more\][\s\S]*)/i, ''  # strip out from first more on
-    .match regex.quick_replies_tag
-
-
 follow_up_reply = (text) ->
   [, label, payload] = text.match regex.follow_up_tag
   rest_of_line = text.replace(regex.follow_up_tag, '').trim()
@@ -183,9 +171,7 @@ follow_up_reply = (text) ->
 
 quick_replies_reply = (text) ->
   [, qr_tag_contents] = text.match regex.quick_replies_tag
-  rest_of_line = text
-    .replace regex.quick_replies_tag, ''
-    .trim()
+  rest_of_line = text.replace(regex.quick_replies_tag, '').trim()
   if rest_of_line
     [
       text_reply rest_of_line
@@ -195,14 +181,58 @@ quick_replies_reply = (text) ->
     quick_replies_reply_handrolled qr_tag_contents
 
 
+cards_reply = (text) ->
+  [, cards_tag_contents] =  text.match regex.cards_tag
+  rest_of_line = text.replace(regex.cards_tag, '').trim()
+
+  elements = cards_tag_contents.split /; ?/
+  elements = elements.map (element) ->
+    [ title_and_subtitle, button_label, button_payload ] = element.split /: ?/
+    if title_and_subtitle.match(/(.*)\((.*)\)/)
+      [ , title, subtitle ] = title_and_subtitle.match(/(.*)\((.*)\)/)
+    else
+      [ title, subtitle ] = [ title_and_subtitle, null ]
+    { 
+      title
+      subtitle
+      button_label
+      button_payload
+    }
+  console.log elements[1]
+  if rest_of_line
+    [
+      text_reply rest_of_line
+      generic_template elements
+    ]
+  else
+    generic_template elements
+
+
+    # [title, ...options] = qr_tag_contents.split /; ?/
+    # quick_replies_template
+    #   title: title
+    #   replies: options.map (option) ->
+    #     [title, payload] = option.split /: ?/
+    #     title: title
+    #     payload: if payload? then "FOLLOW_UP: #{payload}" else "FOLLOW_UP: #{title}"
+
+
+
+
 text_processor = (df_message) ->
-  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
+  strip_out_from_first_more = (text) -> text.replace /(\[more\][\s\S]*)/i, ''
+  has_followup_before_more = (text) -> strip_out_from_first_more(text).match regex.follow_up_tag
+  has_qr_before_more = (text) -> strip_out_from_first_more(text).match regex.quick_replies_tag
+  has_cards_before_more = (text) -> strip_out_from_first_more(text).match regex.cards_tag
+
+  cleaned_speech = remove_extra_whitespace df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
     switch
       when has_followup_before_more line  then follow_up_reply line
       when has_qr_before_more line        then quick_replies_reply line
+      when has_cards_before_more line     then cards_reply line
       else                                     text_reply line
 
 
@@ -282,4 +312,5 @@ module.exports = {
   # for testing
   text_reply
   text_processor
+  cards_reply
 }
