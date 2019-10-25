@@ -79,7 +79,7 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
 
 process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
   fb_messages = format df_result.fulfillmentMessages
-  send_queue {fb_messages, fb_message, bot}
+  send_queue { fb_messages, fb_message, bot }
 
 
 tell_me_more = ({fb_message, bot}) ->

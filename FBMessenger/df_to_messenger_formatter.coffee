@@ -48,7 +48,7 @@ quick_replies_reply_handrolled = (qr_tag_contents) ->
     replies: options.map (option) ->
       [title, payload] = option.split /: ?/
       title: title
-      payload: "FOLLOW_UP: #{payload}"
+      payload: if payload? then "FOLLOW_UP: #{payload}" else "FOLLOW_UP: #{title}"
 
 # --- #
 
@@ -186,10 +186,13 @@ quick_replies_reply = (text) ->
   rest_of_line = text
     .replace regex.quick_replies_tag, ''
     .trim()
-  [
-    text_reply rest_of_line
+  if rest_of_line
+    [
+      text_reply rest_of_line
+      quick_replies_reply_handrolled qr_tag_contents
+    ]
+  else
     quick_replies_reply_handrolled qr_tag_contents
-  ]
 
 
 text_processor = (df_message) ->
@@ -200,8 +203,7 @@ text_processor = (df_message) ->
     switch
       when has_followup_before_more line  then follow_up_reply line
       when has_qr_before_more line        then quick_replies_reply line
-      else
-        text_reply line
+      else                                     text_reply line
 
 
 msec_delay = (message) ->

@@ -4,10 +4,15 @@ EventEmitter = require('eventemitter2').EventEmitter2
 chalk = require 'chalk'
 Sentry = require '@sentry/node'
 
-Sentry.init
-    dsn: process.env.sentry_dsn
-    environment: process.env.NODE_ENV
 
+{ 
+  sentry_dsn
+  NODE_ENV
+} = process.env
+
+Sentry.init
+  dsn: sentry_dsn
+  environment: NODE_ENV
 
 bus = new EventEmitter
   wildcard: true
@@ -20,6 +25,14 @@ bus.onAny (event, payload) ->
     Sentry.captureException new Error error_message
   else
     console.log chalk.green "Bus: #{event}"
+    if payload? and (NODE_ENV is 'development')
+      console.log 'Event payload:', Object.keys(payload)
+      if payload.message?
+        console.log 'message', payload.message
+      else if payload.fb_message?
+        console.log 'fb_message.message', payload.fb_message?.message
+      if payload.df_result?.fulfillmentMessages?
+        console.log 'df_result.fulfillmentMessages', payload.df_result?.fulfillmentMessages
 
 bus.emit 'STARTUP: Sending errors to ' + process.env.sentry_dsn
 

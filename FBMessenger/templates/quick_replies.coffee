@@ -1,6 +1,6 @@
 # https://developers.facebook.com/docs/messenger-platform/send-messages/quick-replies/
 
-module.exports = ({title, replies}) ->
+module.exports = ({ title, replies }) ->
   text: title
   quick_replies:
     replies.map (reply) ->

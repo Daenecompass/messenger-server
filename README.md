@@ -13,6 +13,8 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 
 ## Todo
 
+* Add support for environments from workbot/webchat-server
+* Flesh out env.coffee with helpful messages
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?

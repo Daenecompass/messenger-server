@@ -1,10 +1,9 @@
 require('dotenv').load()
 envalid = require 'envalid'
-{str} = envalid
+{ str, url, json } = envalid
 envalid.cleanEnv process.env,
-  mongo_conn_string: str()
-  fb_page_token: str()
-  fb_verify_token: str()
-  fb_app_secret: str()
-  google_creds: str()
-  google_project_id: str()
+  mongo_conn_string: url(desc: 'Mongo DB cloud (or similar) connection string, including username and password')
+  fb_page_token: str(desc: '')
+  fb_verify_token: str(desc: '')
+  fb_app_secret: str(desc: '')
+  google_creds: json({ desc: 'The contents of a Google Cloud json keyfile for a Dialogflow agent, with line breaks removed' })
