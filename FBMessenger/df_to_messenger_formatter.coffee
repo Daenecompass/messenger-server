@@ -198,7 +198,6 @@ cards_reply = (text) ->
       button_label
       button_payload
     }
-  console.log elements[1]
   if rest_of_line
     [
       text_reply rest_of_line
@@ -206,17 +205,6 @@ cards_reply = (text) ->
     ]
   else
     generic_template elements
-
-
-    # [title, ...options] = qr_tag_contents.split /; ?/
-    # quick_replies_template
-    #   title: title
-    #   replies: options.map (option) ->
-    #     [title, payload] = option.split /: ?/
-    #     title: title
-    #     payload: if payload? then "FOLLOW_UP: #{payload}" else "FOLLOW_UP: #{title}"
-
-
 
 
 text_processor = (df_message) ->

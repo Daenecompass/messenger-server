@@ -117,4 +117,7 @@ This app processes responses from Dialogflow like this:
     * Syntax: `[FU: Words to show the user: Words to send to Dialogflow]`
 
   * **Quick replies**:
-    * Syntax: `[QU: Message text; Option 1 words to show user: Words to send to Dialogflow; Option 2 words to show user: Words to send to Dialogflow; etc]`
+    * Syntax: `[QU: Message text; Option 1 words to show user: Text to send to Dialogflow; Option 2 words to show user: Words to send to Dialogflow; etc]`
+
+  * **Cards**:
+    * Syntax: `[Cards: Card 1 title (Card 1 subtitle): Button label: Text to send to Dialogflow on click; Card 2 title...]`
