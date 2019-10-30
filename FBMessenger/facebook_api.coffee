@@ -2,6 +2,9 @@
 
 FB = require 'fb'
 
+bus = require '../event_bus'
+
+
 FB.setAccessToken fb_page_token
 
 
@@ -23,6 +26,15 @@ send_typing = (fb_message) ->
     sender_action: 'typing_on'
 
 
-module.exports =
-  get_facebook_profile: get_facebook_profile
-  send_typing: send_typing
+connected_facebook_page = () ->
+  FB.api '/me', 'get', fields: [ 'id', 'name' ]
+
+
+connected_facebook_page().then (res) ->
+  bus.emit "STARTUP: connected to Messenger profile #{res.name}: https://m.me/#{res.id}"
+
+
+module.exports = {
+  get_facebook_profile
+  send_typing
+}

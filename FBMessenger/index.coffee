@@ -82,7 +82,7 @@ process_df_response_into_fb_messages = ({ fb_message, df_result, bot }) ->
   send_queue { fb_messages, fb_message, bot }
 
 
-tell_me_more = ({f b_message, bot }) ->
+tell_me_more = ({ fb_message, bot }) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?([\s\S]*)/i)?[1]
   fb_messages = format df_text_message_format tell_me_more_content
   send_queue { fb_messages, fb_message, bot }
