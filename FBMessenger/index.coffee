@@ -47,7 +47,7 @@ swap_in_user_name = ({ fb_message, fb_messages }) ->
       resolve fb_messages
 
 
-send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
+send_queue = ({ fb_messages, fb_message:original_fb_message, bot }) ->
   await bot.changeContext original_fb_message.reference
   send_typing original_fb_message
  
@@ -77,18 +77,18 @@ send_queue = ({fb_messages, fb_message:original_fb_message, bot}) ->
     cumulative_wait += msec_delay message
 
 
-process_df_response_into_fb_messages = ({fb_message, df_result, bot}) ->
+process_df_response_into_fb_messages = ({ fb_message, df_result, bot }) ->
   fb_messages = format df_result.fulfillmentMessages
   send_queue { fb_messages, fb_message, bot }
 
 
-tell_me_more = ({fb_message, bot}) ->
+tell_me_more = ({f b_message, bot }) ->
   tell_me_more_content = fb_message.text.match(/^tell_me_more: ?([\s\S]*)/i)?[1]
   fb_messages = format df_text_message_format tell_me_more_content
-  send_queue {fb_messages, fb_message, bot}
+  send_queue { fb_messages, fb_message, bot }
 
 
-check_user_type = ({fb_message, bot}) ->
+check_user_type = ({ fb_message, bot }) ->
   user = await User.findOne _id: fb_message.user
   if user?.user_type?
     bus.emit 'user returns with type set', {
@@ -137,7 +137,7 @@ botkit.on 'message', (bot, fb_message) ->
   event = switch
     when fb_message.quick_reply?.payload.match regex.follow_up then 'quick reply: follow up'
     else 'message from user'
-  bus.emit event, {fb_message, bot}
+  bus.emit event, { fb_message, bot }
 
 
 botkit.on 'facebook_postback', (bot, fb_message) ->
