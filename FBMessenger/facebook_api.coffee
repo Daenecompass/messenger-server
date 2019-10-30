@@ -31,7 +31,7 @@ connected_facebook_page = () ->
 
 
 connected_facebook_page().then (res) ->
-  bus.emit "STARTUP: connected to Messenger profile #{res.name}: https://m.me/#{res.id}"
+  bus.emit "STARTUP: connected to Messenger profile '#{res.name}': https://m.me/#{res.id}"
 
 
 module.exports = {

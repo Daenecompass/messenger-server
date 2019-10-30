@@ -1,7 +1,10 @@
 require '../env'
 { fb_page_token } = process.env
+
 FB = require 'fb'
+
 persistent_menu = require './persistent_menu.json'
+
 
 console.log 'Attempting to delete and re-set get started postback & persistent menu'
 FB.setAccessToken fb_page_token

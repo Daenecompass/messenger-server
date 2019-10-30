@@ -13,7 +13,10 @@ bus = require '../event_bus'
   df_text_message_format
 } = require './df_to_messenger_formatter'
 { regex, emit_error } = require '../helpers'
-{ User } = require '../db'
+{
+  User
+  update_user
+} = require '../db'
 
 
 swap_in_user_name = ({ fb_message, fb_messages }) ->
@@ -22,24 +25,14 @@ swap_in_user_name = ({ fb_message, fb_messages }) ->
     if fb_messages_text_contains fb_messages, '#generic.fb_first_name'
       bus.emit 'Looking up username in storage'
       user = await User.findOne _id: fb_user_id
+
       if user?.fb_user_profile?.first_name?
+        bus.emit 'Found user name in db'
         { first_name } = user.fb_user_profile
       else
         fb_user = await get_facebook_profile fb_user_id
+        update_user fb_user_id, fb_user_profile: fb_user
         { first_name } = fb_user
-        query = _id: fb_user_id
-        update = fb_user_profile: fb_user
-        options =
-          new: true
-          upsert: true
-          setDefaultsOnInsert: true
-        User.findOneAndUpdate query, update, options, (err, doc) ->
-          if err
-            emit_error err
-          else if not doc
-            emit_error 'User not found in db'
-          else
-            bus.emit 'Saved FB profile to db'
 
       resolve apply_fn_to_fb_messages fb_messages, replace '#generic.fb_first_name', first_name
 
@@ -102,18 +95,9 @@ check_user_type = ({ fb_message, bot }) ->
 
 
 store_user_type = ({ user_type, fb_message }) ->
-  query = _id: fb_message.user
-  update = user_type: user_type
-  options =
-    new: true
-    setDefaultsOnInsert: true
-  User.findOneAndUpdate query, update, options, (err, doc) ->
-    if err
-      emit_error err
-    else if not doc
-      emit_error 'User not found in db'
-    else
-      bus.emit 'Saved user type to db'
+  update_user fb_message.user, user_type: user_type
+    .then () -> bus.emit 'Saved user type to db'
+    .catch emit_error
 
 
 check_session = ({ fb_message, df_response, bot, df_session }) ->
@@ -122,7 +106,8 @@ check_session = ({ fb_message, df_response, bot, df_session }) ->
     return
   if user?.last_session_id isnt df_session
     bus.emit 'putting session in db'
-    await User.findOneAndUpdate { _id: fb_message.user }, { last_session_id: df_session }, { upsert: true, new: true }
+    update_user fb_message.user, { last_session_id: df_session }
+      .catch emit_error
     bus.emit 'user session changed', {
       fb_message
       bot

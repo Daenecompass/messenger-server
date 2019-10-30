@@ -1,6 +1,10 @@
 mongoose = require 'mongoose'
 
-{ Event, User } = require '../db'
+{ 
+  Event
+  User
+  update_user
+} = require '../db'
 { emit_error } = require '../helpers'
 
 
@@ -12,15 +16,7 @@ log_event = (obj) ->
 
 module.exports =
   user_starts: ({ fb_message }) ->
-    User.findOneAndUpdate {
-        _id: fb_message.user
-      }, {
-        $push: starts: platform: 'messenger'
-        last_platform: 'messenger'
-      }, {
-        upsert: true
-        setDefaultsOnInsert: true
-      }
+    update_user fb_message.user, { $push: starts: platform: 'messenger' }
       .catch emit_error
 
 
@@ -50,5 +46,5 @@ module.exports =
 
 
   feedback: ({ user_id, feedback }) ->
-    await User.findOneAndUpdate user_id, { $push: feedback: feedback: feedback }, upsert: true
+    update_user user_id, { $push: feedback: feedback: feedback }
       .catch emit_error

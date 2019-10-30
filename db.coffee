@@ -8,9 +8,9 @@ bus = require './event_bus'
 
 mongoose.set 'useFindAndModify', false
 
-mongoose.connect mongo_conn_string, useNewUrlParser: true
+mongoose.connect mongo_conn_string, { useNewUrlParser: true, useUnifiedTopology: true }
   .then (m) ->
-    bus.emit "STARTUP: connected to database #{m.connections[0].host}/#{m.connections[0].name}"
+    bus.emit "STARTUP: connected to database #{m.connections[0].host}/#{m.connections[0].db.databaseName}"
   .catch emit_error
 
 Schema = mongoose.Schema
@@ -31,7 +31,9 @@ UserSchema = new Schema
       default: Date.now
   ]
   last_session_id: String
-  last_platform: String
+  last_platform:
+    type: String
+    default: 'messenger'
   user_type: String
   fb_user_profile:
     id: String            # duplicate of _id but kinda necessary presently to simplify return from FB api I think
@@ -41,6 +43,7 @@ UserSchema = new Schema
   created_at:
     type: Date
     default: Date.now
+
 
 EventSchema = new Schema
   created_at:
@@ -61,6 +64,25 @@ EventSchema = new Schema
   df_confidence: Number
 
 
-module.exports =
-  User: mongoose.models.User or mongoose.model 'User', UserSchema
-  Event: mongoose.models.Event or mongoose.model 'Event', EventSchema
+User = mongoose.models.User or mongoose.model 'User', UserSchema
+Event = mongoose.models.Event or mongoose.model 'Event', EventSchema
+
+
+update_user = (user_id, update) ->
+  new Promise (resolve, reject) ->
+    query = _id: user_id
+    options =
+      new: true
+      upsert: true
+      setDefaultsOnInsert: true
+    User.findOneAndUpdate query, update, options, (err, doc) ->
+      if err
+        reject err
+      resolve doc
+
+
+module.exports = {
+  update_user
+  User
+  Event
+}
