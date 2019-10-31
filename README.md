@@ -12,11 +12,10 @@ It processes some custom syntax in Dialogflow responses to handle images, button
 ## Todo
 
 * Add support for environments from workbot/webchat-server
-* Flesh out env.coffee with helpful messages
+* Flesh out env.coffee with more helpful messages
 * abstract to be able to use same codebase for Workbot
   * env for privacy policy link
   * env for persistent menu?
-* Look up profile on get_started?
 * make get started look up and supply context?
 * make a models folder?
 * Rather than using session_id to figure out whether to refresh context; use has-20-minutes-passed-since-last-interaction-with-DF (https://stackoverflow.com/questions/53717717/what-is-the-lifetime-of-dialog-flow-session)

@@ -9,7 +9,7 @@ module.exports =
     button_tag: /\[.*?(0800|111|0[0-9]|http).*?\]/ig
     whitespace_around_button_tags: /[\s]*(\[(.+(0800|111|0[0-9]|http).*)\][\s]*)/ig
     whitespace_around_first_more: /[\s]*(\[more\])[\s]*/i
-    phone: /(.+?) (111|0800.+|0[0-9].+)/
+    phone: /(.+?) ((?:111|0800|0[0-9])[0-9 ]*)/
     url: /(.+) (https?:\/\/.+)/i
     messenger_url: /(.+) (https?:\/\/m\.me\/.+)/i
     clm_url: /(.+) (http.*community-law-manual.*)/i
@@ -33,4 +33,6 @@ module.exports =
 
   Js: (object) -> JSON.stringify object, null, 2
 
-  emit_error: (e) -> bus.emit "error #{e}", e.stack
+  emit_error: (e) ->
+    bus.emit "error #{e}", e.stack
+    throw new Error e
