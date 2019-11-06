@@ -213,7 +213,7 @@ text_processor = (df_message) ->
   has_qr_before_more = (text) -> strip_out_from_first_more(text).match regex.quick_replies_tag
   has_cards_before_more = (text) -> strip_out_from_first_more(text).match regex.cards_tag
 
-  cleaned_speech = remove_extra_whitespace df_message.text.text[0]
+  cleaned_speech = remove_extra_whitespace remove_sources_tags df_message.text.text[0]
   lines = remove_empties \    # to get rid of removed source lines
           split_on_newlines_before_more cleaned_speech
   flatmap lines, (line) ->
